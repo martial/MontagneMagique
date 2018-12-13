@@ -107,7 +107,7 @@ void ofApp::draw(){
     vector<ofPoint> originPnts;
     
     for(int i=0; i<trackers.size(); i++) {
-        trackers[i]->update(cam);
+        //trackers[i]->update(cam);
         
         if(trackers[i]->isFound()){
             trackers[i]->beginAR();

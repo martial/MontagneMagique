@@ -12,7 +12,8 @@ class ofApp : public ofBaseApp {
     
         void loadTrackers();
     
-
+    void onNewMarker(int & mId);
+    void onLostMarker(int & mId);
 		void keyPressed(int key);
 		void keyReleased(int key);
 		void mouseMoved(int x, int y );
@@ -25,8 +26,7 @@ class ofApp : public ofBaseApp {
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
     
-        void onNewMarker(int & mId);
-        void onLostMarker(int & mId);
+
     
         ofVideoGrabber cam;
         vector<std::shared_ptr<ofxArtool5::NftTracker>> trackers;;

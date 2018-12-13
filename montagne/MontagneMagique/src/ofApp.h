@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxARTNftTracker.h"
+#include "ArToolKitManager.hpp"
 
 class ofApp : public ofBaseApp{
 
@@ -22,11 +22,10 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
     
-    void loadTrackers();
-    
-    void onNewMarker(int & mId);
-    void onLostMarker(int & mId);
+        int camWidth, camHeight;
+        ofPoint fullScreenSize;
+        ofVideoGrabber camera;
+        ArToolKitManager arToolKitManager;
+        ofFbo mainArLayerFbo;
 		
-    ofVideoGrabber cam;
-    vector<std::shared_ptr<ofxArtool5::NftTracker>> trackers;;
 };
