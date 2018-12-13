@@ -1,0 +1,26 @@
+#########################
+# core apps
+#########################
+
+# include official directories
+!projectGenerator/
+!devApps/
+
+# ignore bin folders' contents, except data folder therein
+/devApps/*/bin/*
+!/devApps/*/bin/data/
+
+/devApps/*/.cproject
+/devApps/*/.project
+/devApps/*/.settings/
+
+/montagne/*/bin/*
+!/montagne/*/bin/data/
+
+/montagne/*/.cproject
+/montagne/*/.project
+/montagne/*/.settings/
+/montagne/artoolkitx/libs/*
+# don't ignore the .gitignore file
+!.gitignore
+
