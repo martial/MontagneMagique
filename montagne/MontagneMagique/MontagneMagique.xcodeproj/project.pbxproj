@@ -26,6 +26,7 @@
 		8320D7CA21C2A204000BCEC6 /* ArToolKitManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8320D7C821C2A204000BCEC6 /* ArToolKitManager.cpp */; };
 		8320D7CD21C2A554000BCEC6 /* camera_para.dat in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8320D7CC21C2A553000BCEC6 /* camera_para.dat */; };
 		8320D7D021C2A7F8000BCEC6 /* ofxImgSizeUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8320D7CF21C2A7F8000BCEC6 /* ofxImgSizeUtils.cpp */; };
+		834CD00D21C3ABB300207A1D /* MontagneApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 834CD00B21C3ABB300207A1D /* MontagneApp.cpp */; };
 		879A251454401BC0B6E4F238 /* OscTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D9BFFBBF4CC43DEE890B3C3E /* OscTypes.cpp */; };
 		8D60C222CBD3F869382832E9 /* ofxSyphonServer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 32D6F27DC6308427F9A278C1 /* ofxSyphonServer.mm */; };
 		8F5205AEF8861EF234F0651A /* ofxOscSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 81967292BFC87A0144BD32C6 /* ofxOscSender.cpp */; };
@@ -384,6 +385,8 @@
 		8320D7CC21C2A553000BCEC6 /* camera_para.dat */ = {isa = PBXFileReference; lastKnownFileType = file; name = camera_para.dat; path = bin/data/camera_para.dat; sourceTree = "<group>"; };
 		8320D7CE21C2A7F8000BCEC6 /* ofxImgSizeUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxImgSizeUtils.h; sourceTree = "<group>"; };
 		8320D7CF21C2A7F8000BCEC6 /* ofxImgSizeUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxImgSizeUtils.cpp; sourceTree = "<group>"; };
+		834CD00B21C3ABB300207A1D /* MontagneApp.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MontagneApp.cpp; sourceTree = "<group>"; };
+		834CD00C21C3ABB300207A1D /* MontagneApp.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MontagneApp.hpp; sourceTree = "<group>"; };
 		838C0A631612A5E26A4C4EE9 /* transform_detail.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = transform_detail.hpp; path = "../../../addons/ofxArtool5/libs/include/macosx-universal/opencv2/gpu/device/detail/transform_detail.hpp"; sourceTree = SOURCE_ROOT; };
 		8486E17E15F382EB308D3CD6 /* reduce.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = reduce.hpp; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv2/cudev/block/detail/reduce.hpp; sourceTree = SOURCE_ROOT; };
 		84C059AA681D7088B742D8E8 /* cuda.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = cuda.hpp; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv2/core/cuda.hpp; sourceTree = SOURCE_ROOT; };
@@ -2559,6 +2562,8 @@
 				E4B69E1F0A3A1BDC003C02F2 /* ofApp.h */,
 				8320D7C821C2A204000BCEC6 /* ArToolKitManager.cpp */,
 				8320D7C921C2A204000BCEC6 /* ArToolKitManager.hpp */,
+				834CD00B21C3ABB300207A1D /* MontagneApp.cpp */,
+				834CD00C21C3ABB300207A1D /* MontagneApp.hpp */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -2794,6 +2799,7 @@
 				62545D179C94265CA1389D4A /* OscOutboundPacketStream.cpp in Sources */,
 				879A251454401BC0B6E4F238 /* OscTypes.cpp in Sources */,
 				0546D1A38E13BD319CC9755B /* OscReceivedElements.cpp in Sources */,
+				834CD00D21C3ABB300207A1D /* MontagneApp.cpp in Sources */,
 				C4782ECC372420ACE0615B74 /* OscPrintReceivedElements.cpp in Sources */,
 				67FE4C7B15C2F0478C8126C2 /* NetworkingUtils.cpp in Sources */,
 				510CAFE035E576A4E1502D52 /* UdpSocket.cpp in Sources */,

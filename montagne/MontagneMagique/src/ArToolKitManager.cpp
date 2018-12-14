@@ -112,10 +112,11 @@ void ArToolKitManager::debugDraw() {
              
              */
           
-             ofDrawLine(-1000, 0, 1000, 0);
-             ofDrawLine(0, -1000, 0, 1000);
-             ofDrawBox(0, 0, 0.5, 21, 21, 21);
+            ofDrawLine(-1000, 0, 1000, 0);
+            ofDrawLine(0, -1000, 0, 1000);
+            ofDrawBox(0, 0, 0.5, 21, 21, 21);
             
+            ofSetColor(0, 190);
             ofDrawRectangle(0.0, 0.0, 300, 300);
             
             
@@ -123,7 +124,8 @@ void ArToolKitManager::debugDraw() {
         }
         
     }
-    
+    ofSetColor(255);
+
     for(int i=0; i<originPnts.size(); i++) {
         if(i>0) {
             ofDrawLine(originPnts[i], originPnts[i-1]);
@@ -131,6 +133,17 @@ void ArToolKitManager::debugDraw() {
     }
     
 }
+
+void ArToolKitManager::clean() {
+    
+    for(int i=0; i<trackers.size(); i++) {
+        trackers[i]->cleanup();
+    }
+    
+    trackers.clear();
+    
+}
+
 
 
 //--------------------------------------------------------------
@@ -141,3 +154,4 @@ void ArToolKitManager::onNewMarker(int & mId){
 void ArToolKitManager::onLostMarker(int & mId){
     cout<<"Marker lost!"<<endl;
 }
+

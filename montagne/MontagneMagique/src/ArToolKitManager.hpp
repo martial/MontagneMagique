@@ -24,6 +24,7 @@ public:
     void onNewMarker(int & mId);
     void onLostMarker(int & mId);
     
+    void clean();
     
 private:
     

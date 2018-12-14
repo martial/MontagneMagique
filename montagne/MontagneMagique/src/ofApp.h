@@ -1,7 +1,12 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ArToolKitManager.hpp"
+#include "MontagneApp.hpp"
+#include "ofxSyphon.h"
+
+#define INPUT_VIDEO 0
+#define INPUT_CAMERA 1
+#define INPUT_SYPHON 2
 
 class ofApp : public ofBaseApp{
 
@@ -22,10 +27,25 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
     
-        int camWidth, camHeight;
-        ofPoint fullScreenSize;
-        ofVideoGrabber camera;
-        ArToolKitManager arToolKitManager;
-        ofFbo mainArLayerFbo;
-		
+        void setInputMode(int mode);
+    
+        int videoInputWidth, videoInputHeight;
+    
+        MontagneApp app;
+    
+        // this is the rectangle canvas with position & size for full screen
+        ofRectangle  cameraRectCanvas;
+
+        ofVideoPlayer   videoInput;
+        ofVideoGrabber  cameraInput;
+        ofxSyphonClient syphonInput;
+        ofPixels        syphonInputPixels;
+        ofImage         syphonInputImg;
+    
+        ofJson          configJson;
+    
+        int intputMode;
+        ofxSyphonServer debugSyphonLayer;
+    
+        string messageString;
 };
