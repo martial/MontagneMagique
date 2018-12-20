@@ -1882,9 +1882,9 @@
 			isa = PBXGroup;
 			children = (
 				0A1F531A55E7375F7F555DAD /* ofxARTNftTracker.h */,
+				E9FF6D4B22188406F3A954DF /* ofxARTNftTracker.cpp */,
 				79B8656395553C89674E97D0 /* ARMarkerNFT.h */,
 				25B8527731596AF5DAC60844 /* ofxARTPattern.cpp */,
-				E9FF6D4B22188406F3A954DF /* ofxARTNftTracker.cpp */,
 				85EAD75512968EBBDF93A0D3 /* trackingSub.h */,
 				43EE673A8840DECFA6EEF1A8 /* ofxARTGenericTracker.h */,
 				92C9F669D01D1F260D8E1CFD /* ofxARTNftUtils.h */,

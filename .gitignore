@@ -21,6 +21,8 @@
 /montagne/*/.project
 /montagne/*/.settings/
 /montagne/artoolkitx/libs/*
+/montagne/MontagneMagique/bin/data/old/*
+
 # don't ignore the .gitignore file
 !.gitignore
 

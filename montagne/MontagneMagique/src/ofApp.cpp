@@ -54,8 +54,8 @@ void ofApp::setInputMode(int mode) {
         
         case INPUT_CAMERA:
             
-            videoInputWidth    = 1920 ;
-            videoInputHeight   = 1080 ;
+            videoInputWidth    = 640 ;
+            videoInputHeight   = 480 ;
             
             cameraInput.setDeviceID(deviceId);
             cameraInput.setup(videoInputWidth, videoInputHeight);
@@ -67,8 +67,10 @@ void ofApp::setInputMode(int mode) {
             syphonInput.setup();
             syphonInput.set("", configJson["syphon-input-name"]);
 
-            videoInputWidth    = 1920 ;
-            videoInputHeight   = 1080 ;
+            videoInputWidth    = 640 ;
+            videoInputHeight   = 480 ;
+            
+            syphonFbo.allocate(videoInputWidth, videoInputHeight, GL_RGB);
             
             break;
             
@@ -114,7 +116,12 @@ void ofApp::update(){
             
         case INPUT_SYPHON:
             
-            syphonInput.getTexture().readToPixels(syphonInputPixels);
+            syphonFbo.begin();
+            ofClear(255);
+            syphonInput.draw(0.0,0.0);
+            syphonFbo.end();
+            
+            syphonFbo.readToPixels(syphonInputPixels);
             syphonInputImg.setFromPixels(syphonInputPixels);
             
             if(syphonInputImg.getWidth() == videoInputWidth && syphonInputImg.getHeight() == videoInputHeight )
@@ -144,7 +151,8 @@ void ofApp::draw(){
             break;
             
         case INPUT_SYPHON:
-            syphonInput.draw(cameraRectCanvas.x, cameraRectCanvas.y, cameraRectCanvas.getWidth(), cameraRectCanvas.getHeight());
+            syphonFbo.draw(cameraRectCanvas.x, cameraRectCanvas.y, cameraRectCanvas.getWidth(), cameraRectCanvas.getHeight());
+            //syphonInputImg.draw(0.0,0.0, syphonInput.getWidth() * .5, syphonInput.getHeight() * .5);
             break;
             
     }
@@ -171,10 +179,10 @@ void ofApp::draw(){
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
     
-    if(key == '0')
+    if(key == '1')
         setInputMode(INPUT_CAMERA);
     
-    if(key == '1')
+    if(key == '0')
         setInputMode(INPUT_VIDEO);
 
     if(key == '2')

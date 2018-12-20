@@ -31,6 +31,7 @@ private:
     int inputWidth, inputHeight;
     
     vector<std::shared_ptr<ofxArtool5::NftTracker>> trackers;
+    vector<ofImage> images;
     
 };
 

@@ -35,6 +35,15 @@ void ArToolKitManager::loadTrackers() {
             
             for(int j = 0; j < subdir.size(); j++){
                 subdir[j].copyTo("../Resources/"+subdir[j].getFileName(), false, true);
+                
+                if(subdir[j].getExtension() == "jpg" ) {
+                    
+                    ofImage img;
+                    img.load(subdir[j].getAbsolutePath());
+                    images.push_back(img);
+                    
+                }
+                
             }
             
             ofDisableDataPath();
@@ -95,6 +104,7 @@ void ArToolKitManager::debugDraw() {
             
             trackers[i]->beginAR();
             
+            
             /*
             glm::vec3 scale;
             glm::quat rotation;
@@ -106,19 +116,30 @@ void ArToolKitManager::debugDraw() {
             ofPoint origin;
             origin.x =  ofGetWidth() - (ofGetWidth()*.5 -  translation.x);
             origin.y =  ofGetHeight() *.5 - translation.y;
-            //origin.z =  -translation.z;
-            
             originPnts.push_back(origin);
-             
              */
+             
+            
+            
+            float w = images[i].getWidth() / 3.0;
+            float h = images[i].getHeight() / 3.0;
+
           
             ofDrawLine(-1000, 0, 1000, 0);
             ofDrawLine(0, -1000, 0, 1000);
-            ofDrawBox(0, 0, 0.5, 21, 21, 21);
+            
             
             ofSetColor(0, 190);
-            ofDrawRectangle(0.0, 0.0, 300, 300);
+            ofDrawRectangle(0.0, 0.0, w, h);
             
+            ofSetColor(255, 255);
+
+            images[i].draw(0.0,h, w, -h );
+            
+            ofPushMatrix();
+            ofTranslate(w * .5, h * .5);
+            ofDrawBox(0, 0, 0.5, 21, 21, 21);
+            ofPopMatrix();
             
             trackers[i]->endAR();
         }
