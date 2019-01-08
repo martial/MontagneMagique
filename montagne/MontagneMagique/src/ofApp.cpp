@@ -7,6 +7,7 @@ void ofApp::setup(){
     ofSetLogLevel(OF_LOG_NOTICE);
     ofSetFrameRate(60);
     
+    // some config
     ofFile file;
     file.open("config.json");
     
@@ -18,14 +19,13 @@ void ofApp::setup(){
     intputMode          = configJson["auto-start-mode"];
     videoInputWidth     = 0;
     videoInputHeight    = 0;
-        
     setInputMode(intputMode);
-
-    debugSyphonLayer.setName("MM Debug Layer");
+    
+    syphonLayer.setName("MM Layer");
     
     messageString = "";
     
-    
+    app.setup();
     
 }
 
@@ -36,9 +36,9 @@ void ofApp::setInputMode(int mode) {
     int oldVideoInputWidth  = videoInputWidth;
     int oldVideoInputHeight = videoInputHeight;
     
-    int deviceId = configJson["camera-device-id"];
-    string filename = configJson["video-filename"];
-    string videoUrl = "videos/" + filename;
+    int deviceId            = configJson["camera-device-id"];
+    string filename         = configJson["video-filename"];
+    string videoUrl         = "videos/" + filename;
     
     switch (intputMode) {
             
@@ -57,6 +57,7 @@ void ofApp::setInputMode(int mode) {
             videoInputWidth    = 640 ;
             videoInputHeight   = 480 ;
             
+            cameraInput.listDevices();
             cameraInput.setDeviceID(deviceId);
             cameraInput.setup(videoInputWidth, videoInputHeight);
             
@@ -157,6 +158,7 @@ void ofApp::draw(){
             
     }
     
+    /* for debug
     ofPushMatrix();
     ofTranslate(cameraRectCanvas.x, cameraRectCanvas.y);
     app.processDebugDraw();
@@ -166,9 +168,19 @@ void ofApp::draw(){
     ofTexture & tex = app.debugFboLayer.getTexture();
     
     if(tex.isAllocated()) {
-        
         debugSyphonLayer.publishTexture(&app.debugFboLayer.getTexture());
-        
+    }
+   */
+    
+    ofPushMatrix();
+    ofTranslate(cameraRectCanvas.x, cameraRectCanvas.y);
+    app.drawScene();
+    ofPopMatrix();
+    
+    ofTexture & tex = app.fboLayer.getTexture();
+    
+    if(tex.isAllocated()) {
+        syphonLayer.publishTexture(&app.fboLayer.getTexture());
     }
     
     ofSetColor(255);
@@ -186,6 +198,9 @@ void ofApp::keyPressed(int key){
         setInputMode(INPUT_VIDEO);
 
     if(key == '2')
+        setInputMode(INPUT_SYPHON);
+    
+    if(key == 'd')
         setInputMode(INPUT_SYPHON);
 
 }

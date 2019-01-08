@@ -9,8 +9,7 @@
 #define ArToolKitManager_hpp
 
 #include "ofMain.h"
-#include "ofxARTNftTracker.h"
-
+#include "MagiqueMarker.hpp"
 class ArToolKitManager {
     
 public:
@@ -26,12 +25,15 @@ public:
     
     void clean();
     
+    vector<std::shared_ptr<MagiqueMarker>> trackers;
+    vector<ofImage> images;
+
+    
 private:
     
     int inputWidth, inputHeight;
     
-    vector<std::shared_ptr<ofxArtool5::NftTracker>> trackers;
-    vector<ofImage> images;
+    
     
 };
 

@@ -24,4 +24,6 @@ class ofApp : public ofBaseApp{
         vector <ofImage> draggedImages;
         ofPoint dragPt;
         string status;
+    
+
 };

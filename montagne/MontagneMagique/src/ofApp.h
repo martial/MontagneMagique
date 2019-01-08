@@ -45,9 +45,8 @@ class ofApp : public ofBaseApp{
         ofJson          configJson;
     
         int intputMode;
-        ofxSyphonServer debugSyphonLayer;
+        ofxSyphonServer syphonLayer;
     
         ofFbo syphonFbo;
-    
         string messageString;
 };

@@ -10,6 +10,7 @@
 
 #include "ofMain.h"
 #include "ArToolKitManager.hpp"
+#include "ArSceneManager.hpp"
 
 class MontagneApp {
   
@@ -20,20 +21,24 @@ public:
     void setupFbos();
     void updateTrackers(ofBaseHasPixels & input);
     
+    
+    void drawScene();
+
     void processDebugDraw();
     void debugDrawTrackers();
     
     ArToolKitManager  & getArToolKitManager(){return arToolKitManager;};
     
-    ofFbo debugFboLayer;
+    ofFbo debugFboLayer, fboLayer;
     
     
 private:
     
     int trackerInputWidth, trackerInputHeight;
     
-    ArToolKitManager arToolKitManager;
-
+    ArToolKitManager    arToolKitManager;
+    ArSceneManager      arSceneManager;
+    
     
 };
 

@@ -83,6 +83,8 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 
         dragPt = dragInfo.position;
         
+        float subDivisions = 1;
+        
         draggedImages.assign( dragInfo.files.size(), ofImage() );
         for(unsigned int k = 0; k < dragInfo.files.size(); k++){
             draggedImages[k].load(dragInfo.files[k]);
@@ -90,12 +92,12 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
             // cut and save
             
             int count = 0;
-            for(int i=0; i<4; i++) {
+            for(int i=0; i<subDivisions; i++) {
                 
-                for(int j=0; j<4; j++) {
+                for(int j=0; j< subDivisions; j++) {
                     
-                    float w = draggedImages[k].getWidth() / 4;
-                    float h = draggedImages[k].getHeight() / 4;
+                    float w = draggedImages[k].getWidth() / subDivisions;
+                    float h = draggedImages[k].getHeight() / subDivisions;
                     
                     ofPoint pos;
                     pos.x = i * w;
