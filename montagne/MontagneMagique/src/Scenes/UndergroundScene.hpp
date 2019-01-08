@@ -15,11 +15,14 @@ class UndergroundScene : public AbstractARScene {
     
 public:
     
-    void setup();
+    UndergroundScene() {};
+    void setup(string name);
     void update();
     void draw(int markerIndex, int markerWidth, int markerHeight);
     
+private:
     
+    ofImage bug0, bug1;
 };
 
 #endif /* UndergroundScene_hpp */

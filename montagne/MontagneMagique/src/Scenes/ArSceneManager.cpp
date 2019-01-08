@@ -11,7 +11,11 @@
 void ArSceneManager::setup() {
     
     UndergroundScene * undergroundScene = new UndergroundScene();
+    undergroundScene->setup("underground");
+    
     scenes.push_back(undergroundScene);
+    
+    
     
 }
 
