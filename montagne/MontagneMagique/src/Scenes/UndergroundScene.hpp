@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include "AbstractARScene.hpp"
+#include "SimpleParticle.hpp"
 
 class UndergroundScene : public AbstractARScene {
     
@@ -23,6 +24,8 @@ public:
 private:
     
     ofImage bug0, bug1;
+    vector<SimpleParticle*> particles;
+    
 };
 
 #endif /* UndergroundScene_hpp */
