@@ -2,7 +2,6 @@
 //  SimpleParticle.cpp
 //  MontagneMagique
 //
-//  Created by Martial Geoffre-Rouland on 08/01/2019.
 //
 
 #include "SimpleParticle.hpp"
@@ -49,7 +48,6 @@ void SimpleParticle::setInitialCondition(float px, float py, float vx, float vy)
 //------------------------------------------------------------
 void SimpleParticle::update(){
     
-    
     vel = vel + frc;
     
     ofVec2f newPos  = pos + vel;
@@ -61,9 +59,7 @@ void SimpleParticle::update(){
 
 //------------------------------------------------------------
 void SimpleParticle::draw(){
-    
-    ofCircle(pos.x, pos.y, 3);
-    
+        
     ofSetRectMode(OF_RECTMODE_CENTER);
     ofPushMatrix();
     ofTranslate(pos.x, pos.y);

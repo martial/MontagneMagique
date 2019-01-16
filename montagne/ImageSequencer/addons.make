@@ -1,0 +1,3 @@
+ofxSvg
+ofxThreadedImageLoader
+ofxVectorGraphics
