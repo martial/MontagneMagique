@@ -27,10 +27,10 @@
 		8320D7CD21C2A554000BCEC6 /* camera_para.dat in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8320D7CC21C2A553000BCEC6 /* camera_para.dat */; };
 		8320D7D021C2A7F8000BCEC6 /* ofxImgSizeUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8320D7CF21C2A7F8000BCEC6 /* ofxImgSizeUtils.cpp */; };
 		834CD00D21C3ABB300207A1D /* MontagneApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 834CD00B21C3ABB300207A1D /* MontagneApp.cpp */; };
+		834E47D321EF257B00A4FEC3 /* SimpleParticle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 834E47D121EF257A00A4FEC3 /* SimpleParticle.cpp */; };
 		83C7720521E4B08E00D111D6 /* ArSceneManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83C7720321E4B08E00D111D6 /* ArSceneManager.cpp */; };
 		83C7720821E4B0A200D111D6 /* AbstractARScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83C7720621E4B0A200D111D6 /* AbstractARScene.cpp */; };
 		83C7720B21E4B0C100D111D6 /* UndergroundScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83C7720921E4B0C100D111D6 /* UndergroundScene.cpp */; };
-		83C7720F21E4EFDE00D111D6 /* SimpleParticle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83C7720D21E4EFDE00D111D6 /* SimpleParticle.cpp */; };
 		83F62CB921CD166E00CE0B80 /* MagiqueMarker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83F62CB721CD166E00CE0B80 /* MagiqueMarker.cpp */; };
 		83F62CBC21CD220200CE0B80 /* Particles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83F62CBA21CD220200CE0B80 /* Particles.cpp */; };
 		879A251454401BC0B6E4F238 /* OscTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D9BFFBBF4CC43DEE890B3C3E /* OscTypes.cpp */; };
@@ -393,6 +393,8 @@
 		8320D7CF21C2A7F8000BCEC6 /* ofxImgSizeUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxImgSizeUtils.cpp; sourceTree = "<group>"; };
 		834CD00B21C3ABB300207A1D /* MontagneApp.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MontagneApp.cpp; sourceTree = "<group>"; };
 		834CD00C21C3ABB300207A1D /* MontagneApp.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MontagneApp.hpp; sourceTree = "<group>"; };
+		834E47D121EF257A00A4FEC3 /* SimpleParticle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SimpleParticle.cpp; path = ../../../SharedSrc/SimpleParticle.cpp; sourceTree = "<group>"; };
+		834E47D221EF257A00A4FEC3 /* SimpleParticle.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = SimpleParticle.hpp; path = ../../../SharedSrc/SimpleParticle.hpp; sourceTree = "<group>"; };
 		838C0A631612A5E26A4C4EE9 /* transform_detail.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = transform_detail.hpp; path = "../../../addons/ofxArtool5/libs/include/macosx-universal/opencv2/gpu/device/detail/transform_detail.hpp"; sourceTree = SOURCE_ROOT; };
 		83C7720321E4B08E00D111D6 /* ArSceneManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ArSceneManager.cpp; sourceTree = "<group>"; };
 		83C7720421E4B08E00D111D6 /* ArSceneManager.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ArSceneManager.hpp; sourceTree = "<group>"; };
@@ -400,8 +402,6 @@
 		83C7720721E4B0A200D111D6 /* AbstractARScene.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AbstractARScene.hpp; sourceTree = "<group>"; };
 		83C7720921E4B0C100D111D6 /* UndergroundScene.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UndergroundScene.cpp; sourceTree = "<group>"; };
 		83C7720A21E4B0C100D111D6 /* UndergroundScene.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = UndergroundScene.hpp; sourceTree = "<group>"; };
-		83C7720D21E4EFDE00D111D6 /* SimpleParticle.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleParticle.cpp; sourceTree = "<group>"; };
-		83C7720E21E4EFDE00D111D6 /* SimpleParticle.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SimpleParticle.hpp; sourceTree = "<group>"; };
 		83F62CB721CD166E00CE0B80 /* MagiqueMarker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MagiqueMarker.cpp; sourceTree = "<group>"; };
 		83F62CB821CD166E00CE0B80 /* MagiqueMarker.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MagiqueMarker.hpp; sourceTree = "<group>"; };
 		83F62CBA21CD220200CE0B80 /* Particles.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Particles.cpp; sourceTree = "<group>"; };
@@ -1831,8 +1831,8 @@
 		83C7720C21E4EFC600D111D6 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				83C7720D21E4EFDE00D111D6 /* SimpleParticle.cpp */,
-				83C7720E21E4EFDE00D111D6 /* SimpleParticle.hpp */,
+				834E47D121EF257A00A4FEC3 /* SimpleParticle.cpp */,
+				834E47D221EF257A00A4FEC3 /* SimpleParticle.hpp */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -2917,6 +2917,7 @@
 				BA1ADE30C05C01103C1BE219 /* ARMarkerNFT.c in Sources */,
 				83C7720521E4B08E00D111D6 /* ArSceneManager.cpp in Sources */,
 				83C7720B21E4B0C100D111D6 /* UndergroundScene.cpp in Sources */,
+				834E47D321EF257B00A4FEC3 /* SimpleParticle.cpp in Sources */,
 				9DE8923039A746113B23102D /* ofxARTGenericTracker.cpp in Sources */,
 				8320D7CA21C2A204000BCEC6 /* ArToolKitManager.cpp in Sources */,
 				F695DBAAC580A2B8BF3658BC /* trackingSub.c in Sources */,
@@ -2928,7 +2929,6 @@
 				169D3C72FDE6C5590A1616F5 /* ofxCvFloatImage.cpp in Sources */,
 				FB09C6B2A1DA0EA217240CB8 /* ofxCvGrayscaleImage.cpp in Sources */,
 				4ADB88E2FB52E76A471065DE /* ofxOscParameterSync.cpp in Sources */,
-				83C7720F21E4EFDE00D111D6 /* SimpleParticle.cpp in Sources */,
 				5864AD82E20F15536D054EA3 /* ofxOscMessage.cpp in Sources */,
 				72A929D3561B8232A182ABFC /* ofxOscBundle.cpp in Sources */,
 				83C7720821E4B0A200D111D6 /* AbstractARScene.cpp in Sources */,
