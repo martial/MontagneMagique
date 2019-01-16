@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "Ants.hpp"
+#include "Eggs.hpp"
 
 class ofApp : public ofBaseApp{
 
@@ -23,4 +24,5 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
 		
         Ants ants;
+        Eggs eggs;
 };

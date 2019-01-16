@@ -28,7 +28,7 @@ void Ants::setup() {
         images[i].setLoop(true);
         images[i].play();
         
-        ofLogNotice("i") << i;
+        //ofLogNotice("i") << i;
     }
     
 }

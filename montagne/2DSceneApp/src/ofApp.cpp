@@ -5,11 +5,13 @@ void ofApp::setup(){
     
     ofSetVerticalSync(true);
     ants.setup();
+    eggs.setup();
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
     ants.update();
+    eggs.update();
 }
 
 //--------------------------------------------------------------
@@ -17,7 +19,7 @@ void ofApp::draw(){
     
     ofBackground(255);
     ofSetColor(255);
-    ants.draw();
+    eggs.draw();
 }
 
 //--------------------------------------------------------------
