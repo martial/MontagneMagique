@@ -22,6 +22,8 @@
 /montagne/*/.settings/
 /montagne/artoolkitx/libs/*
 /montagne/MontagneMagique/bin/data/old/*
+/montagne/MontagneMagique/bin/data/videos/*
+/montagne/MontagneMagique/bin/data/markers/*
 
 # don't ignore the .gitignore file
 !.gitignore
