@@ -21,10 +21,12 @@ public:
     }
     virtual void update(){};
     virtual void draw(int markerIndex, int markerWidth, int markerHeight){};
+    virtual void setMarkerIndex(int index) { this->markerIndex = index };);
     
 protected:
     
     string dataPath;
+    int markerIndex;
     
     virtual void onFoundMarker(){};
     virtual void onLostMarker(){};

@@ -24,7 +24,7 @@ class ofApp : public ofBaseApp{
     
         void generateMarkers();
     
-        ofImage currentImage;
+        string imgFileName;
         vector <ofImage> draggedImages;
         ofPoint dragPt;
         string status;
@@ -33,6 +33,9 @@ class ofApp : public ofBaseApp{
         ofxIntSlider rows, cols;
         ofxButton generate;
         ofxPanel gui;
+    
+        vector<bool> selecteds;
+        vector<ofRectangle> rectangles;
     
 
 };

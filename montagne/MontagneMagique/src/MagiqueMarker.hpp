@@ -23,9 +23,9 @@ public:
     void endAR();
     
     void drawParticles();
-
-    
     bool hasBeenTracked();
+    
+    string markerid;
     
 private:
     
