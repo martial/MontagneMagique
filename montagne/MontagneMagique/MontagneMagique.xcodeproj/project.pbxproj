@@ -28,6 +28,13 @@
 		8320D7D021C2A7F8000BCEC6 /* ofxImgSizeUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8320D7CF21C2A7F8000BCEC6 /* ofxImgSizeUtils.cpp */; };
 		834CD00D21C3ABB300207A1D /* MontagneApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 834CD00B21C3ABB300207A1D /* MontagneApp.cpp */; };
 		834E47D321EF257B00A4FEC3 /* SimpleParticle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 834E47D121EF257A00A4FEC3 /* SimpleParticle.cpp */; };
+		8353BC6621F868F700627F6A /* EggsScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8353BC6421F868F700627F6A /* EggsScene.cpp */; };
+		8353BC9321F86AEB00627F6A /* Eggs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8353BC6921F8698200627F6A /* Eggs.cpp */; };
+		8353BC9421F86B0B00627F6A /* ofxAnimatableOfColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8353BC8921F86A1A00627F6A /* ofxAnimatableOfColor.cpp */; };
+		8353BC9521F86B0B00627F6A /* ofxAnimatable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8353BC8C21F86A1A00627F6A /* ofxAnimatable.cpp */; };
+		8353BC9621F86B0B00627F6A /* ofxAnimatableFloat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8353BC8E21F86A1A00627F6A /* ofxAnimatableFloat.cpp */; };
+		8353BC9721F86B0B00627F6A /* ofxAnimatableQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8353BC9121F86A1A00627F6A /* ofxAnimatableQueue.cpp */; };
+		8353BC9821F86B0B00627F6A /* ofxAnimatableOfPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8353BC9221F86A1A00627F6A /* ofxAnimatableOfPoint.cpp */; };
 		83C7720521E4B08E00D111D6 /* ArSceneManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83C7720321E4B08E00D111D6 /* ArSceneManager.cpp */; };
 		83C7720821E4B0A200D111D6 /* AbstractARScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83C7720621E4B0A200D111D6 /* AbstractARScene.cpp */; };
 		83C7720B21E4B0C100D111D6 /* UndergroundScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83C7720921E4B0C100D111D6 /* UndergroundScene.cpp */; };
@@ -395,6 +402,20 @@
 		834CD00C21C3ABB300207A1D /* MontagneApp.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MontagneApp.hpp; sourceTree = "<group>"; };
 		834E47D121EF257A00A4FEC3 /* SimpleParticle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SimpleParticle.cpp; path = ../../../SharedSrc/SimpleParticle.cpp; sourceTree = "<group>"; };
 		834E47D221EF257A00A4FEC3 /* SimpleParticle.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = SimpleParticle.hpp; path = ../../../SharedSrc/SimpleParticle.hpp; sourceTree = "<group>"; };
+		8353BC6421F868F700627F6A /* EggsScene.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EggsScene.cpp; sourceTree = "<group>"; };
+		8353BC6521F868F700627F6A /* EggsScene.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = EggsScene.hpp; sourceTree = "<group>"; };
+		8353BC6821F8698200627F6A /* Eggs.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Eggs.hpp; sourceTree = "<group>"; };
+		8353BC6921F8698200627F6A /* Eggs.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Eggs.cpp; sourceTree = "<group>"; };
+		8353BC8921F86A1A00627F6A /* ofxAnimatableOfColor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxAnimatableOfColor.cpp; sourceTree = "<group>"; };
+		8353BC8A21F86A1A00627F6A /* ofxAnimatableOfColor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxAnimatableOfColor.h; sourceTree = "<group>"; };
+		8353BC8B21F86A1A00627F6A /* ofxAnimatableOfPoint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxAnimatableOfPoint.h; sourceTree = "<group>"; };
+		8353BC8C21F86A1A00627F6A /* ofxAnimatable.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxAnimatable.cpp; sourceTree = "<group>"; };
+		8353BC8D21F86A1A00627F6A /* ofxAnimatableFloat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxAnimatableFloat.h; sourceTree = "<group>"; };
+		8353BC8E21F86A1A00627F6A /* ofxAnimatableFloat.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxAnimatableFloat.cpp; sourceTree = "<group>"; };
+		8353BC8F21F86A1A00627F6A /* ofxAnimatableQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxAnimatableQueue.h; sourceTree = "<group>"; };
+		8353BC9021F86A1A00627F6A /* ofxAnimatable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxAnimatable.h; sourceTree = "<group>"; };
+		8353BC9121F86A1A00627F6A /* ofxAnimatableQueue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxAnimatableQueue.cpp; sourceTree = "<group>"; };
+		8353BC9221F86A1A00627F6A /* ofxAnimatableOfPoint.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxAnimatableOfPoint.cpp; sourceTree = "<group>"; };
 		838C0A631612A5E26A4C4EE9 /* transform_detail.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = transform_detail.hpp; path = "../../../addons/ofxArtool5/libs/include/macosx-universal/opencv2/gpu/device/detail/transform_detail.hpp"; sourceTree = SOURCE_ROOT; };
 		83C7720321E4B08E00D111D6 /* ArSceneManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ArSceneManager.cpp; sourceTree = "<group>"; };
 		83C7720421E4B08E00D111D6 /* ArSceneManager.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ArSceneManager.hpp; sourceTree = "<group>"; };
@@ -1815,15 +1836,54 @@
 			name = osx;
 			sourceTree = "<group>";
 		};
+		8353BC6721F8698200627F6A /* Eggs */ = {
+			isa = PBXGroup;
+			children = (
+				8353BC6821F8698200627F6A /* Eggs.hpp */,
+				8353BC6921F8698200627F6A /* Eggs.cpp */,
+			);
+			name = Eggs;
+			path = ../../../2DSceneApp/src/Eggs;
+			sourceTree = "<group>";
+		};
+		8353BC6A21F86A1A00627F6A /* ofxAnimatable */ = {
+			isa = PBXGroup;
+			children = (
+				8353BC8821F86A1A00627F6A /* src */,
+			);
+			name = ofxAnimatable;
+			path = ../../../addons/ofxAnimatable;
+			sourceTree = "<group>";
+		};
+		8353BC8821F86A1A00627F6A /* src */ = {
+			isa = PBXGroup;
+			children = (
+				8353BC8921F86A1A00627F6A /* ofxAnimatableOfColor.cpp */,
+				8353BC8A21F86A1A00627F6A /* ofxAnimatableOfColor.h */,
+				8353BC8B21F86A1A00627F6A /* ofxAnimatableOfPoint.h */,
+				8353BC8C21F86A1A00627F6A /* ofxAnimatable.cpp */,
+				8353BC8D21F86A1A00627F6A /* ofxAnimatableFloat.h */,
+				8353BC8E21F86A1A00627F6A /* ofxAnimatableFloat.cpp */,
+				8353BC8F21F86A1A00627F6A /* ofxAnimatableQueue.h */,
+				8353BC9021F86A1A00627F6A /* ofxAnimatable.h */,
+				8353BC9121F86A1A00627F6A /* ofxAnimatableQueue.cpp */,
+				8353BC9221F86A1A00627F6A /* ofxAnimatableOfPoint.cpp */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
 		83C7720221E4B01A00D111D6 /* Scenes */ = {
 			isa = PBXGroup;
 			children = (
+				8353BC6721F8698200627F6A /* Eggs */,
 				83C7720321E4B08E00D111D6 /* ArSceneManager.cpp */,
 				83C7720421E4B08E00D111D6 /* ArSceneManager.hpp */,
 				83C7720621E4B0A200D111D6 /* AbstractARScene.cpp */,
 				83C7720721E4B0A200D111D6 /* AbstractARScene.hpp */,
 				83C7720921E4B0C100D111D6 /* UndergroundScene.cpp */,
 				83C7720A21E4B0C100D111D6 /* UndergroundScene.hpp */,
+				8353BC6421F868F700627F6A /* EggsScene.cpp */,
+				8353BC6521F868F700627F6A /* EggsScene.hpp */,
 			);
 			path = Scenes;
 			sourceTree = "<group>";
@@ -2204,6 +2264,7 @@
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
+				8353BC6A21F86A1A00627F6A /* ofxAnimatable */,
 				83F62CBD21CD22BD00CE0B80 /* ofxMSACore */,
 				83F62CC921CD22BD00CE0B80 /* ofxMSAPhysics */,
 				E1353B123A9CD9750FE99DCA /* ofxArtool5 */,
@@ -2908,8 +2969,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8353BC9421F86B0B00627F6A /* ofxAnimatableOfColor.cpp in Sources */,
+				8353BC9521F86B0B00627F6A /* ofxAnimatable.cpp in Sources */,
+				8353BC9621F86B0B00627F6A /* ofxAnimatableFloat.cpp in Sources */,
+				8353BC9721F86B0B00627F6A /* ofxAnimatableQueue.cpp in Sources */,
+				8353BC9821F86B0B00627F6A /* ofxAnimatableOfPoint.cpp in Sources */,
+				8353BC9321F86AEB00627F6A /* Eggs.cpp in Sources */,
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
 				83F62CBC21CD220200CE0B80 /* Particles.cpp in Sources */,
+				8353BC6621F868F700627F6A /* EggsScene.cpp in Sources */,
 				83F62CB921CD166E00CE0B80 /* MagiqueMarker.cpp in Sources */,
 				E4B69E210A3A1BDC003C02F2 /* ofApp.cpp in Sources */,
 				2F429157BB51C803A0FC931F /* ofxARTPattern.cpp in Sources */,

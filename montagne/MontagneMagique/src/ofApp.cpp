@@ -133,6 +133,8 @@ void ofApp::update(){
             break;
             
     }
+    
+    app.updateScene();
 
 }
 
@@ -175,6 +177,8 @@ void ofApp::draw(){
     ofPushMatrix();
     ofTranslate(cameraRectCanvas.x, cameraRectCanvas.y);
     app.drawScene();
+   // app.processDebugDraw();
+    //app.debugDrawTrackers();
     ofPopMatrix();
     
     ofTexture & tex = app.fboLayer.getTexture();

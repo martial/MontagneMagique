@@ -109,7 +109,7 @@ void ArToolKitManager::debugDraw() {
             
             trackers[i]->beginAR();
             
-            trackers[i]->drawParticles();
+            //trackers[i]->drawParticles();
             /*
             glm::vec3 scale;
             glm::quat rotation;

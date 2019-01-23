@@ -36,6 +36,14 @@ void MontagneApp::updateTrackers(ofBaseHasPixels & input) {
     
 }
 
+void MontagneApp::updateScene() {
+    
+    arSceneManager.update();
+
+    
+}
+
+
 void MontagneApp::drawScene() {
     
     fboLayer.begin();

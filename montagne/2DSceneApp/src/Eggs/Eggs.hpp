@@ -15,7 +15,7 @@ class Eggs {
     
 public:
     
-    void setup();
+    void setup(int width, int height, string dataPath = "");
     void update();
     void draw();
     

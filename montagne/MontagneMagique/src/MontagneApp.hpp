@@ -20,7 +20,8 @@ public:
     void setupTrackers(int trackerInputWidth, int trackerInputHeight);
     void setupFbos();
     void updateTrackers(ofBaseHasPixels & input);
-    
+    void updateScene();
+
     
     void drawScene();
 

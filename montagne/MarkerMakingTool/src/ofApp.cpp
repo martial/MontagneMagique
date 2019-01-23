@@ -80,7 +80,7 @@ void ofApp::generateMarkers() {
             imgClone.crop(pos.x, pos.y, w, h);
             string filename = ofToString(count) + ".jpg";
             imgClone.save(filename);
-            
+                        
             status = "¨Procesing";
             
             string path = ofToDataPath(filename, true);

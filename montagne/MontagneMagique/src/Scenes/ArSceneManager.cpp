@@ -7,14 +7,19 @@
 
 #include "ArSceneManager.hpp"
 #include "UndergroundScene.hpp"
+#include "EggsScene.hpp"
 
 void ArSceneManager::setup() {
     
     UndergroundScene * undergroundScene = new UndergroundScene();
     undergroundScene->setup("underground");
     
+    EggsScene * eggsScene = new EggsScene();
+    eggsScene->setup("eggs");
+
+    scenes.push_back(eggsScene);
     scenes.push_back(undergroundScene);
-    
+
     
     
 }
