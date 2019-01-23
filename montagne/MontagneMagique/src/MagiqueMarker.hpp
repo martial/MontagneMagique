@@ -38,6 +38,9 @@ public:
     
     bool getIsSolidFound();
     int timeFoundElapsed, timeLostElapsed;
+    int timeSolidFoundElapsed, timeSolidLostElapsed;
+
+    bool bIsFound, bIsSolidFound;
 
     
 private:
@@ -46,10 +49,10 @@ private:
     bool bTracked;
     Particles particles;
 
-    bool bIsFound, bIsSolidFound;
     int timeFoundDelay, timeLostDelay;
     int timeFound, timeLost;
-    
+    int timeSolidFound, timeSolidLost;
+
 };
 
 

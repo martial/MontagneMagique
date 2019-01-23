@@ -22,7 +22,7 @@ public:
         this->markerID = "";
         this->dataPath = "scenes/"+name;
         this->animInMillisDelay     = 2000;
-        this->animOutMillisDelay    = 2000;
+        this->animOutMillisDelay    = 1000;
         
         ofFile file;
         file.open(this->dataPath + "/config.json");
@@ -35,6 +35,15 @@ public:
         this->markerID = configJson["marker-id"];
     }
     
+    virtual float getInOuPct() {
+        
+        if(marker->getIsSolidFound())
+            return ofClamp(ofMap(marker->timeSolidFoundElapsed, 0, this->animInMillisDelay, 0, 1), 0, 1);
+        else
+            return ofClamp(ofMap(marker->timeSolidLostElapsed, 0, this->animOutMillisDelay, 1, 0),0, 1);
+        
+
+    }
     virtual void update(){};
     virtual void draw(){};
     

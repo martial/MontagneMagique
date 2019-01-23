@@ -17,7 +17,7 @@ public:
     
     void setup(int width, int height, string dataPath = "");
     void update();
-    void draw();
+    void draw(float opacity);
     
 private:
     
@@ -25,9 +25,9 @@ private:
     vector<ofImage>     images;
     vector<ofImage*>    imageRef;
     vector<ofxAnimatableFloat> radiuses;
-    vector<ofVec2f> positions;
-    
-    vector<ofVec2f> allowedPositions;
+    vector<ofVec2f>     positions;
+    vector<float>       opacities;
+    vector<ofVec2f>     allowedPositions;
     
     
 };

@@ -17,7 +17,10 @@ MagiqueMarker::MagiqueMarker() {
     timeLostDelay   = 1000;
     timeFound       = ofGetElapsedTimeMillis();
     timeLost        = ofGetElapsedTimeMillis();
-        
+    
+    timeSolidFoundElapsed = 0;
+    timeSolidLostElapsed  = 0;
+    
     NftTracker();
     
     //particles.setup();
@@ -42,23 +45,42 @@ void MagiqueMarker::updateTimes() {
         bIsFound        = this->isFound();
     }
     
-    timeFoundElapsed    = currentTime - timeFound;
-    timeLostElapsed     = currentTime - timeLost;
     
+    if(bIsSolidFound)
+        timeSolidFoundElapsed = currentTime - timeSolidFound;
+    else
+        timeSolidLostElapsed  = currentTime - timeSolidLost;
+
     // simple ms timer stuff to avoid quick losts of focus
     if(bIsFound) {
         
-        if(timeFoundElapsed > timeFoundDelay) {
-            bIsSolidFound = true;
+        timeFoundElapsed    = currentTime - timeFound;
+        if(!bIsSolidFound && timeFoundElapsed > timeFoundDelay) {
+            bIsSolidFound           = true;
+            timeSolidFound          = currentTime;
+            timeSolidLostElapsed    = 0;
         }
         
     } else {
         
-        if(timeLostElapsed > timeLostDelay) {
-            bIsSolidFound = false;
+        //timeFoundElapsed    = 0;
+        timeLostElapsed     = currentTime - timeLost;
+        if(bIsSolidFound && timeLostElapsed > timeLostDelay) {
+            bIsSolidFound           = false;
+            timeSolidLost           = currentTime;
+            timeSolidFoundElapsed   = 0;
         }
         
     }
+    
+    
+    //ofLogNotice("---");
+    //ofLogNotice("timeFoundElapsed") << timeFoundElapsed;
+    //ofLogNotice("timeLostElapsed") << timeLostElapsed;
+   // ofLogNotice("timeSolidFoundElapsed") << timeSolidFoundElapsed;
+   // ofLogNotice("timeSolidLostElapsed") << timeSolidLostElapsed;
+    
+
     
     
 }

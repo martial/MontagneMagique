@@ -23,18 +23,12 @@ void EggsScene::update() {
 
 void EggsScene::draw() {
     
-    float pct = 0.0;
-    if(marker->getIsSolidFound()) {
-        
-        pct = ofMap(marker->timeFoundElapsed, 0, this->animInMillisDelay, 0, 1);
+    float pct = getInOuPct();
+    
+    if(pct > 0 ) {
         
         ofSetColor(255, pct * 255);
-        
-        ofNoFill();
-        ofDrawRectangle(0.0, 0.0, marker->width, marker->height);
-        ofFill();
-        
-        eggs.draw();
+        eggs.draw(pct);
         
     }
     

@@ -40,7 +40,7 @@ void Eggs::setup(int width, int height, string dataPath) {
     }
     
     // load eggs
-    for(int i=0; i<25; i++) {
+    for(int i=0; i<30; i++) {
         
         int rdm = floor(ofRandom(images.size()));
         imageRef.push_back(&images[rdm]);
@@ -58,6 +58,8 @@ void Eggs::setup(int width, int height, string dataPath) {
         
         int rdmIndex = floor(ofRandom(allowedPositions.size()));
         positions[i].set(allowedPositions[rdmIndex]);
+        
+        opacities.push_back(ofRandom(0.8, 1.0));
     }
     
 }
@@ -70,7 +72,7 @@ void Eggs::update() {
     
 }
 
-void Eggs::draw() {
+void Eggs::draw(float opacity) {
     
     ofEnableAlphaBlending();
     for(int i=0; i<radiuses.size(); i++) {
@@ -79,6 +81,8 @@ void Eggs::draw() {
         float pct = radiuses[i].getCurrentValue();
         float noise = ofMap(ofNoise(ofGetElapsedTimef() +i), 0.0, 1.0, 0.4, 1.0);
         pct *= noise;
+        
+        ofSetColor( 255, 255 * opacities[i] * opacity);
         
         ofPushMatrix();
         ofTranslate(positions[i].x, positions[i].y);
