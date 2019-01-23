@@ -14,9 +14,33 @@ void Eggs::setup(int width, int height, string dataPath) {
         ofImage img;
         images.push_back(img);
         images[i].load(dataPath + "/OEUF_"+ofToString(i+1)+".png");
+        images[i].setAnchorPoint(images[i].getWidth()/2, images[i].getHeight()/2);
+
     }
     
-    for(int i=0; i<20; i++) {
+    // load mask and positions
+    ofImage mask;
+    mask.load(dataPath + "/FOURMILLIERE_0_mask.jpg");
+    mask.mirror(true, false);
+    ofPixels pixels = mask.getPixels();
+    int w = mask.getWidth();
+    int h = mask.getHeight();
+    for (int i = 0; i < w; i++){
+        for (int j = 0; j < h; j++){
+            
+            float brt = pixels.getColor(i, j).getBrightness();
+            
+            if (brt == 255) {
+                ofVec2f pos;
+                pos.set(i,j);
+                pos /= 3.0;
+                allowedPositions.push_back(pos);
+            }
+        }
+    }
+    
+    // load eggs
+    for(int i=0; i<25; i++) {
         
         int rdm = floor(ofRandom(images.size()));
         imageRef.push_back(&images[rdm]);
@@ -31,7 +55,9 @@ void Eggs::setup(int width, int height, string dataPath) {
         
         ofVec2f pos;
         positions.push_back(pos);
-        positions[i].set(ofRandom(-width, width), ofRandom(-height, height));
+        
+        int rdmIndex = floor(ofRandom(allowedPositions.size()));
+        positions[i].set(allowedPositions[rdmIndex]);
     }
     
 }
@@ -56,14 +82,12 @@ void Eggs::draw() {
         
         ofPushMatrix();
         ofTranslate(positions[i].x, positions[i].y);
-        ofTranslate(imageRef[i]->getWidth() * .5, imageRef[i]->getHeight() * .5);
         ofScale(pct, pct);
-        ofTranslate(-imageRef[i]->getWidth() * .5, -imageRef[i]->getHeight() * .5);
-
         imageRef[i]->draw(0.0, 0.0);
         ofPopMatrix();
         
     }
     
+
     
 }

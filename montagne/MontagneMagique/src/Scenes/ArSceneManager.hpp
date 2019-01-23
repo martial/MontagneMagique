@@ -11,19 +11,20 @@
 #include <stdio.h>
 #include "ofMain.h"
 #include "AbstractARScene.hpp"
+#include "MagiqueMarker.hpp"
 
 class ArSceneManager {
     
 public:
     
-    void setup();
+    void setup(vector<std::shared_ptr<MagiqueMarker>> & trackers);
     void update();
-    void draw(int markerIndex, int markerWidth, int markerHeight);
+    void draw(int markerIndex, MagiqueMarker & marker);
     
 private:
     
     vector<AbstractARScene*> scenes;
-    
+    int getSceneIndexForMarkerID(string markerID);
 };
 
 #endif /* ArSceneManager_hpp */

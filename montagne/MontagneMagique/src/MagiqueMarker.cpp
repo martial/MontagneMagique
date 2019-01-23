@@ -9,17 +9,71 @@
 
 MagiqueMarker::MagiqueMarker() {
     
-    bTracked    = false;
+    image           = NULL;
+    bTracked        = false;
+    bIsFound        = false;
+    bIsSolidFound   = false;
+    timeFoundDelay  = 200;
+    timeLostDelay   = 1000;
+    timeFound       = ofGetElapsedTimeMillis();
+    timeLost        = ofGetElapsedTimeMillis();
+        
     NftTracker();
     
-    particles.setup();
+    //particles.setup();
 
 }
+
+void MagiqueMarker::setImage(ofImage * image) {
+    
+    this->image     = image;
+    this->width     = image->getWidth() / 3.0;
+    this->height    = image->getHeight() / 3.0;
+    
+}
+
+void MagiqueMarker::updateTimes() {
+    
+    int currentTime     = ofGetElapsedTimeMillis();
+    // if there is a change, reset timers.
+    if(this->isFound() != bIsFound) {
+        timeFound       = currentTime;
+        timeLost        = currentTime;
+        bIsFound        = this->isFound();
+    }
+    
+    timeFoundElapsed    = currentTime - timeFound;
+    timeLostElapsed     = currentTime - timeLost;
+    
+    // simple ms timer stuff to avoid quick losts of focus
+    if(bIsFound) {
+        
+        if(timeFoundElapsed > timeFoundDelay) {
+            bIsSolidFound = true;
+        }
+        
+    } else {
+        
+        if(timeLostElapsed > timeLostDelay) {
+            bIsSolidFound = false;
+        }
+        
+    }
+    
+    
+}
+
+bool MagiqueMarker::getIsSolidFound() {
+    
+    return bIsSolidFound;
+    
+}
+
 
 
 void MagiqueMarker::beginAR() {
     
-    ARMarkerNFT *mk = &getSelectedMarker();
+    ARMarkerNFT * mk = &getSelectedMarker();
         
     ofRectangle r(0,0,viewportSize.x,viewportSize.y);
     ofPushView();

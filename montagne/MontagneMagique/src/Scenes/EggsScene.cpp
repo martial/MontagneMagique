@@ -11,7 +11,6 @@
 void EggsScene::setup(string dataPath) {
     
     AbstractARScene::setup(dataPath);
-    
     eggs.setup(5, 5, this->dataPath);
     
 }
@@ -22,17 +21,24 @@ void EggsScene::update() {
 
 }
 
-void EggsScene::draw(int markerIndex, int markerWidth, int markerHeight) {
+void EggsScene::draw() {
     
-    ofSetColor(255);
+    float pct = 0.0;
+    if(marker->getIsSolidFound()) {
+        
+        pct = ofMap(marker->timeFoundElapsed, 0, this->animInMillisDelay, 0, 1);
+        
+        ofSetColor(255, pct * 255);
+        
+        ofNoFill();
+        ofDrawRectangle(0.0, 0.0, marker->width, marker->height);
+        ofFill();
+        
+        eggs.draw();
+        
+    }
     
-    
-    
-    ofNoFill();
-    ofDrawRectangle(0.0, 0.0, markerWidth, markerHeight);
-    ofFill();
-    
-    eggs.draw();
+   
     
     
     //ofSetColor(255);

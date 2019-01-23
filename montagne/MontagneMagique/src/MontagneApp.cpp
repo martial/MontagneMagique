@@ -9,7 +9,6 @@
 
 void MontagneApp::setup() {
     
-    arSceneManager.setup();
     
 }
 
@@ -19,6 +18,8 @@ void MontagneApp::setupTrackers(int trackerInputWidth, int trackerInputHeight) {
     this->trackerInputHeight    = trackerInputHeight;
     
     arToolKitManager.setup(trackerInputWidth, trackerInputHeight);
+    arSceneManager.setup(arToolKitManager.trackers);
+
     
 }
 
@@ -55,11 +56,10 @@ void MontagneApp::drawScene() {
         
         //if(trackers[i]->isFound()){
         
-        float w = arToolKitManager.images[i].getWidth() / 3.0;
-        float h = arToolKitManager.images[i].getHeight() / 3.0;
+        string markerID = arToolKitManager.trackers[i]->markerid;
         
         arToolKitManager.trackers[i]->beginAR();
-        arSceneManager.draw(i, w, h);
+        arSceneManager.draw(i, *arToolKitManager.trackers[i]);
         arToolKitManager.trackers[i]->endAR();
         
     }

@@ -9,7 +9,7 @@
 #include "UndergroundScene.hpp"
 #include "EggsScene.hpp"
 
-void ArSceneManager::setup() {
+void ArSceneManager::setup(vector<std::shared_ptr<MagiqueMarker>> & trackers) {
     
     UndergroundScene * undergroundScene = new UndergroundScene();
     undergroundScene->setup("underground");
@@ -19,20 +19,48 @@ void ArSceneManager::setup() {
 
     scenes.push_back(eggsScene);
     scenes.push_back(undergroundScene);
-
     
+    for(int i=0; i<trackers.size(); i++) {
+        
+        int sceneIndex = getSceneIndexForMarkerID(trackers[i]->markerid);
+        scenes[sceneIndex]->marker = trackers[i];
+        
+    }
+
+
     
 }
 
 void ArSceneManager::update() {
     
-    scenes[0]->update();
+    //scenes[0]->update();
 
     
 }
 
-void ArSceneManager::draw(int markerIndex, int markerWidth, int markerHeight) {
+void ArSceneManager::draw(int markerIndex, MagiqueMarker & marker) {
     
-    scenes[0]->draw(markerIndex, markerWidth, markerHeight);
+    int sceneIndex = getSceneIndexForMarkerID(marker.markerid);
+    
+    if(sceneIndex >= 0) {
+        
+        scenes[sceneIndex]->update();
+        scenes[sceneIndex]->draw();
+
+    }
+    
+}
+
+
+int ArSceneManager::getSceneIndexForMarkerID(string markerID) {
+    
+    for(int i=0; i<scenes.size(); i++) {
+        
+        if(scenes[i]->markerID == markerID)
+            return i;
+        
+    }
+    
+    return -1;
     
 }

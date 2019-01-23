@@ -80,6 +80,9 @@ void ArToolKitManager::loadTrackers() {
             string name = dir.getFile(i).getBaseName();
             std::shared_ptr<MagiqueMarker> tracker = std::make_shared<MagiqueMarker>();
             tracker->setup(ofVec2f(inputWidth,inputHeight),ofVec2f(inputWidth,inputHeight), OF_PIXELS_BGR, "../Resources/camera_para.dat", "../Resources/m_"+name+".dat");
+            tracker->markerid = name;
+            tracker->setImage(&images[i]);
+            
             ofAddListener(tracker->evNewMarker, this, &ArToolKitManager::onNewMarker);
             ofAddListener(tracker->evLostMarker, this, &ArToolKitManager::onLostMarker);
             trackers.push_back(tracker);
@@ -92,6 +95,8 @@ void ArToolKitManager::update(ofBaseHasPixels & input){
     
     for(int i=0; i<trackers.size(); i++) {
         trackers[i]->update(input);
+        trackers[i]->updateTimes();
+
     }
     
    
@@ -177,6 +182,8 @@ void ArToolKitManager::clean() {
     trackers.clear();
     
 }
+
+
 
 
 

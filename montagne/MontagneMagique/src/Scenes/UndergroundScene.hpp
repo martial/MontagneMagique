@@ -19,7 +19,7 @@ public:
     UndergroundScene() {};
     void setup(string name);
     void update();
-    void draw(int markerIndex, int markerWidth, int markerHeight);
+    void draw();
     
 private:
     

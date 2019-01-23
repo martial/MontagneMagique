@@ -18,22 +18,38 @@ class MagiqueMarker  : public NftTracker {
     
 public:
     
-    MagiqueMarker(); 
+    MagiqueMarker();
+    
+    void updateTimes();
+    
+    
     void beginAR();
     void endAR();
     
-    void drawParticles();
     bool hasBeenTracked();
-    
     string markerid;
+    
+    // for testing
+    void drawParticles();
+
+    void setImage(ofImage * image);
+    ofImage * image;
+    float width, height;
+    
+    bool getIsSolidFound();
+    int timeFoundElapsed, timeLostElapsed;
+
     
 private:
     
     ARdouble currentPose[16] ;
     bool bTracked;
-    
     Particles particles;
 
+    bool bIsFound, bIsSolidFound;
+    int timeFoundDelay, timeLostDelay;
+    int timeFound, timeLost;
+    
 };
 
 

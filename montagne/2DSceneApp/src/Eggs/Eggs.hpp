@@ -26,7 +26,8 @@ private:
     vector<ofImage*>    imageRef;
     vector<ofxAnimatableFloat> radiuses;
     vector<ofVec2f> positions;
-
+    
+    vector<ofVec2f> allowedPositions;
     
     
 };

@@ -9,6 +9,7 @@
 #define AbstractARScene_hpp
 
 #include "ofMain.h"
+#include "MagiqueMarker.hpp"
 
 class AbstractARScene {
     
@@ -17,17 +18,37 @@ public:
     AbstractARScene(){};
     
     virtual void setup(string name) {
+        
+        this->markerID = "";
         this->dataPath = "scenes/"+name;
+        this->animInMillisDelay     = 2000;
+        this->animOutMillisDelay    = 2000;
+        
+        ofFile file;
+        file.open(this->dataPath + "/config.json");
+        
+        assert(file.exists());
+        
+        if(file.exists())
+            file >> configJson;
+        
+        this->markerID = configJson["marker-id"];
     }
+    
     virtual void update(){};
-    virtual void draw(int markerIndex, int markerWidth, int markerHeight){};
-    virtual void setMarkerIndex(int index) { this->markerIndex = index };);
+    virtual void draw(){};
+    
+    string markerID;
+    std::shared_ptr<MagiqueMarker> marker;
     
 protected:
     
-    string dataPath;
-    int markerIndex;
+    // this is used for fade in / out
+    int animInMillisDelay, animOutMillisDelay;
     
+    // for configuration
+    string dataPath;
+    ofJson configJson;
     virtual void onFoundMarker(){};
     virtual void onLostMarker(){};
 

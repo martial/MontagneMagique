@@ -27,6 +27,7 @@ public:
     
     vector<std::shared_ptr<MagiqueMarker>> trackers;
     vector<ofImage> images;
+    
 
     
 private:

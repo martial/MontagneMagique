@@ -34,7 +34,7 @@ void UndergroundScene::update() {
     
 }
 
-void UndergroundScene::draw(int markerIndex, int markerWidth, int markerHeight) {
+void UndergroundScene::draw() {
     
     ofSetColor(255);
     
