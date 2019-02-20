@@ -27,20 +27,33 @@ void ofApp::setup(){
     syphonDir.setup();
     ofAddListener(syphonDir.events.serverAnnounced, this, &ofApp::serverAnnounced);
     ofAddListener(syphonDir.events.serverRetired, this, &ofApp::serverRetired);
-    syphonLayer.setName("MM Layer");
+    syphonLayer.setName("MM-OF-Layer");
     
-    oscManager.setup();
+    oscManager.setup(configJson["osc-in-port"],configJson["osc-out-port"],configJson["osc-out-ip"]);
+    oscManager.setSceneManager(&app.arSceneManager);
     
     messageString = "";
     
     app.setup();
     
     // -- gui
-    gui.setup(); // most of the time you don't need a name
-    gui.add(bigBangDampingMin.setup("BigBangDmpMin", 0.3, 0.0, 1.0));
-    gui.add(bigBangDampingMax.setup("BigBangDmpMax", 0.3, 0.0, 1.0));
-    gui.add(bigBangScaleMin.setup("BigBangScaleMin", 0.5, 0.0, 50.0));
-    gui.add(bigBangScaleMax.setup("BigBangScaleMax", 2, 0.0, 50.0));
+    
+    parameters.setName("Settings");
+    parameters.add(debugMode.set("debugMode",true));
+    
+    
+    gui.setup(parameters);
+    
+    gui.add(bigBangDampingMin.setup("BigBangDmpMin", 0.1, 0.0, 1.0));
+    gui.add(bigBangDampingMax.setup("BigBangDmpMax", 0.25, 0.0, 1.0));
+    gui.add(bigBangScaleMin.setup("BigBangScaleMin", 2, 0.0, 50.0));
+    gui.add(bigBangScaleMax.setup("BigBangScaleMax", 4, 0.0, 50.0));
+    gui.add(bigBangScaleDampingScale.setup("bigBangScaleDampingScale", .35, 0.0, 1.0));
+    gui.add(bigBangRepulsionFactor.setup("bigBangRepulsionFactor", 3, 0.0, 10));
+    gui.add(bigBangParticleIntensity.setup("bigBangParticleIntensity", 1, 1, 2000));
+
+    
+    
     
 }
 
@@ -64,7 +77,6 @@ void ofApp::setInputMode(int mode) {
             videoInputHeight   = videoInput.getHeight();
             videoInput.play();
             videoInput.setLoopState(OF_LOOP_NORMAL);
-            
             trackedVideoInput = &videoInput;
 
             break;
@@ -183,10 +195,8 @@ void ofApp::draw(){
             break;
             
     }
-     
     
-  
-  
+     ofBackground(0);
     
     ofPushMatrix();
     ofTranslate(cameraRectCanvas.x, cameraRectCanvas.y);
@@ -198,15 +208,11 @@ void ofApp::draw(){
          app.debugDrawTrackers();
      }
              
-
     ofPopMatrix();
-    
     ofTexture & tex = app.fboLayer.getTexture();
-    
     if(tex.isAllocated()) {
         syphonLayer.publishTexture(&app.fboLayer.getTexture());
     }
-    
     ofSetColor(255);
     ofDrawBitmapString(messageString, 20, 20);
     
@@ -281,12 +287,22 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 
 }
 
+//--------------------------------------------------------------
+void ofApp::exit() {
+    
+    ofLogNotice("exit OF");
+}
+
 //these are our directory's callbacks
 void ofApp::serverAnnounced(ofxSyphonServerDirectoryEventArgs &arg)
 {
     for( auto& dir : arg.servers ){
         ofLogNotice("ofxSyphonServerDirectory Server Announced")<<" Server Name: "<<dir.serverName <<" | App Name: "<<dir.appName;
-        syphonInput.set(dir.serverName, dir.appName);
+        
+        if(configJson["auto-link-syphon"])
+            syphonInput.set(dir.serverName, dir.appName);
+        
+        
     }
 }
 

@@ -30,12 +30,13 @@ void ArSceneManager::setup(vector<std::shared_ptr<MagiqueMarker>> & trackers) {
     BeesDepthScene * beesScene = new BeesDepthScene();
     beesScene->setup("beesDepth");
 
+    scenes.push_back(bigBangScene);
     scenes.push_back(videoScene);
     scenes.push_back(eggsScene);
     scenes.push_back(undergroundScene);
     scenes.push_back(beesScene);
 
-   // scenes.push_back(bigBangScene);
+   //
 
 
     for(int i=0; i<trackers.size(); i++) {
@@ -91,3 +92,17 @@ int ArSceneManager::getSceneIndexForMarkerID(string markerID) {
     return -1;
     
 }
+
+AbstractARScene * ArSceneManager::getSceneIndexForPath(string path) {
+    
+    for(int i=0; i<scenes.size(); i++) {
+        
+        if(scenes[i]->name == path)
+            return scenes[i];
+        
+    }
+    
+    return NULL;
+    
+}
+

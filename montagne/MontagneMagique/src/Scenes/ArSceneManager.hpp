@@ -22,10 +22,13 @@ public:
     void drawScene(int sceneIndex);
     void draw(int markerIndex, MagiqueMarker & marker);
     
+    AbstractARScene * getSceneIndexForPath(string path);
+
 private:
     
     vector<AbstractARScene*> scenes;
     int getSceneIndexForMarkerID(string markerID);
+
 };
 
 #endif /* ArSceneManager_hpp */

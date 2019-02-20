@@ -37,13 +37,14 @@ public:
     
     int mode;
     
+    ArSceneManager      arSceneManager;
+
     
 private:
     
     int trackerInputWidth, trackerInputHeight;
     
     ArToolKitManager    arToolKitManager;
-    ArSceneManager      arSceneManager;
     
     
 };

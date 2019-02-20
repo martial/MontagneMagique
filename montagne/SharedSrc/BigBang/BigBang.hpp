@@ -20,12 +20,21 @@ public:
     void update();
     void draw();
     
+    void addParticles(int nParticles);
+    void startRepulsion(float scale);
+    
+    int  mode;
+
+    
 private:
+    
     
     vector<SimpleParticle*> particles;
     
     float scl;
     float radius;
+    
+    float repulsionScale;
     
     ofxCvColorImage         colorImg;
     ofxCvGrayscaleImage     grayImage;
@@ -36,8 +45,11 @@ private:
     int                 threshold;
     bool                bLearnBakground;
     
-    ofImage             gradientPng;
     
+    float               lineDistance;
+    float               blobDistance;
+    float               forceRandomNessScale;
+    float               maxParticleLife;
     
 };
 

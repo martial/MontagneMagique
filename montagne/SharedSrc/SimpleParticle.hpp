@@ -29,7 +29,7 @@ public:
     
     ofVec2f getRandomForceLessThan(float val, float mult);
 
-    void addDampingForce();
+    void addDampingForce(float scale = 1.0);
     void setInitialCondition(float px, float py, float vx, float vy);
     void bounceOffWalls();
     void update();
@@ -50,6 +50,7 @@ public:
     float rotation, smoothedRotation;
     float scale;
     
+    float life, lifeDelay;
     bool bIsAlive;
     
     ofImage * img;

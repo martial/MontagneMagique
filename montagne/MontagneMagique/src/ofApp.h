@@ -30,6 +30,8 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
     
+        void exit();
+    
         void serverAnnounced(ofxSyphonServerDirectoryEventArgs &arg);
         void serverUpdated(ofxSyphonServerDirectoryEventArgs &args);
         void serverRetired(ofxSyphonServerDirectoryEventArgs &arg);
@@ -68,5 +70,11 @@ class ofApp : public ofBaseApp{
     
         ofxFloatSlider bigBangDampingMin,bigBangDampingMax;
         ofxFloatSlider bigBangScaleMin,bigBangScaleMax;
+        ofxFloatSlider bigBangScaleDampingScale;
+        ofxFloatSlider bigBangRepulsionFactor;
+        ofxIntSlider bigBangParticleIntensity;
+
         ofxPanel gui;
+        ofParameter<bool> debugMode;
+        ofParameterGroup parameters;
 };

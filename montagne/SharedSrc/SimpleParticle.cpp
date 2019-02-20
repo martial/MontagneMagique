@@ -141,15 +141,15 @@ bool SimpleParticle::isPointInRadius(ofPoint p, float radius) {
 
 
 //------------------------------------------------------------
-void SimpleParticle::addDampingForce(){
+void SimpleParticle::addDampingForce(float scale){
     
     // the usual way to write this is  vel *= 0.99
     // basically, subtract some part of the velocity
     // damping is a force operating in the oposite direction of the
     // velocity vector
     
-    frc.x = frc.x - vel.x * damping;
-    frc.y = frc.y - vel.y * damping;
+    frc.x = frc.x - vel.x * damping * scale;
+    frc.y = frc.y - vel.y * damping * scale;
 }
 
 //------------------------------------------------------------
@@ -161,7 +161,7 @@ void SimpleParticle::setInitialCondition(float px, float py, float vx, float vy)
 //------------------------------------------------------------
 void SimpleParticle::update(){
     
-    vel = vel + frc;
+    vel += frc;
     
     ofVec2f newPos      = pos + vel;
     ofVec2f diffPos     = newPos - pos;

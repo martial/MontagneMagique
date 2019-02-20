@@ -23,6 +23,7 @@ public:
     
     virtual void setup(string name) {
         
+        this->name = name;
         this->markerID = "";
         this->dataPath = "scenes/"+name;
         this->animInMillisDelay     = 2000;
@@ -54,7 +55,7 @@ public:
     virtual void update(){};
     virtual void draw(){};
     
-    string markerID;
+    string markerID, name;
     std::shared_ptr<MagiqueMarker> marker;
     
 protected:

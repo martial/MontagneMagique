@@ -10,12 +10,13 @@
 
 #include "ofMain.h"
 #include "ofxOsc.h"
-
+#include "arSceneManager.hpp"
 class OscManager {
   
 public:
     
-    void setup();
+    void setup(int receiverPort, int senderPort, string senderIp);
+    void setSceneManager(ArSceneManager * manager);
     void update();
     void draw();
     
@@ -23,8 +24,10 @@ public:
     
 private:
     
-    ofxOscReceiver receiver;
-    ofxOscSender sender;
+    ArSceneManager *    sceneManager;
+    
+    ofxOscReceiver      receiver;
+    ofxOscSender        sender;
     
     
 };

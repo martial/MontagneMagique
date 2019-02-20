@@ -6,11 +6,13 @@
 //
 
 #include "OscManager.hpp"
-
-void OscManager::setup() {
+#include "BigBangScene.hpp"
+void OscManager::setup(int receiverPort, int senderPort, string senderIp) {
     
-    receiver.setup(7002);
-    sender.setup("169.254.134.129", 7003);
+    receiver.setup(receiverPort);
+    sender.setup(senderIp, senderPort);
+    
+    ofLogNotice("OSC: Receiver port=") << receiverPort;
     
 }
 
@@ -22,12 +24,59 @@ void OscManager::update() {
         ofxOscMessage m;
         receiver.getNextMessage(m);
         
+        if(m.getAddress() == "/em/lmm/accueilpublic") {
+                BigBangScene * bigBangScene = (BigBangScene*) this->sceneManager->getSceneIndexForPath("bigbang");
+                bigBangScene->bigBang.mode = 0;
+        }
+        
+        if(m.getAddress() == "/em/lmm/introkalimba") {
+            BigBangScene * bigBangScene = (BigBangScene*) this->sceneManager->getSceneIndexForPath("bigbang");
+            bigBangScene->bigBang.mode = 1;
+        }
+        
+        if(m.getAddress() == "/em/lmm/melodie") {
+            BigBangScene * bigBangScene = (BigBangScene*) this->sceneManager->getSceneIndexForPath("bigbang");
+            bigBangScene->bigBang.mode = 2;
+        }
+        
+        if(m.getAddress() == "/me/cosmogonie/bigbang") {
+            
+            BigBangScene * bigBangScene = (BigBangScene*) this->sceneManager->getSceneIndexForPath("bigbang");
+            
+            /*
+            float repulsion = ofMap(m.getArgAsInt(0), 1, 8, 2, 4);
+            bigBangScene->bigBang.startRepulsion(repulsion);
+            bigBangScene = NULL;
+             */
+            
+            bigBangScene->bigBang.addParticles(m.getArgAsInt(0) * 2);
+            float repulsion = ofMap(m.getArgAsInt(0), 1, 8, 2, 3);
+            bigBangScene->bigBang.startRepulsion(repulsion);
+            
+            ofLogNotice("argument: ") << m.getArgAsInt(0);
+            
+        }
+        
+        if(m.getAddress() == "/me/cosmogonie/kalimba") {
+            
+            BigBangScene * bigBangScene = (BigBangScene*) this->sceneManager->getSceneIndexForPath("bigbang");
+            bigBangScene->bigBang.startRepulsion( m.getArgAsFloat(0));
+            
+        }
+        
         ofLogNotice("OSC: ") << m.getAddress();
         
     }
     
     
 }
+
+void OscManager::setSceneManager(ArSceneManager * manager) {
+    
+    this->sceneManager = manager;
+    
+}
+
 
 void OscManager::sendMessage(string adress, string label) {
     

@@ -1,7 +1,10 @@
 {
-  "syphon-input-app": "NDISyphon",
+  "osc-in-port": 7002,
+  "osc-out-port": 7003,
+  "osc-out-ip": "169.254.134.129",
   "auto-start-mode": 2,
   "video-filename": "FOURMILLIERE_TEST2.mov",
   "camera-device-id": 1,
-  "syphon-input-name": "MBP.LOCAL (Max-1Track)"
-}
+  "auto-link-syphon": true,
+  "syphon-input-name": "MBP.LOCAL (Canvas 3 #1)",
+  "syphon-input-app": "NDISyphon"}
