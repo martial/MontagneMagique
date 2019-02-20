@@ -8,9 +8,8 @@
 #ifndef MagiqueMarker_hpp
 #define MagiqueMarker_hpp
 
-#include <stdio.h>
+#include "ofMain.h"
 #include "ofxARTNftTracker.h"
-#include "Particles.hpp"
 
 using namespace ofxArtool5;
 
@@ -29,9 +28,6 @@ public:
     bool hasBeenTracked();
     string markerid;
     
-    // for testing
-    void drawParticles();
-
     void setImage(ofImage * image);
     ofImage * image;
     float width, height;
@@ -47,7 +43,6 @@ private:
     
     ARdouble currentPose[16] ;
     bool bTracked;
-    Particles particles;
 
     int timeFoundDelay, timeLostDelay;
     int timeFound, timeLost;

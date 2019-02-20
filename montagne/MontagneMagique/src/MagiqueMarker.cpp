@@ -25,10 +25,6 @@ MagiqueMarker::MagiqueMarker() {
     
     for(int i=0; i<16; i++)
         currentPose[i] = 0.0;
-        
-        
-    
-    //particles.setup();
 
 }
 
@@ -43,6 +39,7 @@ void MagiqueMarker::setImage(ofImage * image) {
 void MagiqueMarker::updateTimes() {
     
     int currentTime     = ofGetElapsedTimeMillis();
+    
     // if there is a change, reset timers.
     if(this->isFound() != bIsFound) {
         timeFound       = currentTime;
@@ -78,16 +75,6 @@ void MagiqueMarker::updateTimes() {
         
     }
     
-    
-    //ofLogNotice("---");
-    //ofLogNotice("timeFoundElapsed") << timeFoundElapsed;
-    //ofLogNotice("timeLostElapsed") << timeLostElapsed;
-   // ofLogNotice("timeSolidFoundElapsed") << timeSolidFoundElapsed;
-   // ofLogNotice("timeSolidLostElapsed") << timeSolidLostElapsed;
-    
-
-    
-    
 }
 
 bool MagiqueMarker::getIsSolidFound() {
@@ -95,8 +82,6 @@ bool MagiqueMarker::getIsSolidFound() {
     return bIsSolidFound;
     
 }
-
-
 
 void MagiqueMarker::beginAR() {
     
@@ -126,23 +111,9 @@ void MagiqueMarker::beginAR() {
 
 void MagiqueMarker::endAR() {
     
-    
     NftTracker::endAR();
 
 }
-
-void MagiqueMarker::drawParticles() {
-    
-    particles.update();
-    particles.draw();
-    glDisable(GL_COLOR_MATERIAL);
-    glDisable(GL_LIGHT0);
-    
-   
-    
-}
-
-
 
 bool MagiqueMarker::hasBeenTracked() {
     

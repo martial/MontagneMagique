@@ -21,9 +21,6 @@ void BeesDepthScene::setup(string dataPath) {
     bee2.setAnchorPercent(0.5,0.5);
     
     
-
-
-    
 }
 
 void BeesDepthScene::update() {
