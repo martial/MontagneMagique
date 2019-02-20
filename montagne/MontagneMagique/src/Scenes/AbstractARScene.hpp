@@ -15,7 +15,11 @@ class AbstractARScene {
     
 public:
     
-    AbstractARScene(){};
+    AbstractARScene(){
+        
+        this->marker = NULL;
+        
+    };
     
     virtual void setup(string name) {
         
@@ -36,6 +40,9 @@ public:
     }
     
     virtual float getInOuPct() {
+        
+        if(!marker)
+            return 1.0;
         
         if(marker->getIsSolidFound())
             return ofClamp(ofMap(marker->timeSolidFoundElapsed, 0, this->animInMillisDelay, 0, 1), 0, 1);

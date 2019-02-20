@@ -14,6 +14,7 @@ SimpleParticle::SimpleParticle(){
     scale               = 1.0f;
     rotation            = 0.0f;
     smoothedRotation    = 0.0f;
+    bIsAlive            = true;
 }
 
 //------------------------------------------------------------
@@ -58,6 +59,83 @@ void SimpleParticle::addNonBackingForce(float mult) {
 
         addForce(rx, ry);
     }
+    
+}
+
+//------------------------------------------------------------
+void SimpleParticle::addRepulsionForce(ofVec2f posOfForce, float radius, float scale){
+    
+    if ( isPointInRadius(posOfForce, radius) ){
+        
+        ofVec2f diff    = pos - posOfForce;
+        float pct = 1 - (diff.length() / radius);
+        diff.normalize();
+        frc += diff * scale * pct;
+    }
+}
+
+//------------------------------------------------------------
+void SimpleParticle::addAttractionForce(ofVec2f posOfForce,  float radius, float scale){
+
+    if ( isPointInRadius(posOfForce, radius) ){
+        
+
+        
+        ofVec2f diff    = pos - posOfForce;
+        float pct = 1 - (diff.length() / radius);
+        diff.normalize();
+        frc -= diff * scale * pct;
+        
+    }
+}
+
+//------------------------------------------------------------
+void SimpleParticle::addRepulsionForce(SimpleParticle &p, float radius, float scale){
+    
+    if ( isPointInRadius(p.pos, radius) ){
+        
+        ofVec2f diff    = pos - p.pos;
+        float pct = 1 - (diff.length() / radius);
+        diff.normalize();
+        frc += diff * scale * pct;
+    }
+}
+
+//------------------------------------------------------------
+void SimpleParticle::addAttractionForce(SimpleParticle & p, float radius, float scale){
+    
+    if ( isPointInRadius(p.pos, radius) ){
+        
+        ofVec2f diff    = pos - p.pos;
+        float pct = 1 - (diff.length() / radius);
+        diff.normalize();
+        frc -= diff * scale * pct;
+        
+    }
+    
+}
+
+bool SimpleParticle::isPointInRadius(ofPoint p, float radius) {
+    
+    if (radius == 0)
+        return false;
+    
+    ofVec2f posOfForce;
+    posOfForce.set(p.x,p.y);
+    
+    ofVec2f diff    = pos - posOfForce;
+    float length    = diff.length();
+    
+
+    if(length < radius) {
+        
+        return true;
+        
+    }
+    
+    return false;
+    
+   // return ( length > radius);
     
 }
 
@@ -140,7 +218,7 @@ void SimpleParticle::begin(float xOffSet, float yOffSet) {
     ofPushMatrix();
     ofTranslate(pos.x + xOffSet, pos.y + yOffSet);
     ofScale(scale,scale);
-    ofRotateDeg(90 + smoothedRotation);
+    ofRotateDeg(90 + rotation);
     ofTranslate(-xOffSet, -yOffSet);
 
 }

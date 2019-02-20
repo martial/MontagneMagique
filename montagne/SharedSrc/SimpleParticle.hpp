@@ -35,6 +35,13 @@ public:
     void update();
     void draw();
     
+    void addRepulsionForce(ofVec2f posOfForce, float radius, float scale);
+    void addAttractionForce(ofVec2f posOfForce, float radius, float scale);
+    void addRepulsionForce(SimpleParticle &p, float radius, float scale);
+    void addAttractionForce(SimpleParticle &p, float radius, float scale);
+    bool isPointInRadius(ofPoint p, float radius);
+
+    
     void begin(float xOffSet = 0, float yOffSet = 0);
     void end();
 
@@ -42,6 +49,8 @@ public:
     float damping;
     float rotation, smoothedRotation;
     float scale;
+    
+    bool bIsAlive;
     
     ofImage * img;
     

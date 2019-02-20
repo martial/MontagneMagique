@@ -3,6 +3,7 @@
 #include "ofMain.h"
 #include "Ants.hpp"
 #include "Eggs.hpp"
+#include "BigBang.hpp"
 
 class ofApp : public ofBaseApp{
 
@@ -25,4 +26,6 @@ class ofApp : public ofBaseApp{
 		
         Ants ants;
         Eggs eggs;
+        BigBang bigbang;
+
 };

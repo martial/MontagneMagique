@@ -7,23 +7,24 @@
 
 #include "Ants.hpp"
 
-void Ants::setup() {
+void Ants::setup(string dataPath) {
    
     for(int i = 0; i < 10; i ++) {
         
         SimpleParticle  * p = new SimpleParticle();
-        p->setInitialCondition(ofRandom(ofGetWidth()),ofRandom(ofGetHeight()),0.0,0.0);
-        p->scale = ofRandom(0.05, 0.2);
         
-        float xRand = ofRandom(-1, 1) / 10000;
-        float yRand = ofRandom(-1, 1) / 10000;
+        p->setInitialCondition(ofRandom(-200, 200),ofRandom(-200, 200),0.0,0.0);
+        p->scale = ofRandom(0.05, 0.1);
+        
+        float xRand = ofRandom(-1, 1) / 1000;
+        float yRand = ofRandom(-1, 1) / 1000;
         p->addForce(xRand, yRand);
         particles.push_back(p);
         
         ImageSequencePlayer  imgPlayer;
         images.push_back(imgPlayer);
 
-        images[i].loadFolder("fourmis_1_sprites");
+        images[i].loadFolder(dataPath + "/fourmis_1_sprites");
         images[i].setFps(31);
         images[i].setLoop(true);
         images[i].play();
@@ -42,22 +43,26 @@ void Ants::update() {
 void Ants::draw() {
     
     ofEnableAlphaBlending();
-    ofSetColor(255);
+   // ofSetColor(255);
     
     for(int i = 0; i < particles.size(); i ++) {
         
-        float mult = .001;
+        float mult = .1;
         ofVec2f currentForce = particles[i]->frc;
         particles[i]->resetForce();
+        
+        
         if( ofGetFrameNum() %1 == 0) {
             particles[i]->addNonBackingForce(mult);
         } else {
             particles[i]->addForce(currentForce.x, currentForce.y);
         }
         
-       // particles[i]->addDampingForce();
+        //particles[i]->addForce(currentForce.x, currentForce.y);
+        
+        //particles[i]->addDampingForce();
         particles[i]->update();
-        particles[i]->bounceOffWalls();
+       // particles[i]->bounceOffWalls();
         
         images[i].update();
         

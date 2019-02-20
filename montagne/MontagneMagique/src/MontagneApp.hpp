@@ -12,6 +12,9 @@
 #include "ArToolKitManager.hpp"
 #include "ArSceneManager.hpp"
 
+#define TRACKING_MODE 0
+#define SCENE_MODE 1
+
 class MontagneApp {
   
 public:
@@ -31,6 +34,8 @@ public:
     ArToolKitManager  & getArToolKitManager(){return arToolKitManager;};
     
     ofFbo debugFboLayer, fboLayer;
+    
+    int mode;
     
     
 private:

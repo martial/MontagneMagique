@@ -23,6 +23,11 @@ MagiqueMarker::MagiqueMarker() {
     
     NftTracker();
     
+    for(int i=0; i<16; i++)
+        currentPose[i] = 0.0;
+        
+        
+    
     //particles.setup();
 
 }
@@ -95,6 +100,8 @@ bool MagiqueMarker::getIsSolidFound() {
 
 void MagiqueMarker::beginAR() {
     
+    float blurRate = 0.9;
+    
     ARMarkerNFT * mk = &getSelectedMarker();
         
     ofRectangle r(0,0,viewportSize.x,viewportSize.y);
@@ -105,7 +112,7 @@ void MagiqueMarker::beginAR() {
     if(mk->valid){
         // store in memory
         for(int i=0; i<16; i++)
-            currentPose[i] = mk->pose.T[i];
+            currentPose[i] = blurRate * currentPose[i]   +  (1.0f - blurRate) * mk->pose.T[i];
         
         bTracked = true;
         

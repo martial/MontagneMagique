@@ -17,7 +17,7 @@ void EggsScene::setup(string dataPath) {
 
 void EggsScene::update() {
     
-    eggs.update();
+    
 
 }
 
@@ -27,15 +27,11 @@ void EggsScene::draw() {
     
     if(pct > 0 ) {
         
+        eggs.update();
         ofSetColor(255, pct * 255);
         eggs.draw(pct);
         
     }
-    
-   
-    
-    
-    //ofSetColor(255);
-    //bug0.draw(0.0, 0.0);
+
     
 }

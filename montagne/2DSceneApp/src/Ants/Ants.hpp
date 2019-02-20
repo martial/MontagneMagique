@@ -17,7 +17,7 @@ class Ants {
 
 public:
     
-    void setup();
+    void setup(string dataPath = "");
     void update();
     void draw();
     

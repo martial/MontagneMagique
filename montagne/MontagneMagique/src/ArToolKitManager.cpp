@@ -7,6 +7,7 @@
 
 #include "ArToolKitManager.hpp"
 #include <glm/gtx/matrix_decompose.hpp>
+#include "ofApp.h"
 
 void ArToolKitManager::setup(int width, int height) {
     
@@ -16,14 +17,13 @@ void ArToolKitManager::setup(int width, int height) {
     trackers.reserve(10);
     loadTrackers();
     
-    
-    
 }
 
 void ArToolKitManager::loadTrackers() {
     
     ofDirectory dir("markers");
     dir.listDir();
+    dir.sort();
     ofDisableDataPath();
     
     //go through and print out all the paths
@@ -34,6 +34,7 @@ void ArToolKitManager::loadTrackers() {
             string dirName = dir.getFile(i).getAbsolutePath();
             ofDirectory subdir(dirName);
             subdir.listDir();
+            subdir.sort();
             
             for(int j = 0; j < subdir.size(); j++){
                 subdir[j].copyTo("../Resources/"+subdir[j].getFileName(), false, true);
@@ -70,7 +71,7 @@ void ArToolKitManager::loadTrackers() {
     ofDirectory markersFolder;
     markersFolder.open("markers");
     ofDisableDataPath();
-    // markersFolder.copyTo("../Resources/markers", false, true);
+    markersFolder.copyTo("../Resources/markers", false, true);
     ofEnableDataPath();
     
     for(int i = 0; i < dir.size(); i++){
@@ -110,7 +111,7 @@ void ArToolKitManager::debugDraw() {
     
     for(int i=0; i<trackers.size(); i++) {
         
-        //if(trackers[i]->isFound()){
+        if(trackers[i]->isFound()){
             
             trackers[i]->beginAR();
             
@@ -132,27 +133,18 @@ void ArToolKitManager::debugDraw() {
             
             if( i < images.size() && images[i].isAllocated() ) {
                 
-           
-                float w = images[i].getWidth() / 3.0;
-                float h = images[i].getHeight() / 3.0;
-                
+
                 ofSetColor(0, 190);
-                ofDrawRectangle(0.0, 0.0, w, h);
-                
+                ofDrawRectangle(0.0, 0.0, trackers[i]->width, trackers[i]->height);
                 ofSetColor(255, 255);
                 
-                images[i].draw(0.0,h, w, -h );
+                //images[i].draw(0.0, 0.0,  trackers[i]->width, trackers[i]->height );
                 
-                ofPushMatrix();
-                ofTranslate(w * .5, h * .5);
-                ofDrawBox(0, 0, 0.5, 21, 21, 21);
-                ofPopMatrix();
+                
 
             }
         
-            //ofSetColor(0, 190);
-           // ofDrawRectangle(0.0, 0.0, 210, 210);
-          
+           
             //ofDrawLine(-1000, 0, 1000, 0);
             //ofDrawLine(0, -1000, 0, 1000);
             
@@ -160,7 +152,7 @@ void ArToolKitManager::debugDraw() {
             
             
             trackers[i]->endAR();
-        //}
+        }
         
     }
     ofSetColor(255);
@@ -190,6 +182,12 @@ void ArToolKitManager::clean() {
 //--------------------------------------------------------------
 void ArToolKitManager::onNewMarker(int & mId){
     cout<<"New Marker found!"<<endl;
+    
+    ofApp* app = (ofApp*) ofGetAppPtr();
+    
+    string name = trackers[mId]->markerid;
+    app->oscManager.sendMessage("/AR/found", name);
+    
 }
 
 void ArToolKitManager::onLostMarker(int & mId){

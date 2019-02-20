@@ -8,6 +8,10 @@
 #include "ArSceneManager.hpp"
 #include "UndergroundScene.hpp"
 #include "EggsScene.hpp"
+#include "VideoScene.hpp"
+#include "BigBangScene.hpp"
+#include "BeesDepthScene.hpp"
+
 
 void ArSceneManager::setup(vector<std::shared_ptr<MagiqueMarker>> & trackers) {
     
@@ -16,14 +20,29 @@ void ArSceneManager::setup(vector<std::shared_ptr<MagiqueMarker>> & trackers) {
     
     EggsScene * eggsScene = new EggsScene();
     eggsScene->setup("eggs");
+    
+    VideoScene * videoScene = new VideoScene();
+    videoScene->setup("video");
+    
+    BigBangScene * bigBangScene = new BigBangScene();
+    bigBangScene->setup("bigbang");
+    
+    BeesDepthScene * beesScene = new BeesDepthScene();
+    beesScene->setup("beesDepth");
 
+    scenes.push_back(videoScene);
     scenes.push_back(eggsScene);
     scenes.push_back(undergroundScene);
-    
+    scenes.push_back(beesScene);
+
+   // scenes.push_back(bigBangScene);
+
+
     for(int i=0; i<trackers.size(); i++) {
         
         int sceneIndex = getSceneIndexForMarkerID(trackers[i]->markerid);
-        scenes[sceneIndex]->marker = trackers[i];
+        if(sceneIndex >= 0)
+            scenes[sceneIndex]->marker = trackers[i];
         
     }
 
@@ -37,6 +56,14 @@ void ArSceneManager::update() {
 
     
 }
+
+void ArSceneManager::drawScene(int sceneIndex) {
+    
+    scenes[sceneIndex]->update();
+    scenes[sceneIndex]->draw();
+    
+}
+
 
 void ArSceneManager::draw(int markerIndex, MagiqueMarker & marker) {
     

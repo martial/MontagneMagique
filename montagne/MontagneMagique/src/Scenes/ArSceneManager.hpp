@@ -19,6 +19,7 @@ public:
     
     void setup(vector<std::shared_ptr<MagiqueMarker>> & trackers);
     void update();
+    void drawScene(int sceneIndex);
     void draw(int markerIndex, MagiqueMarker & marker);
     
 private:

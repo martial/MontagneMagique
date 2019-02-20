@@ -119,7 +119,7 @@ void ofApp::generateMarkers() {
                 string filename = imgFileName + "_" + ofToString(count) + ".jpg";
                 imgClone.save(filename);
                 
-                status = "¨Procesing";
+                status = "¨Processing";
                 
                 string path = ofToDataPath(filename, true);
                 string command = "../../../../../Utils/genTexData " + path + " -level=4 -leveli=3 -dpi=72 -max_dpi=72 -min_dpi=4";

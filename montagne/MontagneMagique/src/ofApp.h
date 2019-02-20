@@ -3,10 +3,13 @@
 #include "ofMain.h"
 #include "MontagneApp.hpp"
 #include "ofxSyphon.h"
+#include "OscManager.hpp"
+#include "ofxGui.h"
 
 #define INPUT_VIDEO 0
 #define INPUT_CAMERA 1
 #define INPUT_SYPHON 2
+
 
 class ofApp : public ofBaseApp{
 
@@ -27,26 +30,43 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
     
+        void serverAnnounced(ofxSyphonServerDirectoryEventArgs &arg);
+        void serverUpdated(ofxSyphonServerDirectoryEventArgs &args);
+        void serverRetired(ofxSyphonServerDirectoryEventArgs &arg);
+    
         void setInputMode(int mode);
     
         int videoInputWidth, videoInputHeight;
     
         MontagneApp app;
     
+        ofBaseHasPixels * trackedVideoInput;
+    
         // this is the rectangle canvas with position & size for full screen
         ofRectangle  cameraRectCanvas;
 
         ofVideoPlayer   videoInput;
         ofVideoGrabber  cameraInput;
-        ofxSyphonClient syphonInput;
-        ofPixels        syphonInputPixels;
-        ofImage         syphonInputImg;
+    
+        ofxSyphonServerDirectory    syphonDir;
+        ofxSyphonClient             syphonInput;
+        ofxSyphonServer             syphonLayer;
+
+        ofPixels                    syphonInputPixels;
+        ofImage                     syphonInputImg;
+    
+        OscManager                  oscManager;
     
         ofJson          configJson;
     
+        bool bDebugTrackers;
         int intputMode;
-        ofxSyphonServer syphonLayer;
     
         ofFbo syphonFbo;
         string messageString;
+    
+    
+        ofxFloatSlider bigBangDampingMin,bigBangDampingMax;
+        ofxFloatSlider bigBangScaleMin,bigBangScaleMax;
+        ofxPanel gui;
 };

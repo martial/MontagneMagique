@@ -14,6 +14,7 @@
 		74D31933EE82E12834DB3B06 /* ofxAnimatableOfColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 777D89F9EECAC3FE2405D5D1 /* ofxAnimatableOfColor.cpp */; };
 		834E47E521EF691400A4FEC3 /* SimpleParticle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 834E47E121EF691400A4FEC3 /* SimpleParticle.cpp */; };
 		834E47E621EF691400A4FEC3 /* ImageSequencePlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 834E47E321EF691400A4FEC3 /* ImageSequencePlayer.cpp */; };
+		83D3EB9F221AD49E00516904 /* BigBang.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D3EB9E221AD49E00516904 /* BigBang.cpp */; };
 		BC054B7D3B48B395B1D87F2E /* ofxAnimatableOfPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 904CD301F7BB14F91235B2E8 /* ofxAnimatableOfPoint.cpp */; };
 		E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B69E1D0A3A1BDC003C02F2 /* main.cpp */; };
 		E4B69E210A3A1BDC003C02F2 /* ofApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B69E1E0A3A1BDC003C02F2 /* ofApp.cpp */; };
@@ -45,6 +46,8 @@
 		834E47E221EF691400A4FEC3 /* ImageSequencePlayer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ImageSequencePlayer.hpp; sourceTree = "<group>"; };
 		834E47E321EF691400A4FEC3 /* ImageSequencePlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageSequencePlayer.cpp; sourceTree = "<group>"; };
 		834E47E421EF691400A4FEC3 /* SimpleParticle.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SimpleParticle.hpp; sourceTree = "<group>"; };
+		83D3EB9D221AD49E00516904 /* BigBang.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = BigBang.hpp; sourceTree = "<group>"; };
+		83D3EB9E221AD49E00516904 /* BigBang.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BigBang.cpp; sourceTree = "<group>"; };
 		904CD301F7BB14F91235B2E8 /* ofxAnimatableOfPoint.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxAnimatableOfPoint.cpp; path = ../../../addons/ofxAnimatable/src/ofxAnimatableOfPoint.cpp; sourceTree = SOURCE_ROOT; };
 		ABD03BFDCE34D12744F39FB4 /* Ants.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Ants.hpp; path = src/Ants/Ants.hpp; sourceTree = SOURCE_ROOT; };
 		CDAB248B06C9762FFACEDA79 /* Eggs.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Eggs.hpp; path = src/Eggs/Eggs.hpp; sourceTree = SOURCE_ROOT; };
@@ -262,6 +265,16 @@
 			);
 			name = SharedSrc;
 			path = ../../SharedSrc;
+			sourceTree = "<group>";
+		};
+		83D3EB9C221AD49E00516904 /* BigBang */ = {
+			isa = PBXGroup;
+			children = (
+				83D3EB9D221AD49E00516904 /* BigBang.hpp */,
+				83D3EB9E221AD49E00516904 /* BigBang.cpp */,
+			);
+			name = BigBang;
+			path = ../../SharedSrc/BigBang;
 			sourceTree = "<group>";
 		};
 		8D83D7AC476703EBECC1932D /* ofxAnimatable */ = {
@@ -604,6 +617,7 @@
 		E4B69E1C0A3A1BDC003C02F2 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				83D3EB9C221AD49E00516904 /* BigBang */,
 				834E47E021EF691400A4FEC3 /* SharedSrc */,
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
 				E4B69E1E0A3A1BDC003C02F2 /* ofApp.cpp */,
@@ -727,6 +741,7 @@
 				EF8F7BA4BB9CD59A0B3BF4F0 /* Eggs.cpp in Sources */,
 				74D31933EE82E12834DB3B06 /* ofxAnimatableOfColor.cpp in Sources */,
 				52C77060FBB9307AEFDAE8C6 /* ofxAnimatable.cpp in Sources */,
+				83D3EB9F221AD49E00516904 /* BigBang.cpp in Sources */,
 				5D067CF087427621DD1E64B8 /* ofxAnimatableFloat.cpp in Sources */,
 				2C61E47DDBFD642D87E63940 /* ofxAnimatableQueue.cpp in Sources */,
 				BC054B7D3B48B395B1D87F2E /* ofxAnimatableOfPoint.cpp in Sources */,

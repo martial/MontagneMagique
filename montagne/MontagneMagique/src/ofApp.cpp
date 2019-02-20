@@ -3,6 +3,9 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+    
+    bDebugTrackers = false;
+    trackedVideoInput = NULL;
 
     ofSetLogLevel(OF_LOG_NOTICE);
     ofSetFrameRate(60);
@@ -21,11 +24,23 @@ void ofApp::setup(){
     videoInputHeight    = 0;
     setInputMode(intputMode);
     
+    syphonDir.setup();
+    ofAddListener(syphonDir.events.serverAnnounced, this, &ofApp::serverAnnounced);
+    ofAddListener(syphonDir.events.serverRetired, this, &ofApp::serverRetired);
     syphonLayer.setName("MM Layer");
+    
+    oscManager.setup();
     
     messageString = "";
     
     app.setup();
+    
+    // -- gui
+    gui.setup(); // most of the time you don't need a name
+    gui.add(bigBangDampingMin.setup("BigBangDmpMin", 0.3, 0.0, 1.0));
+    gui.add(bigBangDampingMax.setup("BigBangDmpMax", 0.3, 0.0, 1.0));
+    gui.add(bigBangScaleMin.setup("BigBangScaleMin", 0.5, 0.0, 50.0));
+    gui.add(bigBangScaleMax.setup("BigBangScaleMax", 2, 0.0, 50.0));
     
 }
 
@@ -49,29 +64,32 @@ void ofApp::setInputMode(int mode) {
             videoInputHeight   = videoInput.getHeight();
             videoInput.play();
             videoInput.setLoopState(OF_LOOP_NORMAL);
+            
+            trackedVideoInput = &videoInput;
 
             break;
         
         case INPUT_CAMERA:
             
-            videoInputWidth    = 640 ;
-            videoInputHeight   = 480 ;
+            videoInputWidth    = 1280 ;
+            videoInputHeight   = 720 ;
             
             cameraInput.listDevices();
             cameraInput.setDeviceID(deviceId);
             cameraInput.setup(videoInputWidth, videoInputHeight);
-            
+            trackedVideoInput = &cameraInput;
+
             break;
             
         case INPUT_SYPHON:
             
             syphonInput.setup();
-            syphonInput.set("", configJson["syphon-input-name"]);
-
-            videoInputWidth    = 640 ;
-            videoInputHeight   = 480 ;
-            
+            syphonInput.set(configJson["syphon-input-name"], configJson["syphon-input-app"]);
+            videoInputWidth    = 1280 ;
+            videoInputHeight   = 720 ;
             syphonFbo.allocate(videoInputWidth, videoInputHeight, GL_RGB);
+            
+            trackedVideoInput = &syphonInputImg;
             
             break;
             
@@ -94,6 +112,8 @@ void ofApp::setInputMode(int mode) {
 
 //--------------------------------------------------------------
 void ofApp::update(){
+    
+    oscManager.update();
     
     messageString = "";
     
@@ -118,8 +138,9 @@ void ofApp::update(){
         case INPUT_SYPHON:
             
             syphonFbo.begin();
+            ofEnableAlphaBlending();
             ofClear(255);
-            syphonInput.draw(0.0,0.0);
+            syphonInput.draw(0.0,0.0, 1280, 720);
             syphonFbo.end();
             
             syphonFbo.readToPixels(syphonInputPixels);
@@ -134,6 +155,8 @@ void ofApp::update(){
             
     }
     
+   
+    
     app.updateScene();
 
 }
@@ -142,6 +165,7 @@ void ofApp::update(){
 void ofApp::draw(){
 
     ofBackground(0);
+    ofEnableAlphaBlending();
     
     switch (intputMode) {
             
@@ -159,26 +183,22 @@ void ofApp::draw(){
             break;
             
     }
+     
     
-    /* for debug
-    ofPushMatrix();
-    ofTranslate(cameraRectCanvas.x, cameraRectCanvas.y);
-    app.processDebugDraw();
-    app.debugDrawTrackers();
-    ofPopMatrix();
-    
-    ofTexture & tex = app.debugFboLayer.getTexture();
-    
-    if(tex.isAllocated()) {
-        debugSyphonLayer.publishTexture(&app.debugFboLayer.getTexture());
-    }
-   */
+  
+  
     
     ofPushMatrix();
     ofTranslate(cameraRectCanvas.x, cameraRectCanvas.y);
-    app.drawScene();
-   // app.processDebugDraw();
-    //app.debugDrawTrackers();
+    
+     if(!bDebugTrackers) {
+         app.drawScene();
+     } else {
+         app.processDebugDraw();
+         app.debugDrawTrackers();
+     }
+             
+
     ofPopMatrix();
     
     ofTexture & tex = app.fboLayer.getTexture();
@@ -189,6 +209,8 @@ void ofApp::draw(){
     
     ofSetColor(255);
     ofDrawBitmapString(messageString, 20, 20);
+    
+    gui.draw();
 
 }
 
@@ -257,4 +279,27 @@ void ofApp::gotMessage(ofMessage msg){
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo){ 
 
+}
+
+//these are our directory's callbacks
+void ofApp::serverAnnounced(ofxSyphonServerDirectoryEventArgs &arg)
+{
+    for( auto& dir : arg.servers ){
+        ofLogNotice("ofxSyphonServerDirectory Server Announced")<<" Server Name: "<<dir.serverName <<" | App Name: "<<dir.appName;
+        syphonInput.set(dir.serverName, dir.appName);
+    }
+}
+
+void ofApp::serverUpdated(ofxSyphonServerDirectoryEventArgs &arg)
+{
+    for( auto& dir : arg.servers ){
+        ofLogNotice("ofxSyphonServerDirectory Server Updated")<<" Server Name: "<<dir.serverName <<" | App Name: "<<dir.appName;
+    }
+}
+
+void ofApp::serverRetired(ofxSyphonServerDirectoryEventArgs &arg)
+{
+    for( auto& dir : arg.servers ){
+        ofLogNotice("ofxSyphonServerDirectory Server Retired")<<" Server Name: "<<dir.serverName <<" | App Name: "<<dir.appName;
+    }
 }

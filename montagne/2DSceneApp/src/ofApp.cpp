@@ -4,22 +4,22 @@
 void ofApp::setup(){
     
     ofSetVerticalSync(true);
-    ants.setup();
-    eggs.setup();
+    //ants.setup("ants");
+    bigbang.setup();
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    ants.update();
-    eggs.update();
+   // ants.update();
+    bigbang.update();
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
     
-    ofBackground(255);
+    ofBackground(0);
     ofSetColor(255);
-    eggs.draw();
+    bigbang.draw();
 }
 
 //--------------------------------------------------------------
