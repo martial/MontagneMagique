@@ -126,14 +126,7 @@ bool SimpleParticle::isPointInRadius(ofPoint p, float radius) {
     ofVec2f diff    = pos - posOfForce;
     float length    = diff.length();
     
-
-    if(length < radius) {
-        
-        return true;
-        
-    }
-    
-    return false;
+    return (length < radius);
     
    // return ( length > radius);
     

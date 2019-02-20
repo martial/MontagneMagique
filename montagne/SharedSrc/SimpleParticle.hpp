@@ -45,7 +45,6 @@ public:
     void begin(float xOffSet = 0, float yOffSet = 0);
     void end();
 
-    
     float damping;
     float rotation, smoothedRotation;
     float scale;

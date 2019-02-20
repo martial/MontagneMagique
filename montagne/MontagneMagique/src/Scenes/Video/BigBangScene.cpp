@@ -10,11 +10,8 @@
 void BigBangScene::setup(string dataPath) {
     
     AbstractARScene::setup(dataPath);
-    
     bigBang.setup(this->dataPath);
    
-    
-    
 }
 
 void BigBangScene::update() {
@@ -34,8 +31,6 @@ void BigBangScene::draw() {
         
         ofSetColor(255, pct * 255);
         ofPushMatrix();
-      //  ofScale(1, -1.0);
-        //ofTranslate(ofGetWidth(), -ofGetHeight());
         bigBang.draw();
         ofPopMatrix();
         

@@ -12,8 +12,6 @@ void OscManager::setup(int receiverPort, int senderPort, string senderIp) {
     receiver.setup(receiverPort);
     sender.setup(senderIp, senderPort);
     
-    ofLogNotice("OSC: Receiver port=") << receiverPort;
-    
 }
 
 void OscManager::update() {
@@ -25,8 +23,8 @@ void OscManager::update() {
         receiver.getNextMessage(m);
         
         if(m.getAddress() == "/em/lmm/accueilpublic") {
-                BigBangScene * bigBangScene = (BigBangScene*) this->sceneManager->getSceneIndexForPath("bigbang");
-                bigBangScene->bigBang.mode = 0;
+            BigBangScene * bigBangScene = (BigBangScene*) this->sceneManager->getSceneIndexForPath("bigbang");
+            bigBangScene->bigBang.mode = 0;
         }
         
         if(m.getAddress() == "/em/lmm/introkalimba") {
@@ -53,8 +51,6 @@ void OscManager::update() {
             float repulsion = ofMap(m.getArgAsInt(0), 1, 8, 2, 3);
             bigBangScene->bigBang.startRepulsion(repulsion);
             
-            ofLogNotice("argument: ") << m.getArgAsInt(0);
-            
         }
         
         if(m.getAddress() == "/me/cosmogonie/kalimba") {
@@ -68,7 +64,6 @@ void OscManager::update() {
         
     }
     
-    
 }
 
 void OscManager::setSceneManager(ArSceneManager * manager) {
@@ -76,7 +71,6 @@ void OscManager::setSceneManager(ArSceneManager * manager) {
     this->sceneManager = manager;
     
 }
-
 
 void OscManager::sendMessage(string adress, string label) {
     
@@ -86,8 +80,6 @@ void OscManager::sendMessage(string adress, string label) {
     sender.sendMessage(m, false);
     
 }
-
-
 
 void OscManager::draw() {
     

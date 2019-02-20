@@ -41,7 +41,6 @@ void ofApp::setup(){
     parameters.setName("Settings");
     parameters.add(debugMode.set("debugMode",true));
     
-    
     gui.setup(parameters);
     
     gui.add(bigBangDampingMin.setup("BigBangDmpMin", 0.1, 0.0, 1.0));
@@ -52,9 +51,6 @@ void ofApp::setup(){
     gui.add(bigBangRepulsionFactor.setup("bigBangRepulsionFactor", 3, 0.0, 10));
     gui.add(bigBangParticleIntensity.setup("bigBangParticleIntensity", 1, 1, 2000));
 
-    
-    
-    
 }
 
 void ofApp::setInputMode(int mode) {
@@ -191,12 +187,11 @@ void ofApp::draw(){
             
         case INPUT_SYPHON:
             syphonFbo.draw(cameraRectCanvas.x, cameraRectCanvas.y, cameraRectCanvas.getWidth(), cameraRectCanvas.getHeight());
-            //syphonInputImg.draw(0.0,0.0, syphonInput.getWidth() * .5, syphonInput.getHeight() * .5);
             break;
             
     }
     
-     ofBackground(0);
+    ofBackground(0);
     
     ofPushMatrix();
     ofTranslate(cameraRectCanvas.x, cameraRectCanvas.y);
