@@ -15,17 +15,21 @@ void BigBang::setup(string dataPath) {
     repulsionScale  = 0.0;
     maxParticleLife = 900;
     
-    mode            = 2;
+    mode            = 0;
     
     lineDistance    = 200;
     blobDistance    = 350;
     
     forceRandomNessScale = 1.0;
     
+    fadeInOutPct    = 0.1;
+    
 }
 
 
 void BigBang::update() {
+    
+    //addParticles(1);
     
     ofApp * app = (ofApp*) ofGetAppPtr();
 
@@ -43,7 +47,13 @@ void BigBang::update() {
     colorImg.setFromPixels(app->trackedVideoInput->getPixels());
     grayImage = colorImg;
     grayImage.threshold(100);
-    contourFinder.findContours(grayImage, 20, (app->videoInputWidth*app->videoInputHeight), 10, false);    // find holes
+    
+    if(mode != 2)
+        contourFinder.findContours(grayImage, 20, (app->videoInputWidth*app->videoInputHeight), 10, false);    // find holes
+    else {
+        contourFinder.findContours(grayImage, 10, ofGetMouseX(), 10, false);    // find holes
+
+    }
     
    
     // delete old particles
@@ -61,6 +71,10 @@ void BigBang::update() {
     
     if(mode == 0) {
         
+        app->bigBangScaleMin = 1.3;
+        app->bigBangScaleMax = 6.5;
+
+        fadeInOutPct = 0.001;
         maxParticleLife = 900;
         forceRandomNessScale = 1.0;
         repulsionScale -= .1;
@@ -70,6 +84,13 @@ void BigBang::update() {
     
     if(mode == 1) {
         
+        glLineWidth(1);
+
+        lineDistance = 200;
+        app->bigBangScaleMin = 1.3;
+        app->bigBangScaleMax = 4.5;
+        
+        fadeInOutPct = 0.05;
         maxParticleLife = 900;
         forceRandomNessScale = 1.0;
         
@@ -83,13 +104,32 @@ void BigBang::update() {
     
     if(mode == 2) {
         
+        glLineWidth(2);
+        lineDistance = 280;
+        fadeInOutPct = 0.05;
         maxParticleLife = 5000;
         forceRandomNessScale = 0.01;
         repulsionScale = 0.0;
-        if(ofGetFrameNum() % 24 == 0 && particles.size() < 30)
-            addParticles(2);
+        if(ofGetFrameNum() % 24 == 0 && particles.size() < 10)
+            addParticles(1);
+        
+        if(mode != lastMode) {
+            
+            //ofLogNotice("gogogo");
+            for(int i = 0; i < particles.size(); i ++) {
+                float deadlyLifeTime = maxParticleLife - (maxParticleLife * ofRandom(0.05, 0.1));
+                if(particles[i]->life < deadlyLifeTime) {
+                    particles[i]->life = deadlyLifeTime;
+                   // ofLogNotice("deadlyLifeTime") << deadlyLifeTime;
+
+                }
+            }
+            
+        }
         
     }
+    
+    lastMode = mode;
     
 }
 
@@ -126,22 +166,32 @@ void BigBang::draw() {
         particles[i]->addDampingForce(app->bigBangScaleDampingScale);
         particles[i]->update();
         
+        
+        
         // add ease in / out transition
+        
+        float durationFadePct = maxParticleLife * fadeInOutPct;
+        
         float alpha = 1.0;
-        if(particles[i]->life < 100) {
-            alpha = ofMap(particles[i]->life, 0, 100, 0.0, 1.0);
+        if(mode == 2) {
+            
+            float pct = ofNoise((ofGetElapsedTimef()+i) *5);
+            pct = ofMap(pct, 0.0, 1.0, 0.7, 1.0 );
+            alpha *= pct;
+            
         }
         
-        if(particles[i]->life > maxParticleLife - 100) {
-            alpha = ofMap(particles[i]->life, maxParticleLife - 100, maxParticleLife, 1.0, 0.0);
+        if(particles[i]->life < durationFadePct) {
+            alpha = ofMap(particles[i]->life, 0, durationFadePct, 0.0, 1.0);
         }
         
+        if(particles[i]->life > maxParticleLife - durationFadePct) {
+            alpha = ofMap(particles[i]->life, maxParticleLife - durationFadePct, maxParticleLife, 1.0, 0.0);
+        }
         
         // draw
         ofSetColor(255, 255 * alpha);
-        particles[i]->begin();
-        ofDrawEllipse(0.0, 0.0, particles[i]->scale, particles[i]->scale);
-        particles[i]->end();
+        ofDrawEllipse(particles[i]->pos.x,particles[i]->pos.y, particles[i]->scale * particles[i]->scale, particles[i]->scale * particles[i]->scale);
         
         // we draw lines in mode 1
         
@@ -180,7 +230,43 @@ void BigBang::draw() {
             }
             
         }
+        
       
+    }
+    
+    // draw lines with elie layer
+    if( mode == 2 ) {
+        
+        // if there is no blob, we don't have any reason to draw lines
+        if(contourFinder.nBlobs > 0 ) {
+            
+             for(int i = 0; i < contourFinder.nBlobs; i ++) {
+                 for(int j = 0; j < contourFinder.nBlobs; j ++) {
+                
+                    if ( i != j  ) {
+                        
+                        ofVec2f pos = ofVec2f (contourFinder.blobs[i].boundingRect.getCenter());
+                        float dist = pos.distance(contourFinder.blobs[j].boundingRect.getCenter());
+                        if ( dist < lineDistance) {
+                            
+                            float alpha = ofMap(dist, 0, lineDistance, 255, 0);
+                            ofSetColor(255,  alpha);
+                            ofDrawLine(pos, contourFinder.blobs[j].boundingRect.getCenter());
+                        }
+                        
+                    }
+                
+                 }
+                 
+             }
+            
+        }
+        
+    }
+    
+    if(mode == 2) {
+        
+       // contourFinder.draw();
     }
 
 }
@@ -262,7 +348,7 @@ void BigBang::addParticles(int nParticles) {
 
 void BigBang::startRepulsion(float scale) {
     ofApp * app = (ofApp*) ofGetAppPtr();
-    app->bigBangRepulsionFactor = scale;
-    repulsionScale = app->bigBangRepulsionFactor;
+   // app->bigBangRepulsionFactor = scale;
+    repulsionScale = scale * app->bigBangRepulsionFactor;
     
 }

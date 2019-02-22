@@ -32,10 +32,19 @@ class ofApp : public ofBaseApp{
         ofxFloatSlider scale;
         ofxIntSlider rows, cols;
         ofxButton generate;
+    
+        ofxFloatSlider rectXScale, rectYScale;
+        ofxFloatSlider offSetX, offSetY;
+
+        //ofxFloatSlider rectScale;
+
+    
         ofxPanel gui;
     
         vector<bool> selecteds;
         vector<ofRectangle> rectangles;
     
+        ofPoint clickedPoint;
+        ofRectangle mouseRect;
 
 };

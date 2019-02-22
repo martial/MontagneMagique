@@ -52,6 +52,7 @@ public:
         
 
     }
+    
     virtual void update(){};
     virtual void draw(){};
     
@@ -69,10 +70,6 @@ protected:
     virtual void onFoundMarker(){};
     virtual void onLostMarker(){};
 
-    
-    
-    
-    
 };
 
 

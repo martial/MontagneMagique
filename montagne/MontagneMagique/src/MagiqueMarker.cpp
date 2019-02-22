@@ -18,6 +18,8 @@ MagiqueMarker::MagiqueMarker() {
     timeFound       = ofGetElapsedTimeMillis();
     timeLost        = ofGetElapsedTimeMillis();
     
+    blurRate        = 0.9;
+    
     timeSolidFoundElapsed = 0;
     timeSolidLostElapsed  = 0;
     
@@ -31,8 +33,8 @@ MagiqueMarker::MagiqueMarker() {
 void MagiqueMarker::setImage(ofImage * image) {
     
     this->image     = image;
-    this->width     = image->getWidth() / 3.0;
-    this->height    = image->getHeight() / 3.0;
+    this->width     = image->getWidth() / 9.0;
+    this->height    = image->getHeight() / 9.0;
     
 }
 
@@ -85,7 +87,12 @@ bool MagiqueMarker::getIsSolidFound() {
 
 void MagiqueMarker::beginAR() {
     
-    float blurRate = 0.9;
+    float scale = 12.0;
+    this->width     = image->getWidth() / scale;
+    this->height    = image->getHeight() / scale;
+    
+    
+  
     
     ARMarkerNFT * mk = &getSelectedMarker();
         
@@ -94,15 +101,17 @@ void MagiqueMarker::beginAR() {
     ofViewport(r);
     loadProjectionMatrix();
     
-    if(mk->valid){
-        // store in memory
+    if(mk->valid && this->isFound()){
+        // store in memory and smooth
         for(int i=0; i<16; i++)
             currentPose[i] = blurRate * currentPose[i]   +  (1.0f - blurRate) * mk->pose.T[i];
         
         bTracked = true;
         
     }
+    
    
+    
     if(bTracked){
         glLoadMatrixd(currentPose);
     }

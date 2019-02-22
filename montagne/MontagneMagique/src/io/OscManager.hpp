@@ -11,19 +11,27 @@
 #include "ofMain.h"
 #include "ofxOsc.h"
 #include "arSceneManager.hpp"
+#include "MontagneApp.hpp"
+
 class OscManager {
   
 public:
     
     void setup(int receiverPort, int senderPort, string senderIp);
     void setSceneManager(ArSceneManager * manager);
+    void setMontagneApp(MontagneApp * app);
+
     void update();
     void draw();
     
     void sendMessage(string adress, string label);
     
+    
+    void keyPressed(int key);
+    
 private:
     
+    MontagneApp *       montagneApp;
     ArSceneManager *    sceneManager;
     
     ofxOscReceiver      receiver;

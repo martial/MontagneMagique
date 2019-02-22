@@ -9,7 +9,7 @@
 
 void MontagneApp::setup() {
     
-    mode = SCENE_MODE;
+    mode = TRACKING_MODE;
     
 }
 
@@ -50,10 +50,7 @@ void MontagneApp::updateScene() {
 
 void MontagneApp::drawScene() {
     
-   
-    
     fboLayer.begin();
-    //ofEnableAlphaBlending();
     ofClear(0,0,0,0);
     glEnable(GL_DEPTH);
     glEnable(GL_BLEND);
@@ -72,9 +69,7 @@ void MontagneApp::drawScene() {
             // TODO remove that for scenes 
           //  if(arToolKitManager.trackers[i]->isFound()){
             
-            
                 string markerID = arToolKitManager.trackers[i]->markerid;
-                
                 arToolKitManager.trackers[i]->beginAR();
                 arSceneManager.draw(i, *arToolKitManager.trackers[i]);
                 arToolKitManager.trackers[i]->endAR();
@@ -92,8 +87,7 @@ void MontagneApp::drawScene() {
         
     } else {
         fboLayer.getTexture().getTextureData().bFlipTexture = true;
-        fboLayer.draw(0.0, trackerInputHeight, trackerInputWidth, -trackerInputHeight);
-        
+        fboLayer.draw(0.0, 0.0, trackerInputWidth, trackerInputHeight);
     }
 
 

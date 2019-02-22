@@ -67,7 +67,6 @@ class ofApp : public ofBaseApp{
         ofFbo syphonFbo;
         string messageString;
     
-    
         ofxFloatSlider bigBangDampingMin,bigBangDampingMax;
         ofxFloatSlider bigBangScaleMin,bigBangScaleMax;
         ofxFloatSlider bigBangScaleDampingScale;
@@ -77,4 +76,8 @@ class ofApp : public ofBaseApp{
         ofxPanel gui;
         ofParameter<bool> debugMode;
         ofParameterGroup parameters;
+        bool    bDrawGui;
+    
+        void addMessage(string message);
+        vector<string> messages;
 };

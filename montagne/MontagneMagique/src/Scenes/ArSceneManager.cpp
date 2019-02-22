@@ -11,34 +11,37 @@
 #include "VideoScene.hpp"
 #include "BigBangScene.hpp"
 #include "BeesDepthScene.hpp"
+#include "BirdsScene.hpp"
 
 
 void ArSceneManager::setup(vector<std::shared_ptr<MagiqueMarker>> & trackers) {
     
-    UndergroundScene * undergroundScene = new UndergroundScene();
-    undergroundScene->setup("underground");
+    // UndergroundScene * undergroundScene = new UndergroundScene();
+   // undergroundScene->setup("underground");
     
-    EggsScene * eggsScene = new EggsScene();
-    eggsScene->setup("eggs");
+   // EggsScene * eggsScene = new EggsScene();
+   // eggsScene->setup("eggs");
     
-    VideoScene * videoScene = new VideoScene();
-    videoScene->setup("video");
+   // VideoScene * videoScene = new VideoScene();
+   // videoScene->setup("video");
     
     BigBangScene * bigBangScene = new BigBangScene();
     bigBangScene->setup("bigbang");
+    
+    BirdsScene * birdsScene = new BirdsScene();
+    birdsScene->setup("birds");
     
     BeesDepthScene * beesScene = new BeesDepthScene();
     beesScene->setup("beesDepth");
 
     scenes.push_back(bigBangScene);
-    scenes.push_back(videoScene);
-    scenes.push_back(eggsScene);
-    scenes.push_back(undergroundScene);
+
+    scenes.push_back(birdsScene);
+    //scenes.push_back(videoScene);
+   // scenes.push_back(eggsScene);
+    //scenes.push_back(undergroundScene);
     scenes.push_back(beesScene);
-
-   //
-
-
+    
     for(int i=0; i<trackers.size(); i++) {
         
         int sceneIndex = getSceneIndexForMarkerID(trackers[i]->markerid);
@@ -47,8 +50,6 @@ void ArSceneManager::setup(vector<std::shared_ptr<MagiqueMarker>> & trackers) {
         
     }
 
-
-    
 }
 
 void ArSceneManager::update() {

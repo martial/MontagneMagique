@@ -7,6 +7,9 @@
 
 #include "OscManager.hpp"
 #include "BigBangScene.hpp"
+#include "BirdsScene.hpp"
+#include "ofApp.h"
+
 void OscManager::setup(int receiverPort, int senderPort, string senderIp) {
     
     receiver.setup(receiverPort);
@@ -22,19 +25,35 @@ void OscManager::update() {
         ofxOscMessage m;
         receiver.getNextMessage(m);
         
+
+        
         if(m.getAddress() == "/em/lmm/accueilpublic") {
+            
+            this->montagneApp->mode = SCENE_MODE;
             BigBangScene * bigBangScene = (BigBangScene*) this->sceneManager->getSceneIndexForPath("bigbang");
             bigBangScene->bigBang.mode = 0;
+            
         }
         
         if(m.getAddress() == "/em/lmm/introkalimba") {
+            
+            this->montagneApp->mode = SCENE_MODE;
             BigBangScene * bigBangScene = (BigBangScene*) this->sceneManager->getSceneIndexForPath("bigbang");
             bigBangScene->bigBang.mode = 1;
         }
         
         if(m.getAddress() == "/em/lmm/melodie") {
+            
+            this->montagneApp->mode = SCENE_MODE;
             BigBangScene * bigBangScene = (BigBangScene*) this->sceneManager->getSceneIndexForPath("bigbang");
             bigBangScene->bigBang.mode = 2;
+        }
+        
+        if(m.getAddress() == "/em/lmm/oiseau") {
+            
+            ofSetCircleResolution(256);
+            this->montagneApp->mode = TRACKING_MODE;
+            
         }
         
         if(m.getAddress() == "/me/cosmogonie/bigbang") {
@@ -60,17 +79,62 @@ void OscManager::update() {
             
         }
         
-        ofLogNotice("OSC: ") << m.getAddress();
+        
+        
+        if(m.getAddress() == "/me/printemps/oiseau/pitch") {
+            
+            BirdsScene * birds = (BirdsScene*) this->sceneManager->getSceneIndexForPath("birds");
+            birds->setPitchPct(ofNormalize(m.getArgAsFloat(0), 0, 0.6));
+           // ofLogNotice("Pïtch: ") << m.getArgAsFloat(0);
+            
+        } else {
+            
+            ofLogNotice("OSC: ") << m.getAddress();
+        }
+        
+        ofApp* app = (ofApp*) ofGetAppPtr();
+        app->addMessage( m.getAddress());
+        
         
     }
     
 }
+
+void OscManager::keyPressed(int key) {
+    
+    if(key == 'a') {
+        
+        
+        BigBangScene * bigBangScene = (BigBangScene*) this->sceneManager->getSceneIndexForPath("bigbang");
+        bigBangScene->bigBang.addParticles(4 * 2);
+        bigBangScene->bigBang.startRepulsion(2);
+        
+    }
+    
+    if( key == OF_KEY_RIGHT) {
+        
+        BigBangScene * bigBangScene = (BigBangScene*) this->sceneManager->getSceneIndexForPath("bigbang");
+        bigBangScene->bigBang.mode ++;
+        if(bigBangScene->bigBang.mode > 2)
+            bigBangScene->bigBang.mode = 0;
+        
+    }
+    
+}
+
 
 void OscManager::setSceneManager(ArSceneManager * manager) {
     
     this->sceneManager = manager;
     
 }
+
+void OscManager::setMontagneApp(MontagneApp * app) {
+    
+    this->montagneApp = app;
+    
+}
+
 
 void OscManager::sendMessage(string adress, string label) {
     

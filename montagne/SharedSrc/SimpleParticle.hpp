@@ -40,7 +40,8 @@ public:
     void addRepulsionForce(SimpleParticle &p, float radius, float scale);
     void addAttractionForce(SimpleParticle &p, float radius, float scale);
     bool isPointInRadius(ofPoint p, float radius);
-
+    
+    void computeRotation();
     
     void begin(float xOffSet = 0, float yOffSet = 0);
     void end();
@@ -53,6 +54,10 @@ public:
     bool bIsAlive;
     
     ofImage * img;
+    
+    ofColor color;
+    
+    float depth, depthVel;
     
 protected:
 private:

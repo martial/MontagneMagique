@@ -15,6 +15,8 @@ SimpleParticle::SimpleParticle(){
     rotation            = 0.0f;
     smoothedRotation    = 0.0f;
     bIsAlive            = true;
+    
+    depth               = 0.0;
 }
 
 //------------------------------------------------------------
@@ -155,16 +157,22 @@ void SimpleParticle::setInitialCondition(float px, float py, float vx, float vy)
 void SimpleParticle::update(){
     
     vel += frc;
+    pos += vel;
     
-    ofVec2f newPos      = pos + vel;
+}
+
+void SimpleParticle::computeRotation() {
+    
+    ofVec2f newVel      = vel + frc;
+    ofVec2f newPos      = pos + newVel;
+    
     ofVec2f diffPos     = newPos - pos;
     rotation            = ofRadToDeg(atan2(diffPos.y, diffPos.x));
     
     float blurRate      = 0.999;
     smoothedRotation    = blurRate * smoothedRotation   +  (1.0f - blurRate) * rotation;
-    pos                 = newPos;
-    
 }
+
 
 //------------------------------------------------------------
 void SimpleParticle::bounceOffWalls(){

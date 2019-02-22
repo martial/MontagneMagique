@@ -37,8 +37,9 @@
 		8353BCA121F8D5AE00627F6A /* SimpleParticle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8353BC9D21F8D5AE00627F6A /* SimpleParticle.cpp */; };
 		8353BCA221F8D5AE00627F6A /* ImageSequencePlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8353BC9F21F8D5AE00627F6A /* ImageSequencePlayer.cpp */; };
 		8353BCA321F8D7B500627F6A /* Ants.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8353BC9A21F8D57100627F6A /* Ants.cpp */; };
+		83A3F090221FEE3E00DF0FA3 /* Bee.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83A3F08E221FEE3E00DF0FA3 /* Bee.cpp */; };
+		83AE5E4D221E945900651359 /* BirdsScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83AE5E4B221E945900651359 /* BirdsScene.cpp */; };
 		83C7720521E4B08E00D111D6 /* ArSceneManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83C7720321E4B08E00D111D6 /* ArSceneManager.cpp */; };
-		83C7720821E4B0A200D111D6 /* AbstractARScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83C7720621E4B0A200D111D6 /* AbstractARScene.cpp */; };
 		83C7720B21E4B0C100D111D6 /* UndergroundScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83C7720921E4B0C100D111D6 /* UndergroundScene.cpp */; };
 		83CEA1C4221BF2C900D239DC /* BigBang.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83CEA1C3221BF2C800D239DC /* BigBang.cpp */; };
 		83CEA1C7221BF49B00D239DC /* BigBangScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83CEA1C5221BF49B00D239DC /* BigBangScene.cpp */; };
@@ -438,9 +439,12 @@
 		8353BC9F21F8D5AE00627F6A /* ImageSequencePlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageSequencePlayer.cpp; sourceTree = "<group>"; };
 		8353BCA021F8D5AE00627F6A /* SimpleParticle.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SimpleParticle.hpp; sourceTree = "<group>"; };
 		838C0A631612A5E26A4C4EE9 /* transform_detail.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = transform_detail.hpp; path = "../../../addons/ofxArtool5/libs/include/macosx-universal/opencv2/gpu/device/detail/transform_detail.hpp"; sourceTree = SOURCE_ROOT; };
+		83A3F08E221FEE3E00DF0FA3 /* Bee.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Bee.cpp; sourceTree = "<group>"; };
+		83A3F08F221FEE3E00DF0FA3 /* Bee.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Bee.hpp; sourceTree = "<group>"; };
+		83AE5E4B221E945900651359 /* BirdsScene.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BirdsScene.cpp; sourceTree = "<group>"; };
+		83AE5E4C221E945900651359 /* BirdsScene.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = BirdsScene.hpp; sourceTree = "<group>"; };
 		83C7720321E4B08E00D111D6 /* ArSceneManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ArSceneManager.cpp; sourceTree = "<group>"; };
 		83C7720421E4B08E00D111D6 /* ArSceneManager.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ArSceneManager.hpp; sourceTree = "<group>"; };
-		83C7720621E4B0A200D111D6 /* AbstractARScene.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractARScene.cpp; sourceTree = "<group>"; };
 		83C7720721E4B0A200D111D6 /* AbstractARScene.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AbstractARScene.hpp; sourceTree = "<group>"; };
 		83C7720921E4B0C100D111D6 /* UndergroundScene.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UndergroundScene.cpp; sourceTree = "<group>"; };
 		83C7720A21E4B0C100D111D6 /* UndergroundScene.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = UndergroundScene.hpp; sourceTree = "<group>"; };
@@ -1956,7 +1960,6 @@
 				8353BC6721F8698200627F6A /* Eggs */,
 				83C7720321E4B08E00D111D6 /* ArSceneManager.cpp */,
 				83C7720421E4B08E00D111D6 /* ArSceneManager.hpp */,
-				83C7720621E4B0A200D111D6 /* AbstractARScene.cpp */,
 				83C7720721E4B0A200D111D6 /* AbstractARScene.hpp */,
 				83C7720921E4B0C100D111D6 /* UndergroundScene.cpp */,
 				83C7720A21E4B0C100D111D6 /* UndergroundScene.hpp */,
@@ -1968,6 +1971,8 @@
 				83CEA1C6221BF49B00D239DC /* BigBangScene.hpp */,
 				83CEA1EF221C72A700D239DC /* BeesDepthScene.cpp */,
 				83CEA1F0221C72A700D239DC /* BeesDepthScene.hpp */,
+				83AE5E4B221E945900651359 /* BirdsScene.cpp */,
+				83AE5E4C221E945900651359 /* BirdsScene.hpp */,
 			);
 			path = Scenes;
 			sourceTree = "<group>";
@@ -2031,6 +2036,8 @@
 		83CEA1EE221C729000D239DC /* BeesDepth */ = {
 			isa = PBXGroup;
 			children = (
+				83A3F08E221FEE3E00DF0FA3 /* Bee.cpp */,
+				83A3F08F221FEE3E00DF0FA3 /* Bee.hpp */,
 			);
 			path = BeesDepth;
 			sourceTree = "<group>";
@@ -3120,6 +3127,7 @@
 				8353BC9421F86B0B00627F6A /* ofxAnimatableOfColor.cpp in Sources */,
 				8353BCA221F8D5AE00627F6A /* ImageSequencePlayer.cpp in Sources */,
 				83CEA1EC221C1CD500D239DC /* ofxPanel.cpp in Sources */,
+				83A3F090221FEE3E00DF0FA3 /* Bee.cpp in Sources */,
 				8353BC9521F86B0B00627F6A /* ofxAnimatable.cpp in Sources */,
 				8353BC9621F86B0B00627F6A /* ofxAnimatableFloat.cpp in Sources */,
 				83CEA1E6221C1CD500D239DC /* ofxSliderGroup.cpp in Sources */,
@@ -3155,7 +3163,6 @@
 				5864AD82E20F15536D054EA3 /* ofxOscMessage.cpp in Sources */,
 				83CEA1E9221C1CD500D239DC /* ofxGuiGroup.cpp in Sources */,
 				72A929D3561B8232A182ABFC /* ofxOscBundle.cpp in Sources */,
-				83C7720821E4B0A200D111D6 /* AbstractARScene.cpp in Sources */,
 				640279EE111671BD026CB013 /* ofxOscReceiver.cpp in Sources */,
 				8F5205AEF8861EF234F0651A /* ofxOscSender.cpp in Sources */,
 				83CEA1F1221C72A700D239DC /* BeesDepthScene.cpp in Sources */,
@@ -3175,6 +3182,7 @@
 				8320D7D021C2A7F8000BCEC6 /* ofxImgSizeUtils.cpp in Sources */,
 				ADE367465D2A8EBAD4C7A8D9 /* IpEndpointName.cpp in Sources */,
 				8D60C222CBD3F869382832E9 /* ofxSyphonServer.mm in Sources */,
+				83AE5E4D221E945900651359 /* BirdsScene.cpp in Sources */,
 				1F558B76FB3412843DDAA031 /* ofxSyphonClient.mm in Sources */,
 				83CEA1E4221C1CD500D239DC /* ofxBaseGui.cpp in Sources */,
 				11DF9AB1B4EAA63E3B190CA0 /* ofxSyphonServerDirectory.mm in Sources */,

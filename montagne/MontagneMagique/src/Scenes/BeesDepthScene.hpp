@@ -9,7 +9,14 @@
 #define BeesDepthScene_hpp
 
 #include "AbstractARScene.hpp"
+#include "Bee.hpp"
 
+/*
+struct SortByX
+{
+    bool operator() const (MyClass const & L, MyClass const & R) { return L.x < R.x; }
+};
+*/
 class BeesDepthScene : public AbstractARScene {
     
 public:
@@ -21,10 +28,14 @@ public:
     
 private:
     
-    ofImage bee0, bee1, bee2;
+    ofImage bee0, bee1, bee2, beeShadow;
     
-    vector<ofVec2f> positions;
-    vector<float> scales;
+    vector<Bee> bees;
+    
+    vector<ofVec2f> positions, targetPositions;
+    vector<float> scales, targetScales;
+    
+   
 
     
 };

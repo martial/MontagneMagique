@@ -4,9 +4,11 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
     
-    bDebugTrackers = false;
-    trackedVideoInput = NULL;
+    bDrawGui            = false;
+    bDebugTrackers      = false;
+    trackedVideoInput   = NULL;
 
+    //ofSetCircleResolution(256);
     ofSetLogLevel(OF_LOG_NOTICE);
     ofSetFrameRate(60);
     
@@ -19,18 +21,21 @@ void ofApp::setup(){
     else
         exit();
     
+    syphonDir.setup();
+    
+    
     intputMode          = configJson["auto-start-mode"];
     videoInputWidth     = 0;
     videoInputHeight    = 0;
     setInputMode(intputMode);
     
-    syphonDir.setup();
     ofAddListener(syphonDir.events.serverAnnounced, this, &ofApp::serverAnnounced);
     ofAddListener(syphonDir.events.serverRetired, this, &ofApp::serverRetired);
     syphonLayer.setName("MM-OF-Layer");
     
     oscManager.setup(configJson["osc-in-port"],configJson["osc-out-port"],configJson["osc-out-ip"]);
     oscManager.setSceneManager(&app.arSceneManager);
+    oscManager.setMontagneApp(&app);
     
     messageString = "";
     
@@ -45,11 +50,10 @@ void ofApp::setup(){
     
     gui.add(bigBangDampingMin.setup("BigBangDmpMin", 0.1, 0.0, 1.0));
     gui.add(bigBangDampingMax.setup("BigBangDmpMax", 0.25, 0.0, 1.0));
-    gui.add(bigBangScaleMin.setup("BigBangScaleMin", 2, 0.0, 50.0));
-    gui.add(bigBangScaleMax.setup("BigBangScaleMax", 4, 0.0, 50.0));
+    gui.add(bigBangScaleMin.setup("BigBangScaleMin", 3, 0.0, 50.0));
+    gui.add(bigBangScaleMax.setup("BigBangScaleMax", 6, 0.0, 50.0));
     gui.add(bigBangScaleDampingScale.setup("bigBangScaleDampingScale", .35, 0.0, 1.0));
-    gui.add(bigBangRepulsionFactor.setup("bigBangRepulsionFactor", 3, 0.0, 10));
-    gui.add(bigBangParticleIntensity.setup("bigBangParticleIntensity", 1, 1, 2000));
+    gui.add(bigBangRepulsionFactor.setup("bigBangRepulsionFactor", 1, 0.0, 3));
 
 }
 
@@ -173,7 +177,6 @@ void ofApp::update(){
 void ofApp::draw(){
 
     ofBackground(0);
-    ofEnableAlphaBlending();
     
     switch (intputMode) {
             
@@ -190,9 +193,7 @@ void ofApp::draw(){
             break;
             
     }
-    
-    ofBackground(0);
-    
+        
     ofPushMatrix();
     ofTranslate(cameraRectCanvas.x, cameraRectCanvas.y);
     
@@ -211,7 +212,15 @@ void ofApp::draw(){
     ofSetColor(255);
     ofDrawBitmapString(messageString, 20, 20);
     
-    gui.draw();
+    if(bDrawGui)
+        gui.draw();
+    
+    ofSetColor(255,0,0);
+    ofDrawBitmapString(ofToString(ofGetFrameRate()), 20, 20);
+    ofSetColor(255,255);
+    for(int i=0; i<messages.size(); i++) {
+        ofDrawBitmapString(messages[i], 20, 40 + i * 20);
+    }
 
 }
 
@@ -229,7 +238,23 @@ void ofApp::keyPressed(int key){
     
     if(key == 'd')
         setInputMode(INPUT_SYPHON);
+    
+    if(key == 'g')
+        bDrawGui = !bDrawGui;
+    
+    
+    oscManager.keyPressed(key);
 
+}
+
+void ofApp::addMessage(string message) {
+    
+    if(messages.size() > 10) {
+        messages.erase(messages.begin());
+    }
+    
+    messages.push_back(message);
+    
 }
 
 //--------------------------------------------------------------
@@ -294,8 +319,16 @@ void ofApp::serverAnnounced(ofxSyphonServerDirectoryEventArgs &arg)
     for( auto& dir : arg.servers ){
         ofLogNotice("ofxSyphonServerDirectory Server Announced")<<" Server Name: "<<dir.serverName <<" | App Name: "<<dir.appName;
         
-        if(configJson["auto-link-syphon"])
+        if(configJson["auto-link-syphon"] && dir.serverName != "MM-OF-Layer") {
             syphonInput.set(dir.serverName, dir.appName);
+            configJson["syphon-input-name"] = dir.serverName;
+            configJson["syphon-input-app"] = dir.appName;
+            ofSaveJson("config.json", configJson);
+
+        }
+        
+        addMessage("Server Name: " + dir.serverName + " | App Name: " + dir.appName);
+        
         
         
     }

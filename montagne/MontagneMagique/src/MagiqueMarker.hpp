@@ -37,7 +37,7 @@ public:
     int timeSolidFoundElapsed, timeSolidLostElapsed;
 
     bool bIsFound, bIsSolidFound;
-
+    float blurRate;
     
 private:
     

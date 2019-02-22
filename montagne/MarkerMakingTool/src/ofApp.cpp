@@ -13,6 +13,13 @@ void ofApp::setup(){
    
     gui.add(rows.setup("rows", 1, 1, 12));
     gui.add(cols.setup("cols", 1, 1, 12));
+    
+    gui.add(rectXScale.setup("rectXScale,", 1, 0, 1));
+    gui.add(rectYScale.setup("rectYScale,", 1, 0, 1));
+
+
+    
+    
     gui.add(generate.setup("generate"));
     generate.addListener(this, &ofApp::generateMarkers);
 
@@ -55,12 +62,17 @@ void ofApp::draw(){
                 // add rectangles for check
                 ofRectangle rect;
                 rect.set(x,y,w,h);
+                rect.x += offSetX;
+                rect.y += offSetY;
                 rect.x *= scale;
                 rect.y *= scale;
                 rect.x += ofGetWidth() * .5 -draggedImages[0].getWidth() * scale * .5;
                 rect.y += ofGetHeight() * .5 -draggedImages[0].getHeight() * scale * .5;
-                rect.width *= scale;
-                rect.height *= scale;
+                
+                
+                
+                rect.width *= scale * rectXScale;
+                rect.height *= scale * rectYScale;
                 rectangles.push_back(rect);
                 
                 
@@ -92,6 +104,9 @@ void ofApp::draw(){
         gui.draw();
     }
     
+    ofNoFill();
+    ofDrawRectangle(mouseRect);
+    
 }
 
 void ofApp::generateMarkers() {
@@ -110,9 +125,18 @@ void ofApp::generateMarkers() {
                 float w = draggedImages[0].getWidth() / rows;
                 float h = draggedImages[0].getHeight() / cols;
                 
+                w *= rectXScale;
+                h *= rectYScale;
+                
                 ofPoint pos;
                 pos.x = j * w;
                 pos.y = i * h;
+                
+                pos.x += round(offSetX);
+                pos.y += round(offSetY);
+                
+                ofLogNotice("crop to ") << pos;
+
                 
                 ofImage imgClone = draggedImages[0];
                 imgClone.crop(pos.x, pos.y, w, h);
@@ -122,7 +146,7 @@ void ofApp::generateMarkers() {
                 status = "¨Processing";
                 
                 string path = ofToDataPath(filename, true);
-                string command = "../../../../../Utils/genTexData " + path + " -level=4 -leveli=3 -dpi=72 -max_dpi=72 -min_dpi=4";
+                string command = "../../../../../Utils/genTexData " + path + " -level=4 -leveli=3 -dpi=300 -max_dpi=300 -min_dpi=200";
                 string result = ofSystem(command);
                 ofLogNotice("result ") << result;
                 
@@ -170,7 +194,8 @@ void ofApp::mouseMoved(int x, int y ){
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
-
+    
+   // mouseRect.set(clickedPoint.x, clickedPoint.y, x - clickedPoint.x, y - clickedPoint.y);
 }
 
 //--------------------------------------------------------------
@@ -182,6 +207,8 @@ void ofApp::mousePressed(int x, int y, int button){
             selecteds[i] = !selecteds[i];
         
     }
+    
+    //clickedPoint.set(x,y);
 }
 
 //--------------------------------------------------------------
@@ -228,6 +255,10 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
             imgFileName = path.substr(path.find_last_of("/\\") + 1);
             size_t lastindex = imgFileName.find_last_of(".");
             imgFileName = imgFileName.substr(0, lastindex);
+            
+            gui.add(offSetX.setup("offSetX", 0, 0, draggedImages[k].getWidth()));
+            gui.add(offSetY.setup("offSetY", 0, 0, draggedImages[k].getHeight()));
+            
             return;
         }
     

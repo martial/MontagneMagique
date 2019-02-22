@@ -50,6 +50,9 @@ private:
     float               blobDistance;
     float               forceRandomNessScale;
     float               maxParticleLife;
+    float               fadeInOutPct;
+    
+    int                 lastMode;
     
 };
 
