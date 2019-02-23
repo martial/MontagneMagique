@@ -48,7 +48,7 @@ void MontagneApp::updateScene() {
 }
 
 
-void MontagneApp::drawScene() {
+void MontagneApp::drawScene(bool bDraw) {
     
     fboLayer.begin();
     ofClear(0,0,0,0);
@@ -81,13 +81,18 @@ void MontagneApp::drawScene() {
     glDisable(GL_BLEND);
     fboLayer.end();
     
-    if(mode == SCENE_MODE) {
-        fboLayer.getTexture().getTextureData().bFlipTexture = false;
-        fboLayer.draw(0.0, 0.0, trackerInputWidth, trackerInputHeight);
+    
+    if(bDraw) {
         
-    } else {
-        fboLayer.getTexture().getTextureData().bFlipTexture = true;
-        fboLayer.draw(0.0, 0.0, trackerInputWidth, trackerInputHeight);
+        if(mode == SCENE_MODE) {
+            fboLayer.getTexture().getTextureData().bFlipTexture = false;
+            fboLayer.draw(0.0, 0.0, trackerInputWidth, trackerInputHeight);
+            
+        } else {
+            fboLayer.getTexture().getTextureData().bFlipTexture = true;
+            fboLayer.draw(0.0, 0.0, trackerInputWidth, trackerInputHeight);
+        }
+        
     }
 
 

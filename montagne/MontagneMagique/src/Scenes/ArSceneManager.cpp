@@ -16,6 +16,8 @@
 
 void ArSceneManager::setup(vector<std::shared_ptr<MagiqueMarker>> & trackers) {
     
+    bDebugMode = false;
+    
     // UndergroundScene * undergroundScene = new UndergroundScene();
    // undergroundScene->setup("underground");
     
@@ -106,4 +108,15 @@ AbstractARScene * ArSceneManager::getSceneIndexForPath(string path) {
     return NULL;
     
 }
+
+void ArSceneManager::setDebugMode(bool debugMode) {
+    
+    for(int i=0; i<scenes.size(); i++) {
+        
+        scenes[i]->bDebugMarker = debugMode;
+          
+    }
+    this->bDebugMode = debugMode;
+}
+
 

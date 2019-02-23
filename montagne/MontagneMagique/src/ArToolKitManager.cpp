@@ -60,13 +60,17 @@ void ArToolKitManager::loadTrackers() {
             myTextFile << "1\n";
             myTextFile << name+"\n";
             myTextFile << "NFT\n";
-            myTextFile << "FILTER 15.0\n";
+            myTextFile << "FILTER 5.0\n";
             
+            myTextFile.close();
             
+            subdir.close();
             
         }
         
     }
+    
+    dir.close();
     
     ofDirectory markersFolder;
     markersFolder.open("markers");
@@ -86,10 +90,14 @@ void ArToolKitManager::loadTrackers() {
             
             ofAddListener(tracker->evNewMarker, this, &ArToolKitManager::onNewMarker);
             ofAddListener(tracker->evLostMarker, this, &ArToolKitManager::onLostMarker);
+            ofAddListener(tracker->solidFoundEvent, this, &ArToolKitManager::onSolidFoundEvent);
+            ofAddListener(tracker->solidLostEvent, this, &ArToolKitManager::onSolidLostEvent);
             trackers.push_back(tracker);
             
         }
     }
+    
+    markersFolder.close();
 }
 
 void ArToolKitManager::update(ofBaseHasPixels & input){
@@ -99,6 +107,8 @@ void ArToolKitManager::update(ofBaseHasPixels & input){
         trackers[i]->updateTimes();
 
     }
+    
+    
     
    
 
@@ -177,20 +187,33 @@ void ArToolKitManager::clean() {
 
 
 
+void ArToolKitManager::onSolidFoundEvent(string & markerid) {
+    
+    cout<<"New Marker lost!"<<endl;
 
+    ofApp* app = (ofApp*) ofGetAppPtr();
+    app->oscManager.sendMessage("/AR/found", markerid);
+    
+}
+
+void ArToolKitManager::onSolidLostEvent(string & markerid) {
+    
+    cout<<"New Marker found!"<<endl;
+
+    ofApp* app = (ofApp*) ofGetAppPtr();    
+    app->oscManager.sendMessage("/AR/lost", markerid);
+    
+}
 
 //--------------------------------------------------------------
 void ArToolKitManager::onNewMarker(int & mId){
-    cout<<"New Marker found!"<<endl;
+    //cout<<"New Marker found!"<<endl;
     
-    ofApp* app = (ofApp*) ofGetAppPtr();
     
-    string name = trackers[mId]->markerid;
-    app->oscManager.sendMessage("/AR/found", name);
     
 }
 
 void ArToolKitManager::onLostMarker(int & mId){
-    cout<<"Marker lost!"<<endl;
+   // cout<<"Marker lost!"<<endl;
 }
 

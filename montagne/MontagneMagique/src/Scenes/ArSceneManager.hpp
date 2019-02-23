@@ -22,7 +22,11 @@ public:
     void drawScene(int sceneIndex);
     void draw(int markerIndex, MagiqueMarker & marker);
     
+    void setDebugMode(bool debugMode);
+    
     AbstractARScene * getSceneIndexForPath(string path);
+    
+    bool bDebugMode;
 
 private:
     

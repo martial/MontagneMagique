@@ -54,6 +54,9 @@ void MagiqueMarker::updateTimes() {
         timeSolidFoundElapsed = currentTime - timeSolidFound;
     else
         timeSolidLostElapsed  = currentTime - timeSolidLost;
+    
+    if(timeSolidLostElapsed < 0 )
+        timeSolidLostElapsed = 0;
 
     // simple ms timer stuff to avoid quick losts of focus
     if(bIsFound) {
@@ -63,6 +66,9 @@ void MagiqueMarker::updateTimes() {
             bIsSolidFound           = true;
             timeSolidFound          = currentTime;
             timeSolidLostElapsed    = 0;
+            
+            ofNotifyEvent(solidFoundEvent, this->markerid, this );
+            
         }
         
     } else {
@@ -73,6 +79,9 @@ void MagiqueMarker::updateTimes() {
             bIsSolidFound           = false;
             timeSolidLost           = currentTime;
             timeSolidFoundElapsed   = 0;
+            
+            ofNotifyEvent(solidLostEvent, this->markerid, this );
+
         }
         
     }
@@ -92,7 +101,7 @@ void MagiqueMarker::beginAR() {
     this->height    = image->getHeight() / scale;
     
     
-  
+   // blurRate = ofNormalize(ofGetMouseX(), 0, ofGetWidth());
     
     ARMarkerNFT * mk = &getSelectedMarker();
         

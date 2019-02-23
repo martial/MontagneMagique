@@ -39,7 +39,7 @@ void BirdsScene::draw() {
     
     float pct = getInOuPct();
     
-    if(pct <= 0 )
+    if(pct <= 0 || !this->marker->getIsSolidFound())
         return;
     
     float scale = 20;
@@ -48,7 +48,7 @@ void BirdsScene::draw() {
     // delete old particles
     for(int i = particles.size() - 1; i >= 0; i --) {
         
-        if(particles[i]->pos.x < particles[i]->scale * scale) {
+        if(particles[i]->pos.x < particles[i]->scale * scale * 100) {
             particles[i] = NULL;
             particles.erase(particles.begin() + i);
         }
@@ -62,8 +62,13 @@ void BirdsScene::draw() {
   //  ofSetColor(255, 50);
    // ofDrawRectangle(0.0, 0.0, marker->width, marker->height);
     
-    
-    // marker->image->draw(0.0, 0.0, marker->width, marker->height);
+     if(bDebugMarker) {
+        
+         ofSetColor(255, 125);
+         marker->image->draw(0.0, 0.0, marker->width, marker->height);
+         ofSetColor(255, 255);
+
+    }
     
     // if value is above zero we actually have sound
     if(!bIsSinging && targetPitchPct > 0.0) {
@@ -179,12 +184,13 @@ void BirdsScene::draw() {
         
         
     }
+    
+   
 
-    
-    
-    
-    
     ofPopMatrix();
+    
+    
+    
     
 }
 
@@ -220,8 +226,7 @@ void BirdsScene::onPitchStart() {
     endColor =  colors[rdmIndex];
     
     // choose initial pos
-    ofVec2f initialPos (ofRandom(60, 70),ofRandom(80, 90));
-    initialPos *= .3;
+    ofVec2f initialPos (ofRandom(6, 8),ofRandom(6, 8));
     
     currentParticle = new SimpleParticle();
     currentParticle->setInitialCondition(initialPos.x, initialPos.y,0.0,0.0);

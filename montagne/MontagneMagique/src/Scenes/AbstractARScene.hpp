@@ -18,6 +18,7 @@ public:
     AbstractARScene(){
         
         this->marker = NULL;
+        this->bDebugMarker = false;
         
     };
     
@@ -58,6 +59,9 @@ public:
     
     string markerID, name;
     std::shared_ptr<MagiqueMarker> marker;
+    
+    bool bDebugMarker;
+
     
 protected:
     

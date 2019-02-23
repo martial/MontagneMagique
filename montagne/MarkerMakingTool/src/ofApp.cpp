@@ -135,8 +135,6 @@ void ofApp::generateMarkers() {
                 pos.x += round(offSetX);
                 pos.y += round(offSetY);
                 
-                ofLogNotice("crop to ") << pos;
-
                 
                 ofImage imgClone = draggedImages[0];
                 imgClone.crop(pos.x, pos.y, w, h);

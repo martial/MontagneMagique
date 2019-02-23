@@ -4,6 +4,7 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
     
+    bDrawPreview        = true;
     bDrawGui            = false;
     bDebugTrackers      = false;
     trackedVideoInput   = NULL;
@@ -54,6 +55,13 @@ void ofApp::setup(){
     gui.add(bigBangScaleMax.setup("BigBangScaleMax", 6, 0.0, 50.0));
     gui.add(bigBangScaleDampingScale.setup("bigBangScaleDampingScale", .35, 0.0, 1.0));
     gui.add(bigBangRepulsionFactor.setup("bigBangRepulsionFactor", 1, 0.0, 3));
+    
+    addMessage("Welcome.");
+    addMessage("Press g for GUI");
+    addMessage("Press d to debug markers");
+    addMessage("Press p to draw preview");
+    addMessage("Press o and send an OSC test message on ip " + ofToString(configJson["osc-out-ip"]) + " and port " + ofToString(configJson["osc-out-port"]));
+    addMessage("Your current OSC input port is " + ofToString(configJson["osc-in-port"]));
 
 }
 
@@ -119,6 +127,9 @@ void ofApp::setInputMode(int mode) {
         
     }
     
+   
+
+    
 }
 
 
@@ -178,27 +189,31 @@ void ofApp::draw(){
 
     ofBackground(0);
     
-    switch (intputMode) {
-            
-        case INPUT_VIDEO:
-            videoInput.draw(cameraRectCanvas);
-            break;
-            
-        case INPUT_CAMERA:
-            cameraInput.draw(cameraRectCanvas);
-            break;
-            
-        case INPUT_SYPHON:
-            syphonFbo.draw(cameraRectCanvas.x, cameraRectCanvas.y, cameraRectCanvas.getWidth(), cameraRectCanvas.getHeight());
-            break;
-            
+    if(bDrawPreview) {
+        
+        switch (intputMode) {
+                
+            case INPUT_VIDEO:
+                videoInput.draw(cameraRectCanvas);
+                break;
+                
+            case INPUT_CAMERA:
+                cameraInput.draw(cameraRectCanvas);
+                break;
+                
+            case INPUT_SYPHON:
+                syphonFbo.draw(cameraRectCanvas.x, cameraRectCanvas.y, cameraRectCanvas.getWidth(), cameraRectCanvas.getHeight());
+                break;
+                
+        }
+        
     }
         
     ofPushMatrix();
     ofTranslate(cameraRectCanvas.x, cameraRectCanvas.y);
     
      if(!bDebugTrackers) {
-         app.drawScene();
+         app.drawScene(bDrawPreview);
      } else {
          app.processDebugDraw();
          app.debugDrawTrackers();
@@ -209,19 +224,24 @@ void ofApp::draw(){
     if(tex.isAllocated()) {
         syphonLayer.publishTexture(&app.fboLayer.getTexture());
     }
+    
     ofSetColor(255);
-    ofDrawBitmapString(messageString, 20, 20);
     
     if(bDrawGui)
         gui.draw();
     
     ofSetColor(255,0,0);
     ofDrawBitmapString(ofToString(ofGetFrameRate()), 20, 20);
-    ofSetColor(255,255);
-    for(int i=0; i<messages.size(); i++) {
-        ofDrawBitmapString(messages[i], 20, 40 + i * 20);
+    
+    if(bDrawPreview) {
+        
+        ofSetColor(255, 255);
+        for(int i=0; i<messages.size(); i++) {
+            ofDrawBitmapString(messages[i], 20, 40 + i * 20);
+        }
+        ofSetColor(255);
+        
     }
-
 }
 
 //--------------------------------------------------------------
@@ -242,6 +262,14 @@ void ofApp::keyPressed(int key){
     if(key == 'g')
         bDrawGui = !bDrawGui;
     
+    if(key == 'o')
+        oscManager.sendMessage("/OF/test", "This is a test");
+    
+    if(key == 'd')
+        app.arSceneManager.setDebugMode(!app.arSceneManager.bDebugMode);
+    
+    if(key == 'p')
+        bDrawPreview =!bDrawPreview;
     
     oscManager.keyPressed(key);
 
@@ -249,11 +277,33 @@ void ofApp::keyPressed(int key){
 
 void ofApp::addMessage(string message) {
     
+    
+    if(!bDrawPreview)
+        return;
+    
     if(messages.size() > 10) {
         messages.erase(messages.begin());
     }
     
-    messages.push_back(message);
+    if(message == lastMessage) {
+        
+        string m = messages[messages.size() - 1];
+        ofStringReplace(m," [" + ofToString(duplicateCount-1) + "]"," [" + ofToString(duplicateCount+1) + "]");
+        
+        if(duplicateCount == 0)
+            m += " [" + ofToString(duplicateCount) + "]";
+        
+        messages[messages.size() - 1] = m;
+        duplicateCount++;
+        
+    } else {
+        duplicateCount = 0;
+        messages.push_back(message);
+
+    }
+    
+    
+    lastMessage = message;
     
 }
 
@@ -327,7 +377,8 @@ void ofApp::serverAnnounced(ofxSyphonServerDirectoryEventArgs &arg)
 
         }
         
-        addMessage("Server Name: " + dir.serverName + " | App Name: " + dir.appName);
+        if(dir.serverName != "MM-OF-Layer")
+            addMessage("Server Name: " + dir.serverName + " | App Name: " + dir.appName);
         
         
         

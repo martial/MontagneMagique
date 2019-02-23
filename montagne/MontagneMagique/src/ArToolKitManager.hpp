@@ -32,6 +32,10 @@ public:
     
 private:
     
+    void onSolidFoundEvent(string & markerid);
+    void onSolidLostEvent(string & markerid);
+
+    
     int inputWidth, inputHeight;
     
     

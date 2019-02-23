@@ -28,7 +28,6 @@ public:
     
 private:
     
-    
     vector<SimpleParticle*> particles;
     
     float scl;
@@ -44,7 +43,6 @@ private:
     
     int                 threshold;
     bool                bLearnBakground;
-    
     
     float               lineDistance;
     float               blobDistance;

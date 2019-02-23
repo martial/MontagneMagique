@@ -39,6 +39,11 @@ public:
     bool bIsFound, bIsSolidFound;
     float blurRate;
     
+    ofEvent<string> solidFoundEvent;
+    ofEvent<string> solidLostEvent;
+    
+
+    
 private:
     
     ARdouble currentPose[16] ;

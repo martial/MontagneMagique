@@ -129,6 +129,24 @@ void BigBang::update() {
         
     }
     
+    if(mode == 3) {
+        
+        if(mode != lastMode) {
+            
+            //ofLogNotice("gogogo");
+            for(int i = 0; i < particles.size(); i ++) {
+                float deadlyLifeTime = maxParticleLife - (maxParticleLife * ofRandom(0.05, 0.1));
+                if(particles[i]->life < deadlyLifeTime) {
+                    particles[i]->life = deadlyLifeTime;
+                    
+                }
+            }
+            
+        }
+
+        
+    }
+    
     lastMode = mode;
     
 }
@@ -150,7 +168,7 @@ void BigBang::draw() {
         particles[i]->addForce(xFrc, yFrc);
         
         // if we are in mode 0 and 1, add attraction and repulsion forces to the blobs
-        if( mode != 2) {
+        if( mode != 2 && mode != 3) {
             
             for (int j = 0; j < contourFinder.nBlobs; j++){
                 
@@ -173,7 +191,7 @@ void BigBang::draw() {
         float durationFadePct = maxParticleLife * fadeInOutPct;
         
         float alpha = 1.0;
-        if(mode == 2) {
+        if(mode == 2 || mode == 3) {
             
             float pct = ofNoise((ofGetElapsedTimef()+i) *5);
             pct = ofMap(pct, 0.0, 1.0, 0.7, 1.0 );

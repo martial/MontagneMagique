@@ -49,6 +49,13 @@ void OscManager::update() {
             bigBangScene->bigBang.mode = 2;
         }
         
+        if(m.getAddress() == "/em/lmm/finetoile") {
+            
+            this->montagneApp->mode = SCENE_MODE;
+            BigBangScene * bigBangScene = (BigBangScene*) this->sceneManager->getSceneIndexForPath("bigbang");
+            bigBangScene->bigBang.mode = 3;
+        }
+        
         if(m.getAddress() == "/em/lmm/oiseau") {
             
             ofSetCircleResolution(256);
@@ -92,10 +99,12 @@ void OscManager::update() {
             ofLogNotice("OSC: ") << m.getAddress();
         }
         
+
         ofApp* app = (ofApp*) ofGetAppPtr();
         app->addMessage( m.getAddress());
         
         
+                
     }
     
 }

@@ -80,4 +80,8 @@ class ofApp : public ofBaseApp{
     
         void addMessage(string message);
         vector<string> messages;
+        string lastMessage;
+        int duplicateCount;
+    
+        bool bDrawPreview;
 };

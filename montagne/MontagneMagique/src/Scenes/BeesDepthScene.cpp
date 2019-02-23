@@ -6,6 +6,7 @@
 //
 
 #include "BeesDepthScene.hpp"
+#include "ofApp.h"
 
 
 void BeesDepthScene::setup(string dataPath) {
@@ -31,10 +32,14 @@ void BeesDepthScene::update() {
     
     float pct = getInOuPct();
     
-    if(pct > 0 ) {
+    //ofLogNotice("update") << pct;
+    
+    if(pct > 0 && this->marker->getIsSolidFound()) {
         
-        float minScale = 0.01;
-        float maxScale = 0.1;
+        ofLogNotice("update") << pct;
+        
+        float minScale = 0.02;
+        float maxScale = 0.2;
         if(bees.size() == 0) {
             
             for(int i=0; i<6; i++) {
@@ -72,7 +77,8 @@ void BeesDepthScene::update() {
           
             
             // send osc ?
-            
+            ofApp * app = (ofApp*) ofGetAppPtr();
+            app->oscManager.sendMessage("/AR/bees/move", "move");
             
         }
         
@@ -94,15 +100,21 @@ void BeesDepthScene::draw() {
     
     float pct = getInOuPct();
     
-    if(pct > 0 ) {
-        
+    if(pct > 0 && this->marker->getIsSolidFound()) {
+
         ofSetColor(255, pct * 255);
         ofPushMatrix();
         ofScale(1, -1.0);
         ofTranslate(0.0, -marker->height);
         ofSetColor(255, 40);
 
-      //  marker->image->draw(0.0, 0.0, marker->width, marker->height);
+        if(bDebugMarker) {
+            
+            ofSetColor(255, 125);
+            marker->image->draw(0.0, 0.0, marker->width, marker->height);
+            ofSetColor(255, 255);
+            
+        }
 
         
         float rotationRange = 1;

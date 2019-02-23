@@ -26,7 +26,7 @@ public:
     void updateScene();
 
     
-    void drawScene();
+    void drawScene(bool bDraw = true);
 
     void processDebugDraw();
     void debugDrawTrackers();

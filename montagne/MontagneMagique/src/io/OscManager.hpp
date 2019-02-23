@@ -37,6 +37,8 @@ private:
     ofxOscReceiver      receiver;
     ofxOscSender        sender;
     
+    string              lastAddress;
+    
     
 };
 
