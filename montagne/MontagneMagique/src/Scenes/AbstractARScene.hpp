@@ -38,9 +38,9 @@ public:
         if(file.exists())
             file >> configJson;
         
-        this->markerID = configJson["marker-id"];
+        this->markerID = configJson["marker-id"].get<std::string>();
+        
     }
-    
     virtual float getInOuPct() {
         
         if(!marker)
