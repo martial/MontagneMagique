@@ -22,10 +22,11 @@ public:
     void setMontagneApp(MontagneApp * app);
 
     void update();
-    void draw();
     
     void sendMessage(string adress, string label);
+    void sendMessage(string adress, int value);
     
+    void setSceneEvent(ofxOscMessage & m);
     
     void keyPressed(int key);
     

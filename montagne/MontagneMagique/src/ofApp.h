@@ -5,10 +5,12 @@
 #include "ofxSyphon.h"
 #include "OscManager.hpp"
 #include "ofxGui.h"
+#include "ofxHapPlayer.h"
 
 #define INPUT_VIDEO 0
 #define INPUT_CAMERA 1
 #define INPUT_SYPHON 2
+#define INPUT_IMAGE 3
 
 
 class ofApp : public ofBaseApp{
@@ -45,28 +47,25 @@ class ofApp : public ofBaseApp{
         ofBaseHasPixels * trackedVideoInput;
     
         // this is the rectangle canvas with position & size for full screen
-        ofRectangle  cameraRectCanvas;
+        ofRectangle                 cameraRectCanvas;
 
-        ofVideoPlayer   videoInput;
-        ofVideoGrabber  cameraInput;
+        ofVideoPlayer               videoInput;
+        ofVideoGrabber              cameraInput;
+        ofImage                     imageInput;
     
         ofxSyphonServerDirectory    syphonDir;
         ofxSyphonClient             syphonInput;
         ofxSyphonServer             syphonLayer;
 
-        ofPixels                    syphonInputPixels;
-        ofImage                     syphonInputImg;
+        ofFbo                       resizedFbo;
+        ofPixels                    resizedInputPixels;
+        ofImage                     resizedInputImg;
     
         OscManager                  oscManager;
     
-        ofJson          configJson;
-    
-        bool bDebugTrackers;
-        int intputMode;
-    
-        ofFbo syphonFbo;
-        string messageString;
-    
+        ofJson                      configJson;
+
+        // Gui
         ofxFloatSlider bigBangDampingMin,bigBangDampingMax;
         ofxFloatSlider bigBangScaleMin,bigBangScaleMax;
         ofxFloatSlider bigBangScaleDampingScale;
@@ -78,10 +77,20 @@ class ofApp : public ofBaseApp{
         ofParameterGroup parameters;
         bool    bDrawGui;
     
+        // messages
         void addMessage(string message);
         vector<string> messages;
         string lastMessage;
         int duplicateCount;
     
+        // debug
+        bool bDebugTrackers;
+        int intputMode;
+        string messageString;
+    
         bool bDrawPreview;
+        bool bDrawMessages;
+    
+        float currentFrameRate;
+    
 };

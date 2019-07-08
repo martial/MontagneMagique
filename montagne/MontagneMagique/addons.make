@@ -1,4 +1,7 @@
+ofxAnimatable
 ofxArtool5
+ofxGui
+ofxHapPlayer
 ofxOpenCv
 ofxOsc
 ofxSyphon

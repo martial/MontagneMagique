@@ -5,13 +5,18 @@
 void ofApp::setup(){
     
     bDrawPreview        = true;
+    bDrawMessages       = true;
     bDrawGui            = false;
     bDebugTrackers      = false;
     trackedVideoInput   = NULL;
-
-    //ofSetCircleResolution(256);
+    
+    currentFrameRate    = 60;
+    
+    ofSetCircleResolution(256);
     ofSetLogLevel(OF_LOG_NOTICE);
     ofSetFrameRate(60);
+    
+    ofLogNotice("Gl shading version ") <<  glGetString(GL_SHADING_LANGUAGE_VERSION);
     
     // some config
     ofFile file;
@@ -24,10 +29,12 @@ void ofApp::setup(){
     
     syphonDir.setup();
     
-    
+    app.setup();
+
+        
     intputMode          = configJson["auto-start-mode"];
-    videoInputWidth     = 0;
-    videoInputHeight    = 0;
+    videoInputWidth     = 1280;
+    videoInputHeight    = 720;
     setInputMode(intputMode);
     
     ofAddListener(syphonDir.events.serverAnnounced, this, &ofApp::serverAnnounced);
@@ -40,7 +47,6 @@ void ofApp::setup(){
     
     messageString = "";
     
-    app.setup();
     
     // -- gui
     
@@ -57,9 +63,11 @@ void ofApp::setup(){
     gui.add(bigBangRepulsionFactor.setup("bigBangRepulsionFactor", 1, 0.0, 3));
     
     addMessage("Welcome.");
-    addMessage("Press g for GUI");
+    
+    //addMessage("Press g for GUI");
     addMessage("Press d to debug markers");
     addMessage("Press p to draw preview");
+    addMessage("Press m to show hide messages");
     addMessage("Press o and send an OSC test message on ip " + ofToString(configJson["osc-out-ip"]) + " and port " + ofToString(configJson["osc-out-port"]));
     addMessage("Your current OSC input port is " + ofToString(configJson["osc-in-port"]));
 
@@ -85,31 +93,54 @@ void ofApp::setInputMode(int mode) {
             videoInputHeight   = videoInput.getHeight();
             videoInput.play();
             videoInput.setLoopState(OF_LOOP_NORMAL);
+            
             trackedVideoInput = &videoInput;
+            
+            videoInputWidth    = 640;
+            videoInputHeight   = 360;
+            
+            resizedFbo.allocate(videoInputWidth, videoInputHeight, GL_RGB);
+            trackedVideoInput = &resizedInputImg;
+
+
 
             break;
         
         case INPUT_CAMERA:
             
-            videoInputWidth    = 1280 ;
-            videoInputHeight   = 720 ;
+            ofLogNotice("set camera ") << videoInputWidth << " " << videoInputHeight;
             
             cameraInput.listDevices();
             cameraInput.setDeviceID(deviceId);
             cameraInput.setup(videoInputWidth, videoInputHeight);
             trackedVideoInput = &cameraInput;
-
+            
+            videoInputWidth    = 640;
+            videoInputHeight   = 480;
+            
+            break;
+            
+        case INPUT_IMAGE:
+            
+            
+            cameraInput.listDevices();
+            cameraInput.setDeviceID(deviceId);
+            cameraInput.setup(videoInputWidth, videoInputHeight);
+            trackedVideoInput = &cameraInput;
+            
             break;
             
         case INPUT_SYPHON:
             
             syphonInput.setup();
             syphonInput.set(configJson["syphon-input-name"], configJson["syphon-input-app"]);
-            videoInputWidth    = 1280 ;
-            videoInputHeight   = 720 ;
-            syphonFbo.allocate(videoInputWidth, videoInputHeight, GL_RGB);
             
-            trackedVideoInput = &syphonInputImg;
+            videoInputWidth    = 640;
+            videoInputHeight   = 360;
+            
+            resizedFbo.allocate(videoInputWidth, videoInputHeight, GL_RGB);
+            
+            trackedVideoInput = &resizedInputImg;
             
             break;
             
@@ -119,8 +150,6 @@ void ofApp::setInputMode(int mode) {
     if(oldVideoInputWidth != videoInputWidth ||  oldVideoInputHeight != videoInputHeight ) {
         
         ofSetWindowShape(videoInputWidth, videoInputHeight);
-        cameraRectCanvas = ofxImgSizeUtils::getCenteredRect(ofGetWidth(), ofGetHeight(), videoInputWidth, videoInputHeight, false);
-        
         app.getArToolKitManager().clean();
         app.setupTrackers(videoInputWidth, videoInputHeight);
         app.setupFbos();
@@ -136,6 +165,11 @@ void ofApp::setInputMode(int mode) {
 //--------------------------------------------------------------
 void ofApp::update(){
     
+    // frame rate & windows title
+    currentFrameRate = 0.92 * currentFrameRate +  (1.0f - 0.92) * ceil(ofGetFrameRate());
+    string sceneName = app.currentSceneName + " / " + app.currentSubSceneName;
+    ofSetWindowTitle("Montagne Magique – " + sceneName + " ["+  ofToString(floor(currentFrameRate)) + " fps ]");
+    
     oscManager.update();
     
     messageString = "";
@@ -145,64 +179,96 @@ void ofApp::update(){
         case INPUT_VIDEO:
             
             videoInput.update();
-            app.updateTrackers(videoInput);
+            
+            resizedFbo.begin();
+            ofEnableAlphaBlending();
+            ofClear(0, 0, 0, 0);
+            videoInput.draw(0.0,0.0, videoInputWidth, videoInputHeight);
+            ofDisableAlphaBlending();
+            resizedFbo.end();
+            resizedFbo.getTexture().setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
+            
+            resizedFbo.readToPixels(resizedInputPixels);
+            resizedInputImg.setFromPixels(resizedInputPixels);
+            
+            if(resizedInputPixels.getWidth() == videoInputWidth && resizedInputPixels.getHeight() == videoInputHeight )
+                app.updateTrackers(resizedInputImg);
+            else
+                addMessage("Syphon stream is not " + ofToString(videoInputWidth) + " x " + ofToString(videoInputHeight) + " (tracking disabled)");
             
             break;
             
         case INPUT_CAMERA:
             
             cameraInput.update();
+            
             if(cameraInput.isFrameNew()) {
                 app.updateTrackers(cameraInput);
             }
             
             break;
             
+        case INPUT_IMAGE:
+            app.updateTrackers(imageInput);
+            
+            break;
+            
         case INPUT_SYPHON:
             
-            syphonFbo.begin();
+            
+            resizedFbo.begin();
             ofEnableAlphaBlending();
-            ofClear(255);
-            syphonInput.draw(0.0,0.0, 1280, 720);
-            syphonFbo.end();
+            ofClear(0, 0, 0, 0);
+            syphonInput.draw(0.0,0.0, videoInputWidth, videoInputHeight);
+            ofDisableAlphaBlending();
+            resizedFbo.end();
+            resizedFbo.getTexture().setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
+
+            resizedFbo.readToPixels(resizedInputPixels);
+            resizedInputImg.setFromPixels(resizedInputPixels);
             
-            syphonFbo.readToPixels(syphonInputPixels);
-            syphonInputImg.setFromPixels(syphonInputPixels);
-            
-            if(syphonInputImg.getWidth() == videoInputWidth && syphonInputImg.getHeight() == videoInputHeight )
-                app.updateTrackers(syphonInputImg);
+            if(resizedInputPixels.getWidth() == videoInputWidth && resizedInputPixels.getHeight() == videoInputHeight )
+                app.updateTrackers(resizedInputImg);
             else
                 messageString = "Syphon stream is not " + ofToString(videoInputWidth) + " x " + ofToString(videoInputHeight) + " (tracking disabled)";
  
             break;
             
     }
-    
-   
-    
+
     app.updateScene();
 
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-
-    ofBackground(0);
     
-    if(bDrawPreview) {
+    ofBackground(0);
+    ofSetColor(255);
+    
+    if(bDrawPreview && app.getMode() != HAP_MODE) {
         
+        cameraRectCanvas = ofxImgSizeUtils::getCenteredRect(ofGetWidth(), ofGetHeight(), videoInputWidth, videoInputHeight, false);
+
         switch (intputMode) {
                 
             case INPUT_VIDEO:
-                videoInput.draw(cameraRectCanvas);
+               // videoInput.draw(cameraRectCanvas);
+                resizedInputImg.draw(cameraRectCanvas.x, cameraRectCanvas.y, cameraRectCanvas.getWidth(), cameraRectCanvas.getHeight());
+
                 break;
                 
             case INPUT_CAMERA:
                 cameraInput.draw(cameraRectCanvas);
+
+                break;
+                
+            case INPUT_IMAGE:
+                imageInput.draw(cameraRectCanvas);
                 break;
                 
             case INPUT_SYPHON:
-                syphonFbo.draw(cameraRectCanvas.x, cameraRectCanvas.y, cameraRectCanvas.getWidth(), cameraRectCanvas.getHeight());
+                syphonInput.draw(cameraRectCanvas.x, cameraRectCanvas.y, cameraRectCanvas.getWidth(), cameraRectCanvas.getHeight());
                 break;
                 
         }
@@ -211,16 +277,16 @@ void ofApp::draw(){
         
     ofPushMatrix();
     ofTranslate(cameraRectCanvas.x, cameraRectCanvas.y);
-    
      if(!bDebugTrackers) {
          app.drawScene(bDrawPreview);
      } else {
          app.processDebugDraw();
          app.debugDrawTrackers();
      }
-             
     ofPopMatrix();
+    
     ofTexture & tex = app.fboLayer.getTexture();
+    
     if(tex.isAllocated()) {
         syphonLayer.publishTexture(&app.fboLayer.getTexture());
     }
@@ -231,17 +297,19 @@ void ofApp::draw(){
         gui.draw();
     
     ofSetColor(255,0,0);
-    ofDrawBitmapString(ofToString(ofGetFrameRate()), 20, 20);
-    
-    if(bDrawPreview) {
-        
+    ofDrawBitmapString(ofToString(floor(currentFrameRate)) + " fps", 20, 20);
+    ofSetColor(255, 255);
+
+    if(bDrawMessages) {
         ofSetColor(255, 255);
         for(int i=0; i<messages.size(); i++) {
             ofDrawBitmapString(messages[i], 20, 40 + i * 20);
         }
         ofSetColor(255);
-        
     }
+        
+    
+    
 }
 
 //--------------------------------------------------------------
@@ -256,8 +324,6 @@ void ofApp::keyPressed(int key){
     if(key == '2')
         setInputMode(INPUT_SYPHON);
     
-    if(key == 'd')
-        setInputMode(INPUT_SYPHON);
     
     if(key == 'g')
         bDrawGui = !bDrawGui;
@@ -265,11 +331,23 @@ void ofApp::keyPressed(int key){
     if(key == 'o')
         oscManager.sendMessage("/OF/test", "This is a test");
     
-    if(key == 'd')
+    if(key == 'd') {
+        
         app.arSceneManager.setDebugMode(!app.arSceneManager.bDebugMode);
-    
+        
+        if(app.arSceneManager.bDebugMode)
+            addMessage("Debug mode is on");
+        else
+            addMessage("Debug mode is off");
+        
+    }
+        
     if(key == 'p')
         bDrawPreview =!bDrawPreview;
+    
+    if(key == 'm')
+        bDrawMessages =!bDrawMessages;
+    
     
     oscManager.keyPressed(key);
 
@@ -353,8 +431,18 @@ void ofApp::gotMessage(ofMessage msg){
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
+void ofApp::dragEvent(ofDragInfo dragInfo){
+    
+    string filename = dragInfo.files[0].substr( dragInfo.files[0].find_last_of("/") + 1 );
+    configJson["video-filename"] = filename;
+    ofSaveJson("config.json", configJson);
+    
+    ofFile f;
+    f.open(dragInfo.files[0]);
+    f.copyTo("videos/"+ filename);
 
+    setInputMode(INPUT_VIDEO);
+    
 }
 
 //--------------------------------------------------------------
@@ -367,6 +455,7 @@ void ofApp::exit() {
 void ofApp::serverAnnounced(ofxSyphonServerDirectoryEventArgs &arg)
 {
     for( auto& dir : arg.servers ){
+        
         ofLogNotice("ofxSyphonServerDirectory Server Announced")<<" Server Name: "<<dir.serverName <<" | App Name: "<<dir.appName;
         
         if(configJson["auto-link-syphon"] && dir.serverName != "MM-OF-Layer") {
@@ -379,8 +468,6 @@ void ofApp::serverAnnounced(ofxSyphonServerDirectoryEventArgs &arg)
         
         if(dir.serverName != "MM-OF-Layer")
             addMessage("Server Name: " + dir.serverName + " | App Name: " + dir.appName);
-        
-        
         
     }
 }

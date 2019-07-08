@@ -20,7 +20,7 @@ public:
     void update();
     void draw();
     
-    void addParticles(int nParticles);
+    void addParticles(int nParticles, float minSize, float maxSize, float minDamp, float maxDamp);
     void startRepulsion(float scale);
     
     int  mode;
@@ -28,7 +28,10 @@ public:
     
 private:
     
+    float scale;
+    
     vector<SimpleParticle*> particles;
+    int particlesCreated;
     
     float scl;
     float radius;
@@ -37,8 +40,6 @@ private:
     
     ofxCvColorImage         colorImg;
     ofxCvGrayscaleImage     grayImage;
-    ofxCvGrayscaleImage     grayBg;
-    ofxCvGrayscaleImage     grayDiff;
     ofxCvContourFinder      contourFinder;
     
     int                 threshold;
@@ -51,6 +52,7 @@ private:
     float               fadeInOutPct;
     
     int                 lastMode;
+    
     
 };
 

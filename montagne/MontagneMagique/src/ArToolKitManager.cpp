@@ -103,15 +103,15 @@ void ArToolKitManager::loadTrackers() {
 void ArToolKitManager::update(ofBaseHasPixels & input){
     
     for(int i=0; i<trackers.size(); i++) {
-        trackers[i]->update(input);
-        trackers[i]->updateTimes();
+        
+        if(trackers[i]->bIsActive) {
+            
+            trackers[i]->update(input);
+            trackers[i]->updateTimes();
+                        
+        }
 
     }
-    
-    
-    
-   
-
     
 }
 
@@ -125,42 +125,19 @@ void ArToolKitManager::debugDraw() {
             
             trackers[i]->beginAR();
             
-            //trackers[i]->drawParticles();
-            /*
-            glm::vec3 scale;
-            glm::quat rotation;
-            glm::vec3 translation;
-            glm::vec3 skew;
-            glm::vec4 perspective;
-            glm::decompose(ofGetCurrentMatrix(OF_MATRIX_MODELVIEW), scale, rotation, translation, skew, perspective);
-            
-            ofPoint origin;
-            origin.x =  ofGetWidth() - (ofGetWidth()*.5 -  translation.x);
-            origin.y =  ofGetHeight() *.5 - translation.y;
-            originPnts.push_back(origin);
-             */
-             
             
             if( i < images.size() && images[i].isAllocated() ) {
                 
-
-                ofSetColor(0, 190);
-                ofDrawRectangle(0.0, 0.0, trackers[i]->width, trackers[i]->height);
+                ofPushMatrix();
+                ofScale(1, -1.0);
+                ofTranslate(0.0, -trackers[i]->height);
+                ofSetColor(255, 125);
+                trackers[i]->image->draw(0.0, 0.0, trackers[i]->width, trackers[i]->height);
                 ofSetColor(255, 255);
-                
-                //images[i].draw(0.0, 0.0,  trackers[i]->width, trackers[i]->height );
-                
-                
+                ofPopMatrix();
 
             }
-        
-           
-            //ofDrawLine(-1000, 0, 1000, 0);
-            //ofDrawLine(0, -1000, 0, 1000);
-            
-            
-            
-            
+    
             trackers[i]->endAR();
         }
         
@@ -189,19 +166,26 @@ void ArToolKitManager::clean() {
 
 void ArToolKitManager::onSolidFoundEvent(string & markerid) {
     
-    cout<<"New Marker lost!"<<endl;
 
     ofApp* app = (ofApp*) ofGetAppPtr();
-    app->oscManager.sendMessage("/AR/found", markerid);
+    app->oscManager.sendMessage("/marker/"+markerid, 1);
+    app->addMessage("Marker found : " + markerid );
     
+    int sceneIndex = app->app.arSceneManager.getSceneIndexForMarkerID(markerid);
+    app->app.arSceneManager.scenes[sceneIndex]->onMarkerTracked();
+
+   
+
 }
 
 void ArToolKitManager::onSolidLostEvent(string & markerid) {
     
-    cout<<"New Marker found!"<<endl;
-
     ofApp* app = (ofApp*) ofGetAppPtr();    
-    app->oscManager.sendMessage("/AR/lost", markerid);
+    app->oscManager.sendMessage("/marker/" + markerid, 0);
+    app->addMessage("Marker lost : " + markerid );
+    
+    int sceneIndex = app->app.arSceneManager.getSceneIndexForMarkerID(markerid);
+    app->app.arSceneManager.scenes[sceneIndex]->onMarkerLost();
     
 }
 

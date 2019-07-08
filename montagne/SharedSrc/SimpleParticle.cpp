@@ -9,6 +9,9 @@
 
 //------------------------------------------------------------
 SimpleParticle::SimpleParticle(){
+    
+    nOfTrails           = 50;
+    
     setInitialCondition(0,0,0,0);
     damping             = 0.01f;
     scale               = 1.0f;
@@ -158,6 +161,18 @@ void SimpleParticle::update(){
     
     vel += frc;
     pos += vel;
+    
+    if(nOfTrails > 0 ) {
+        
+       
+        
+        storedPositions.insert(storedPositions.begin(), pos);
+        
+        if(storedPositions.size() > nOfTrails )
+            storedPositions.erase( storedPositions.begin() + storedPositions.size() - 1 );
+        
+
+    }
     
 }
 

@@ -10,6 +10,7 @@
 
 #include "ofMain.h"
 #include "ofxARTNftTracker.h"
+#include "SimpleKalmanFilter.hpp"
 
 using namespace ofxArtool5;
 
@@ -21,9 +22,11 @@ public:
     
     void updateTimes();
     
-    
     void beginAR();
+    void beginHardAR();
     void endAR();
+    
+    void updateBlank(); // this used for shutting marker detection
     
     bool hasBeenTracked();
     string markerid;
@@ -37,11 +40,11 @@ public:
     int timeSolidFoundElapsed, timeSolidLostElapsed;
 
     bool bIsFound, bIsSolidFound;
-    float blurRate;
     
     ofEvent<string> solidFoundEvent;
     ofEvent<string> solidLostEvent;
     
+    bool bIsActive, bIsAlwaysActive;
 
     
 private:
@@ -52,6 +55,8 @@ private:
     int timeFoundDelay, timeLostDelay;
     int timeFound, timeLost;
     int timeSolidFound, timeSolidLost;
+    
+    vector<SimpleKalmanFilter> filters;
 
 };
 

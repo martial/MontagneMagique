@@ -1,2 +1,0 @@
-ofxArtool5
-ofxOpenCv

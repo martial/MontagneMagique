@@ -14,6 +14,8 @@ void BirdsScene::setup(string dataPath) {
     pitchMillis     = 0.0;
     bIsSinging      = false;
     
+    targetPitchPct  = 0.0;
+    
     startColor      = ofColor(157,88, 88);
     endColor        = ofColor(193, 121, 27);
     
@@ -24,6 +26,8 @@ void BirdsScene::setup(string dataPath) {
     colors.push_back(ofColor(193,117,20));
     colors.push_back(ofColor(157,88,88));
     colors.push_back(ofColor(49,112,103));
+    
+    currentParticle = NULL;
 
   
     
@@ -31,6 +35,10 @@ void BirdsScene::setup(string dataPath) {
 
 void BirdsScene::update() {
     
+    hasConfigChanged();
+    
+    //float noise = cos((float)ofGetElapsedTimeMillis() / 1000.0f);
+    //setPitchPct(noise);
     
 }
 
@@ -56,20 +64,8 @@ void BirdsScene::draw() {
     }
 
     
-    ofPushMatrix();
-    ofScale(1, -1.0);
-    ofTranslate(0.0, -marker->height);
-  //  ofSetColor(255, 50);
-   // ofDrawRectangle(0.0, 0.0, marker->width, marker->height);
-    
-     if(bDebugMarker) {
-        
-         ofSetColor(255, 125);
-         marker->image->draw(0.0, 0.0, marker->width, marker->height);
-         ofSetColor(255, 255);
+    beginFlip();
 
-    }
-    
     // if value is above zero we actually have sound
     if(!bIsSinging && targetPitchPct > 0.0) {
         
@@ -88,7 +84,7 @@ void BirdsScene::draw() {
         pitchTime = ofGetElapsedTimeMillis();
     
     // if we are singing but we don't receive anything..
-    if (bIsSinging && targetPitchPct == 0.0) {
+    if (bIsSinging && targetPitchPct <= 0.0) {
     
         float timeDiff = ofGetElapsedTimeMillis() - pitchTime;
 
@@ -97,9 +93,6 @@ void BirdsScene::draw() {
             onPitchEnd();
         }
     }
-    
-    
-    
     
     // smooth pct values
     float blurRate      = 0.9;
@@ -111,7 +104,7 @@ void BirdsScene::draw() {
     for (int i=0; i<particles.size(); i++) {
         
         particles[i]->resetForce();
-        ofVec2f frc (ofRandom(-0.01, -0.02), ofRandom(-0.001, -0.001));
+        ofVec2f frc (ofRandom(-0.01, -0.02), ofRandom(-0.001, -0.005));
         frc *= .3;
         particles[i]->addForce(frc.x, frc.y);
         particles[i]->update();
@@ -121,17 +114,12 @@ void BirdsScene::draw() {
     // draw shadows of moving particles
     for (int i=0; i<particles.size(); i++) {
         
-       
         ofSetColor(0, 40);
         
         ofFill();
-        ofPushMatrix();
-        ofTranslate(0.0,0.0,0.0);
         // draw shadow
         ofVec2f pos = particles[i]->pos + particles[i]->depthVel;
         drawCircle(pos, particles[i]->scale * scale, ofColor(0,40));
-        
-        ofPopMatrix();
         
     }
     
@@ -139,11 +127,7 @@ void BirdsScene::draw() {
     for (int i=0; i<particles.size(); i++) {
         
         ofFill();
-        ofPushMatrix();
-        ofTranslate(0.0,0.0,0.0);
         drawCircle(particles[i]->pos, particles[i]->scale * scale, particles[i]->color);
-        ofPopMatrix();
-        //ofLogNotice(" particles[i]->depth: ") <<  particles[i]->depth;
     }
     
     // if we are singing, let's grow the particle
@@ -154,14 +138,14 @@ void BirdsScene::draw() {
             radiusVelFactor -= 0.45;
             radiusVelFactor = ofClamp(radiusVelFactor, 1.0, 99);
             
-            float vel = ofMap(this->targetPitchPct, 0.0, 1.0, -0.008, 0.002);
+            float vel = ofMap(this->targetPitchPct, 0.0, 1.0, -0.08, 0.02);
             currentRadius += vel * radiusVelFactor;
             currentParticle->scale = currentRadius ;
             
             ofColor c = startColor;
             c =  c.lerp(endColor, this->targetPitchPct);
+            c.a = 210;
             
-            //c.a = 125;
             currentParticle->color = c;
             
         }
@@ -170,8 +154,6 @@ void BirdsScene::draw() {
         currentParticle->update();
         
         ofFill();
-        ofPushMatrix();
-        ofTranslate(0.0,0.0,0.0);
         
         // draw shadow
         ofVec2f pos = currentParticle->pos + currentParticle->depthVel;
@@ -180,29 +162,55 @@ void BirdsScene::draw() {
         // draw bubble
         drawCircle(currentParticle->pos, currentParticle->scale * scale, currentParticle->color);
 
-        ofPopMatrix();
-        
-        
+
     }
     
-   
-
-    ofPopMatrix();
-    
-    
-    
+    endFlip();
     
 }
 
 void BirdsScene::drawCircle(ofVec2f pos, float radius, ofColor col) {
     
+    
     ofSetColor(col);
+   // ofDrawEllipse(pos.x + radius * .5, pos.y + radius * .5, radius, radius);
+    
+    
+    drawCircleNoise(pos, radius, col);
+    
+}
+
+
+
+void BirdsScene::drawCircleNoise(ofVec2f pos, float radius, ofColor col) {
+    
+    int len = 15;
+
+    
     ofPushMatrix();
     ofTranslate(pos.x, pos.y);
-    ofDrawEllipse(radius * .5, radius * .5, radius, radius);
+    
+    vector<glm::vec2> out_vertices;
+    vector<glm::vec2> in_vertices;
+    for (int deg = 0; deg < 360; deg += 8) {
+        
+        auto noise_point = glm::vec2(pos.x + radius * cos(deg * DEG_TO_RAD), pos.y + radius * sin(deg * DEG_TO_RAD));
+        float noise_len = ofMap(ofNoise(noise_point.x * 0.01, noise_point.y * 0.01, ofGetFrameNum() * 0.05), 0, 1, 5, len);
+        
+        float r = radius + noise_len;
+        out_vertices.push_back(glm::vec2(r * cos(deg * DEG_TO_RAD), r * sin(deg * DEG_TO_RAD)));
+        
+        
+    }
+    
+    ofBeginShape();
+    ofVertices(out_vertices);
+    ofEndShape(true);
+    
     ofPopMatrix();
     
 }
+
 
 
 void BirdsScene::setPitchPct(float pct) {
@@ -233,11 +241,14 @@ void BirdsScene::onPitchStart() {
     currentParticle->scale        = .2;
     currentParticle->damping      = 0.9;
     currentParticle->life        = 0.0;
-    currentParticle->depthVel      = ofRandom(1, 2);
+    currentParticle->depthVel      = ofRandom(10, 20);
     currentRadius                 = 0.0;
     
     radiusVel                   = ofRandom(0.001, 0.003);
     radiusVelFactor             = 10.0;
+    
+    ofLogNotice("onPitch start");
+
 }
 
 void BirdsScene::onPitchEnd() {

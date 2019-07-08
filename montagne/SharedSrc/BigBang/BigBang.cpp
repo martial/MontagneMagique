@@ -13,17 +13,13 @@ void BigBang::setup(string dataPath) {
     radius          = 10.0;
     threshold       = 80;
     repulsionScale  = 0.0;
-    maxParticleLife = 900;
-    
-    mode            = 0;
-    
-    lineDistance    = 200;
-    blobDistance    = 350;
-    
-    forceRandomNessScale = 1.0;
-    
-    fadeInOutPct    = 0.1;
-    
+    maxParticleLife         = 900;
+    mode                    = 0;
+    lineDistance            = 200;
+    blobDistance            = 200;
+    forceRandomNessScale    = 1.0;
+    fadeInOutPct            = 0.1;
+    particlesCreated        = 0;
 }
 
 
@@ -32,27 +28,38 @@ void BigBang::update() {
     //addParticles(1);
     
     ofApp * app = (ofApp*) ofGetAppPtr();
-
+    
+    //scale = 640 / (float)app->videoInputWidth;
+    scale = 2;
+    
     // we allocate openCV images if needed
     if(!colorImg.bAllocated) {
     
         colorImg.allocate(app->videoInputWidth,app->videoInputHeight);
         grayImage.allocate(app->videoInputWidth,app->videoInputHeight);
-        grayBg.allocate(app->videoInputWidth,app->videoInputHeight);
-        grayDiff.allocate(app->videoInputWidth,app->videoInputHeight);
         
     }
     
     // we do the countour finding
-    colorImg.setFromPixels(app->trackedVideoInput->getPixels());
+    colorImg.setFromPixels(app->resizedInputImg.getPixels());
+    
     grayImage = colorImg;
     grayImage.threshold(100);
     
     if(mode != 2)
-        contourFinder.findContours(grayImage, 20, (app->videoInputWidth*app->videoInputHeight), 10, false);    // find holes
+        contourFinder.findContours(grayImage, 20, (app->videoInputWidth * app->videoInputHeight), 10, false);    // find holes
     else {
-        contourFinder.findContours(grayImage, 10, ofGetMouseX(), 10, false);    // find holes
+        contourFinder.findContours(grayImage, 10,(app->videoInputWidth * app->videoInputHeight), 10, false);    // find holes
 
+    }
+    
+    for (int j = 0; j < contourFinder.nBlobs; j++){
+        
+        
+        contourFinder.blobs[j].area *= scale;
+        contourFinder.blobs[j].centroid *= scale;
+
+                                            
     }
     
    
@@ -98,20 +105,20 @@ void BigBang::update() {
         repulsionScale = ofClamp(repulsionScale, 0.0, 10.0);
         
         if(ofGetFrameNum() % 8 == 0)
-            addParticles(2);
+            addParticles(2, app->bigBangScaleMin, app->bigBangScaleMax, app->bigBangDampingMin, app->bigBangDampingMax);
         
     }
     
     if(mode == 2) {
         
         glLineWidth(2);
-        lineDistance = 280;
+        lineDistance = 200;
         fadeInOutPct = 0.05;
         maxParticleLife = 5000;
         forceRandomNessScale = 0.01;
         repulsionScale = 0.0;
         if(ofGetFrameNum() % 24 == 0 && particles.size() < 10)
-            addParticles(1);
+            addParticles(1, app->bigBangScaleMin, app->bigBangScaleMax, app->bigBangDampingMin, app->bigBangDampingMax);
         
         if(mode != lastMode) {
             
@@ -155,13 +162,13 @@ void BigBang::draw() {
     
      ofApp * app = (ofApp*) ofGetAppPtr();
     
-    
-    
     for(int i = 0; i < particles.size(); i ++) {
         
         // reset forces
         particles[i]->resetForce();
         
+        forceRandomNessScale = 0.1;
+        forceRandomNessScale = 0.1;
         // add some randomness force
         float xFrc = ofRandom(-1.5 * forceRandomNessScale, 1.5 * forceRandomNessScale);
         float yFrc = ofRandom(-1.5 * forceRandomNessScale, 1.5 * forceRandomNessScale);
@@ -173,9 +180,12 @@ void BigBang::draw() {
             for (int j = 0; j < contourFinder.nBlobs; j++){
                 
                 if(repulsionScale > 0.0) {
-                    particles[i]->addRepulsionForce(contourFinder.blobs[j].boundingRect.getCenter(), ofGetWidth() * 5, repulsionScale);
+                    particles[i]->addRepulsionForce(contourFinder.blobs[j].centroid, 1920 * 5, repulsionScale);
                 }
-                particles[i]->addAttractionForce(contourFinder.blobs[j].boundingRect.getCenter(),ofGetWidth() * 5, 0.8);
+                
+                particles[i]->addRepulsionForce(contourFinder.blobs[j].centroid, 1920 * 5, 0.3);
+                particles[i]->addAttractionForce(contourFinder.blobs[j].centroid,1920 * 5, 0.8);
+               
                
             }
         }
@@ -183,8 +193,6 @@ void BigBang::draw() {
         // add damping
         particles[i]->addDampingForce(app->bigBangScaleDampingScale);
         particles[i]->update();
-        
-        
         
         // add ease in / out transition
         
@@ -210,7 +218,7 @@ void BigBang::draw() {
         // draw
         ofSetColor(255, 255 * alpha);
         ofDrawEllipse(particles[i]->pos.x,particles[i]->pos.y, particles[i]->scale * particles[i]->scale, particles[i]->scale * particles[i]->scale);
-        
+
         // we draw lines in mode 1
         
         if( mode == 1 ) {
@@ -218,24 +226,26 @@ void BigBang::draw() {
             // if there is no blob, we don't have any reason to draw lines
             if(contourFinder.nBlobs > 0 ) {
                 
-                float minDistFromBlobs = particles[i]->pos.distance(contourFinder.blobs[0].boundingRect.getCenter());
+                float minDistFromBlobs = particles[i]->pos.distance(contourFinder.blobs[0].centroid);
                 for (int j = 1; j < contourFinder.nBlobs; j++){
-                    minDistFromBlobs = MIN( minDistFromBlobs,particles[i]->pos.distance(contourFinder.blobs[j].boundingRect.getCenter()) );
+                    minDistFromBlobs = MIN( minDistFromBlobs,particles[i]->pos.distance(contourFinder.blobs[j].centroid) );
                     
                 }
             
                 // we draw lines only if we have a minimum distance away from a blob
                 if( minDistFromBlobs > blobDistance) {
                 
-                     for(int j = 0; j < particles.size(); j ++) {
+                     for(int j = 0; j < particles.size(); j++) {
                          
-                         if ( i != j  ) {
+                         // not same and not everyone
+                         
+                         if ( i != j && particles[j]->id % 12 == 0) {
                            
                              float dist = particles[i]->pos.distance(particles[j]->pos);
                              if ( dist < lineDistance) {
                                  
-                                 alpha = ofMap(dist, 0, lineDistance, 255, 0);
-                                 ofSetColor(255,  alpha);
+                                 float a = ofClamp(ofMap(dist, 0, lineDistance, 255, 0), 0, 255);
+                                 ofSetColor(255, a);
                                  ofDrawLine(particles[i]->pos, particles[j]->pos);
                              }
                              
@@ -263,13 +273,13 @@ void BigBang::draw() {
                 
                     if ( i != j  ) {
                         
-                        ofVec2f pos = ofVec2f (contourFinder.blobs[i].boundingRect.getCenter());
-                        float dist = pos.distance(contourFinder.blobs[j].boundingRect.getCenter());
+                        ofVec2f pos = ofVec2f (contourFinder.blobs[i].centroid);
+                        float dist = pos.distance(contourFinder.blobs[j].centroid);
                         if ( dist < lineDistance) {
                             
                             float alpha = ofMap(dist, 0, lineDistance, 255, 0);
                             ofSetColor(255,  alpha);
-                            ofDrawLine(pos, contourFinder.blobs[j].boundingRect.getCenter());
+                            ofDrawLine(pos, contourFinder.blobs[j].centroid);
                         }
                         
                     }
@@ -286,11 +296,23 @@ void BigBang::draw() {
         
        // contourFinder.draw();
     }
+    
+    
+    if( app->app.arSceneManager.bDebugMode ) {
+        
+        ofPushMatrix();
+        ofScale(scale, scale);
+        contourFinder.draw();
+        ofPopMatrix();
+        
+    }
+    
+    
 
 }
 
-void BigBang::addParticles(int nParticles) {
-    
+void BigBang::addParticles(int nParticles, float minSize, float maxSize, float minDamp, float maxDamp) {
+        
     ofApp * app = (ofApp*) ofGetAppPtr();
     
     vector<ofVec2f> positions;
@@ -298,22 +320,22 @@ void BigBang::addParticles(int nParticles) {
     // we get positions from the borders
     if(mode == 0 ) {
         
-            for(int i=0; i<ofGetWidth(); i++) {
+            for(int i=0; i<1920; i++) {
             
             ofVec2f pos(i, 0.0);
             positions.push_back(pos);
             
-            ofVec2f posy(i, ofGetHeight());
+            ofVec2f posy(i, 1080);
             positions.push_back(posy);
             
         }
         
-        for(int i=0; i<ofGetHeight(); i++) {
+        for(int i=0; i<1080; i++) {
             
             ofVec2f pos(0.0, i);
             positions.push_back(pos);
             
-            ofVec2f posy(ofGetWidth(), i);
+            ofVec2f posy(1920, i);
             positions.push_back(posy);
             
         }
@@ -324,7 +346,7 @@ void BigBang::addParticles(int nParticles) {
         
         
          for (int j = 0; j < contourFinder.nBlobs; j++){
-             positions.push_back(contourFinder.blobs[j].boundingRect.getCenter());
+             positions.push_back(contourFinder.blobs[j].centroid);
          }
         
         
@@ -333,7 +355,7 @@ void BigBang::addParticles(int nParticles) {
     else if ( mode == 2 ) {
         
         for (int j = 0; j < 100; j++){
-            positions.push_back(ofVec2f(ofRandom(ofGetWidth()),ofRandom(ofGetHeight())));
+            positions.push_back(ofVec2f(ofRandom(1920),ofRandom(1080)));
         }
         
     }
@@ -344,11 +366,13 @@ void BigBang::addParticles(int nParticles) {
         for(int i=0; i<nParticles; i++) {
             
             SimpleParticle  * p = new SimpleParticle();
+            p->id = particlesCreated;
+            particlesCreated ++;
             int rdm = floor(ofRandom(positions.size()));
             ofVec2f pos = positions[rdm];
             p->setInitialCondition(pos.x,pos.y,0.0,0.0);
-            p->scale        = ofRandom(app->bigBangScaleMin, app->bigBangScaleMax);
-            p->damping      = ofRandom(app->bigBangDampingMin, app->bigBangDampingMax);
+            p->scale        = ofRandom(minSize, maxSize);
+            p->damping      = ofRandom(minDamp, maxDamp);
             p->life         = 0.0;
             particles.push_back(p);
                 

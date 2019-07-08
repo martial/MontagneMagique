@@ -17,8 +17,12 @@ public:
     
     AbstractARScene(){
         
-        this->marker = NULL;
-        this->bDebugMarker = false;
+        this->marker        = NULL;
+        this->bDebugMarker  = false;
+        this->assetsDir     = "scenes/";
+        this->scaleFactor   = 12.0f;
+        this->bGenerateMask = false;
+        this->lockedScene   = "";
         
     };
     
@@ -26,19 +30,32 @@ public:
         
         this->name = name;
         this->markerID = "";
-        this->dataPath = "scenes/"+name;
+        this->dataPath = this->assetsDir + name;
         this->animInMillisDelay     = 2000;
         this->animOutMillisDelay    = 1000;
         
-        ofFile file;
+        loadConfigJson();
+        
+    }
+    
+    void loadConfigJson() {
+        
         file.open(this->dataPath + "/config.json");
         
         assert(file.exists());
         
-        if(file.exists())
-            file >> configJson;
+        file >> configJson;
         
-        this->markerID = configJson["marker-id"];
+        // reset time stamp 
+        timestamp                   = std::filesystem::last_write_time(file);
+        
+        lockedScene                 = configJson.value("scene-lock", "");
+        //marker->bIsAlwaysActive     = configJson.value("always-active", false);
+        animInMillisDelay           = configJson.value("animInMillisDelay", this->animInMillisDelay);
+        animOutMillisDelay          = configJson.value("animOutMillisDelay", this->animOutMillisDelay);
+        markerID                    = configJson["marker-id"].get<std::string>();
+        
+        
     }
     
     virtual float getInOuPct() {
@@ -54,16 +71,102 @@ public:
 
     }
     
+    virtual bool hasConfigChanged(){
+        
+        int currentTimeStamp = std::filesystem::last_write_time(file);
+        
+        if(currentTimeStamp != timestamp) {
+            loadConfigJson();
+            return true;
+            
+        }
+        
+        return false;
+        
+    };
+    
     virtual void update(){};
     virtual void draw(){};
     
     string markerID, name;
+    string assetsDir;
     std::shared_ptr<MagiqueMarker> marker;
     
     bool bDebugMarker;
+    
+    // if this string is not empty, it will discard scene if not in current ( see app.currentSceneName )
+    string lockedScene;
+    
+    bool bGenerateMask;
+    
+    void generateMaskFbo() {
+        
+
+        beginFlip();
+        ofSetRectMode(OF_RECTMODE_CENTER);
+        ofSetColor(255);
+        ofDrawRectangle(0.0,0.0, marker->image->getWidth(), marker->image->getHeight());
+        endFlip();
+        ofSetRectMode(OF_RECTMODE_CORNER);
+
+        
+    }
+    
+    virtual void onMarkerTracked(){};
+    virtual void onMarkerLost(){};
+
 
     
 protected:
+    
+    void beginFlip() {
+        
+        ofPushMatrix();
+        ofScale(1 / scaleFactor, -1.0 / scaleFactor);
+        
+        float x = marker->width * scaleFactor * .5;
+        float y = - marker->height * scaleFactor + marker->height * scaleFactor * .5;
+        
+    // weird offset issue
+        x += 4;
+        y -= 4;
+        
+        ofTranslate(x,y);
+
+        if(!configJson["translate"].is_null() && configJson["translate"].is_object()) {
+            ofTranslate(configJson["translate"]["x"],configJson["translate"]["y"]);
+        }
+        
+    }
+    
+    void endFlip() {
+        
+        if(bDebugMarker) {
+            
+            if(!configJson["translate"].is_null() && configJson["translate"].is_object()) {
+                float offsetx = configJson["translate"]["x"];
+                float offsety = configJson["translate"]["y"];
+                ofTranslate(-offsetx, -offsety);
+            }
+            
+            ofSetRectMode(OF_RECTMODE_CENTER);
+            ofSetColor(255, 125);
+            marker->image->draw(0.0,0.0);
+            ofSetColor(255, 255);
+            
+            ofPushMatrix();
+            ofSetColor(255, 0, 0);
+            ofDrawLine(-10, 0, 10, 0);
+            ofDrawLine(0, -10, 0, 10);
+            ofPopMatrix();
+            ofSetRectMode(OF_RECTMODE_CORNER);
+            
+        }
+        
+        ofPopMatrix();
+    }
+    
+ 
     
     // this is used for fade in / out
     int animInMillisDelay, animOutMillisDelay;
@@ -73,6 +176,13 @@ protected:
     ofJson configJson;
     virtual void onFoundMarker(){};
     virtual void onLostMarker(){};
+    
+    float scaleFactor;
+    int timestamp;
+    ofFile file;
+    
+
+
 
 };
 

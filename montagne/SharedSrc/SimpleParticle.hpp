@@ -59,6 +59,11 @@ public:
     
     float depth, depthVel;
     
+    vector<ofVec2f> storedPositions;
+    int nOfTrails;
+    
+    int id;
+    
 protected:
 private:
 };

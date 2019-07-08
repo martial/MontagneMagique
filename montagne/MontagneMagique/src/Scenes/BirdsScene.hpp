@@ -27,6 +27,7 @@ public:
 private:
     
     void drawCircle(ofVec2f pos, float radius, ofColor col);
+    void drawCircleNoise(ofVec2f pos, float radius, ofColor col);
     
     ofImage backgroundImage;
     

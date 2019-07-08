@@ -28,18 +28,15 @@ void BeesDepthScene::setup(string dataPath) {
 
 void BeesDepthScene::update() {
     
-    this->marker->blurRate = 0.95;
+    hasConfigChanged();
     
     float pct = getInOuPct();
     
-    //ofLogNotice("update") << pct;
-    
     if(pct > 0 && this->marker->getIsSolidFound()) {
+                
+        float minScale = 0.2;
+        float maxScale = 1;
         
-        ofLogNotice("update") << pct;
-        
-        float minScale = 0.02;
-        float maxScale = 0.2;
         if(bees.size() == 0) {
             
             for(int i=0; i<6; i++) {
@@ -75,7 +72,6 @@ void BeesDepthScene::update() {
             bees[rdmIndex].setPosition(pos);
             bees[rdmIndex].setScale(ofRandom(minScale, maxScale));
           
-            
             // send osc ?
             ofApp * app = (ofApp*) ofGetAppPtr();
             app->oscManager.sendMessage("/AR/bees/move", "move");
@@ -100,22 +96,14 @@ void BeesDepthScene::draw() {
     
     float pct = getInOuPct();
     
+    if(pct <= 0 || !this->marker->getIsSolidFound())
+        return;
+        
     if(pct > 0 && this->marker->getIsSolidFound()) {
+        
+        beginFlip();
 
-        ofSetColor(255, pct * 255);
-        ofPushMatrix();
-        ofScale(1, -1.0);
-        ofTranslate(0.0, -marker->height);
-        ofSetColor(255, 40);
-
-        if(bDebugMarker) {
-            
-            ofSetColor(255, 125);
-            marker->image->draw(0.0, 0.0, marker->width, marker->height);
-            ofSetColor(255, 255);
-            
-        }
-
+        ofSetColor(255, 255);
         
         float rotationRange = 1;
         for(int i=0; i<bees.size(); i++) {
@@ -126,7 +114,6 @@ void BeesDepthScene::draw() {
             bees[i].rotationX = -rotationRange + pct * rotationRange * 2;
             pct = 0.5 + cos(ofGetElapsedTimef() + i + 200) * 0.5;
             bees[i].rotationY = -rotationRange + pct * rotationRange * 2;
-            
             bees[i].drawShadow(beeShadow);
             
         }
@@ -137,8 +124,7 @@ void BeesDepthScene::draw() {
             
         }
         
-      ofPopMatrix();
-      
+        endFlip();
         
     }
     

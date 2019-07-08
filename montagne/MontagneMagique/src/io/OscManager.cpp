@@ -19,67 +19,155 @@ void OscManager::setup(int receiverPort, int senderPort, string senderIp) {
 
 void OscManager::update() {
     
+    ofApp * app = (ofApp*) ofGetAppPtr();
+
+    
     while(receiver.hasWaitingMessages()){
         
         // get the next message
         ofxOscMessage m;
         receiver.getNextMessage(m);
         
+        string adress           = m.getAddress();
+        vector<string> splitted = ofSplitString(adress, "/", true);
+        string first            = splitted[0];
 
-        
-        if(m.getAddress() == "/em/lmm/accueilpublic") {
+        // for video player
+        if(first == "video") {
             
-            this->montagneApp->mode = SCENE_MODE;
+             if(splitted.size() == 2) {
+                 
+                 if(splitted[1] == "stop") {
+                     
+                     this->montagneApp->setPastMode();
+                     
+                 } else {
+                 
+                    this->montagneApp->setMode(HAP_MODE);
+                    app->app.hapPlayer.setVideo(splitted[1]);
+                     
+                 }
+                 
+             } else if(splitted.size() == 3) {
+                 
+                 if(splitted[2] == "loop") {
+                     
+                     this->montagneApp->setMode(HAP_MODE);
+                     app->app.hapPlayer.setVideo(splitted[1], true);
+                     
+                 }
+                
+                 
+             }
+        }
+        
+        
+        // for scene
+        if(first == "scene") {
+            
+            
+            if(splitted.size() > 1) {
+                
+                app->app.currentSceneName = splitted[1];
+                
+                 if(splitted.size() > 2) {
+                     
+                     app->app.currentSubSceneName = splitted[2];
+
+                 } else {
+                     
+                     app->app.currentSubSceneName = "";
+                 }
+                
+            } else {
+                
+                app->app.currentSceneName       = "";
+                app->app.currentSubSceneName    = "";
+                
+            }
+            
+            // we check for scene-locks here
+            this->sceneManager->activateMarkersFromScene();
+            
+        }
+        
+        if(m.getAddress() == "/event/stoploops") {
+            
+            this->sceneManager->setGenericSceneLoopMode(OF_LOOP_NONE);
+            
+        }
+        
+         if(m.getAddress() == "/scene/blackout") {
+             
+         }
+        
+       
+        if(m.getAddress() == "/scene/cosmogonie/accueilpublic") {
+            
+            this->montagneApp->setMode(SCENE_MODE);
             BigBangScene * bigBangScene = (BigBangScene*) this->sceneManager->getSceneIndexForPath("bigbang");
             bigBangScene->bigBang.mode = 0;
             
         }
         
-        if(m.getAddress() == "/em/lmm/introkalimba") {
+        if(m.getAddress() == "/scene/cosmogonie/introkalimba") {
             
-            this->montagneApp->mode = SCENE_MODE;
+            this->montagneApp->setMode(SCENE_MODE);
             BigBangScene * bigBangScene = (BigBangScene*) this->sceneManager->getSceneIndexForPath("bigbang");
             bigBangScene->bigBang.mode = 1;
         }
         
-        if(m.getAddress() == "/em/lmm/melodie") {
+        if(m.getAddress() == "/scene/cosmogonie/melodiekalimba") {
             
-            this->montagneApp->mode = SCENE_MODE;
+            this->montagneApp->setMode(SCENE_MODE);
             BigBangScene * bigBangScene = (BigBangScene*) this->sceneManager->getSceneIndexForPath("bigbang");
             bigBangScene->bigBang.mode = 2;
         }
         
-        if(m.getAddress() == "/em/lmm/finetoile") {
+        if(m.getAddress() == "/scene/printemps/nuit") {
             
-            this->montagneApp->mode = SCENE_MODE;
+            this->montagneApp->setMode(SCENE_MODE);
             BigBangScene * bigBangScene = (BigBangScene*) this->sceneManager->getSceneIndexForPath("bigbang");
             bigBangScene->bigBang.mode = 3;
-        }
-        
-        if(m.getAddress() == "/em/lmm/oiseau") {
-            
-            ofSetCircleResolution(256);
-            this->montagneApp->mode = TRACKING_MODE;
             
         }
         
-        if(m.getAddress() == "/me/cosmogonie/bigbang") {
+        if(m.getAddress() == "/scene/printemps/soleil") {
+            
+            this->montagneApp->setMode(TRACKING_MODE);
+            
+        }
+        
+        if(m.getAddress() == "/scene/printemps/ours") {
+            
+            this->montagneApp->setMode(TRACKING_MODE);
+
+        }
+        
+        if(m.getAddress() == "/scene/printemps/finabeilles") {
+            
+            this->montagneApp->setMode(TRACKING_MODE);
+
+        }
+        
+
+        if(m.getAddress() == "/event/cosmogonie/particules") {
             
             BigBangScene * bigBangScene = (BigBangScene*) this->sceneManager->getSceneIndexForPath("bigbang");
             
-            /*
-            float repulsion = ofMap(m.getArgAsInt(0), 1, 8, 2, 4);
-            bigBangScene->bigBang.startRepulsion(repulsion);
-            bigBangScene = NULL;
-             */
+            int nParticles      = m.getArgAsInt(0);
+            float minSize       = m.getArgAsFloat(1);
+            float maxSize       = m.getArgAsFloat(2);
+            float minFriction   = m.getArgAsFloat(3);
+            float maxFriction   = m.getArgAsFloat(4);
             
-            bigBangScene->bigBang.addParticles(m.getArgAsInt(0) * 2);
-            float repulsion = ofMap(m.getArgAsInt(0), 1, 8, 2, 3);
-            bigBangScene->bigBang.startRepulsion(repulsion);
+            bigBangScene->bigBang.addParticles(m.getArgAsInt(0), minSize, maxSize, minFriction, maxFriction);
+
             
         }
+       
         
-        if(m.getAddress() == "/me/cosmogonie/kalimba") {
+        if(m.getAddress() == "/event/cosmogonie/kalimba") {
             
             BigBangScene * bigBangScene = (BigBangScene*) this->sceneManager->getSceneIndexForPath("bigbang");
             bigBangScene->bigBang.startRepulsion( m.getArgAsFloat(0));
@@ -88,9 +176,9 @@ void OscManager::update() {
         
         
         
-        if(m.getAddress() == "/me/printemps/oiseau/pitch") {
+        if(m.getAddress() == "/event/printemps/oiseau/pitch") {
             
-            BirdsScene * birds = (BirdsScene*) this->sceneManager->getSceneIndexForPath("birds");
+            BirdsScene * birds = (BirdsScene*) this->sceneManager->getSceneIndexForPath("OISEAU_BULLES");
             birds->setPitchPct(ofNormalize(m.getArgAsFloat(0), 0, 0.6));
            // ofLogNotice("Pïtch: ") << m.getArgAsFloat(0);
             
@@ -100,14 +188,21 @@ void OscManager::update() {
         }
         
 
-        ofApp* app = (ofApp*) ofGetAppPtr();
         app->addMessage( m.getAddress());
         
         
                 
     }
     
+    app = NULL;
+    
 }
+
+void OscManager::setSceneEvent(ofxOscMessage & m) {
+    
+    
+}
+
 
 void OscManager::keyPressed(int key) {
     
@@ -115,7 +210,15 @@ void OscManager::keyPressed(int key) {
         
         
         BigBangScene * bigBangScene = (BigBangScene*) this->sceneManager->getSceneIndexForPath("bigbang");
-        bigBangScene->bigBang.addParticles(4 * 2);
+        bigBangScene->bigBang.addParticles(1, 2, 6, 0.1, 0.2);
+        //bigBangScene->bigBang.startRepulsion(2);
+        
+    }
+    
+    if(key == 'r') {
+        
+        
+        BigBangScene * bigBangScene = (BigBangScene*) this->sceneManager->getSceneIndexForPath("bigbang");
         bigBangScene->bigBang.startRepulsion(2);
         
     }
@@ -154,7 +257,13 @@ void OscManager::sendMessage(string adress, string label) {
     
 }
 
-void OscManager::draw() {
+void OscManager::sendMessage(string adress, int value) {
     
+    ofxOscMessage m;
+    m.setAddress(adress);
+    m.addIntArg(value);
+    sender.sendMessage(m, false);
     
 }
+
+

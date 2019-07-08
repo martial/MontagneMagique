@@ -21,7 +21,6 @@ public:
     
 private:
     
-
     vector<ofImage>     images;
     vector<ofImage*>    imageRef;
     vector<ofxAnimatableFloat> radiuses;

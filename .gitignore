@@ -24,6 +24,13 @@
 /montagne/MontagneMagique/bin/data/old/*
 /montagne/MontagneMagique/bin/data/videos/*
 /montagne/MontagneMagique/bin/data/markers/*
+/montagne/MontagneMagique/bin/data/autoscenes/*
+/montagne/MontagneMagique/bin/data/autoscenes/template/PRINTEMPS_OURS_ZZZ_HAP.mov
+/montagne/Sampler/obj/*
+
+
+*.mov
+*.hap
 
 # don't ignore the .gitignore file
 !.gitignore

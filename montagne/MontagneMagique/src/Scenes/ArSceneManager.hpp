@@ -17,6 +17,7 @@ class ArSceneManager {
     
 public:
     
+    void loadAutoScenes();
     void setup(vector<std::shared_ptr<MagiqueMarker>> & trackers);
     void update();
     void drawScene(int sceneIndex);
@@ -24,14 +25,21 @@ public:
     
     void setDebugMode(bool debugMode);
     
+    void setGenericSceneLoopMode(ofLoopType loopState);
+    
+    void activateAllMarkers();
+    void activateMarkersFromScene();
+    
+    AbstractARScene * getSceneIndexForIndex(int index, MagiqueMarker & marker);
     AbstractARScene * getSceneIndexForPath(string path);
+    int getSceneIndexForMarkerID(string markerID);
+    vector<AbstractARScene*> scenes;
+
     
     bool bDebugMode;
 
 private:
     
-    vector<AbstractARScene*> scenes;
-    int getSceneIndexForMarkerID(string markerID);
 
 };
 

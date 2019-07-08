@@ -1,0 +1,7 @@
+ofxAnimatable
+ofxBlackmagic
+ofxGui
+ofxOpenCv
+ofxOsc
+ofxPSBlend
+ofxSyphon
