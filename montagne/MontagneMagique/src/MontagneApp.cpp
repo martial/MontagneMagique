@@ -118,8 +118,11 @@ void MontagneApp::drawScene(bool bDraw) {
      */
     
     fboLayer.begin();
-    ofEnableAlphaBlending();
-    ofClear(0, 0, 0, 0);
+    //ofEnableAlphaBlending();
+    //glBlendFuncSeparate(GL_ONE, GL_SRC_COLOR, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
+    ofClear(0, 0);
     
     if(mode == HAP_MODE) {
         
@@ -149,14 +152,18 @@ void MontagneApp::drawScene(bool bDraw) {
         }
     }
     
-    ofDisableAlphaBlending();
+    //ofDisableAlphaBlending();
     fboLayer.end();
     
     ofRectangle rect = ofxImgSizeUtils::getCenteredRect(ofGetWidth(), ofGetHeight(), videoOutputWidth, videoOutputHeight, false);
     
     ofSetColor(255,255);
     glEnable(GL_BLEND);
+
     glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
+   // glEnable(GL_BLEND);
+    //glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     
     if(bDraw) {
         

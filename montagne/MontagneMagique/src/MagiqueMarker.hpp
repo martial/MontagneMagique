@@ -46,13 +46,13 @@ public:
     
     bool bIsActive, bIsAlwaysActive;
 
-    
+    int timeFoundDelay, timeLostDelay;
+
 private:
     
     ARdouble currentPose[16] ;
     bool bTracked;
 
-    int timeFoundDelay, timeLostDelay;
     int timeFound, timeLost;
     int timeSolidFound, timeSolidLost;
     

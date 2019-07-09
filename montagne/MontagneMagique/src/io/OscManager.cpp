@@ -126,9 +126,8 @@ void OscManager::update() {
         
         if(m.getAddress() == "/scene/printemps/nuit") {
             
-            this->montagneApp->setMode(SCENE_MODE);
-            BigBangScene * bigBangScene = (BigBangScene*) this->sceneManager->getSceneIndexForPath("bigbang");
-            bigBangScene->bigBang.mode = 3;
+            this->montagneApp->setMode(TRACKING_MODE);
+
             
         }
         
@@ -203,11 +202,9 @@ void OscManager::setSceneEvent(ofxOscMessage & m) {
     
 }
 
-
 void OscManager::keyPressed(int key) {
     
     if(key == 'a') {
-        
         
         BigBangScene * bigBangScene = (BigBangScene*) this->sceneManager->getSceneIndexForPath("bigbang");
         bigBangScene->bigBang.addParticles(1, 2, 6, 0.1, 0.2);
@@ -216,7 +213,6 @@ void OscManager::keyPressed(int key) {
     }
     
     if(key == 'r') {
-        
         
         BigBangScene * bigBangScene = (BigBangScene*) this->sceneManager->getSceneIndexForPath("bigbang");
         bigBangScene->bigBang.startRepulsion(2);
@@ -233,7 +229,6 @@ void OscManager::keyPressed(int key) {
     }
     
 }
-
 
 void OscManager::setSceneManager(ArSceneManager * manager) {
     

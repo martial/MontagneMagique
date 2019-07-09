@@ -19,17 +19,12 @@ void BirdsScene::setup(string dataPath) {
     startColor      = ofColor(157,88, 88);
     endColor        = ofColor(193, 121, 27);
     
-   // backgroundImage.load(this->dataPath + "/oiseau.jpg");
-   // backgroundImage.resize(ofGetWidth(), ofGetHeight());
-    
     colors.push_back(ofColor(27,99,27));
     colors.push_back(ofColor(193,117,20));
     colors.push_back(ofColor(157,88,88));
     colors.push_back(ofColor(49,112,103));
     
     currentParticle = NULL;
-
-  
     
 }
 
@@ -37,8 +32,8 @@ void BirdsScene::update() {
     
     hasConfigChanged();
     
-    //float noise = cos((float)ofGetElapsedTimeMillis() / 1000.0f);
-    //setPitchPct(noise);
+    float noise = cos((float)ofGetElapsedTimeMillis() / 1000.0f);
+    setPitchPct(noise);
     
 }
 
@@ -52,7 +47,6 @@ void BirdsScene::draw() {
     
     float scale = 20;
 
-    
     // delete old particles
     for(int i = particles.size() - 1; i >= 0; i --) {
         
@@ -104,9 +98,12 @@ void BirdsScene::draw() {
     for (int i=0; i<particles.size(); i++) {
         
         particles[i]->resetForce();
-        ofVec2f frc (ofRandom(-0.01, -0.02), ofRandom(-0.001, -0.005));
-        frc *= .3;
-        particles[i]->addForce(frc.x, frc.y);
+        //ofVec2f frc (ofRandom(-0.01, -0.02), ofRandom(-0.001, -0.005));
+        //frc *= .3;
+        //particles[i]->addForce(frc.x, frc.y);
+        
+        particles[i]->addStoredForce();
+        
         particles[i]->update();
         
     }
@@ -128,6 +125,7 @@ void BirdsScene::draw() {
         
         ofFill();
         drawCircle(particles[i]->pos, particles[i]->scale * scale, particles[i]->color);
+        
     }
     
     // if we are singing, let's grow the particle
@@ -162,7 +160,6 @@ void BirdsScene::draw() {
         // draw bubble
         drawCircle(currentParticle->pos, currentParticle->scale * scale, currentParticle->color);
 
-
     }
     
     endFlip();
@@ -173,33 +170,28 @@ void BirdsScene::drawCircle(ofVec2f pos, float radius, ofColor col) {
     
     
     ofSetColor(col);
-   // ofDrawEllipse(pos.x + radius * .5, pos.y + radius * .5, radius, radius);
-    
-    
     drawCircleNoise(pos, radius, col);
     
 }
-
-
 
 void BirdsScene::drawCircleNoise(ofVec2f pos, float radius, ofColor col) {
     
     int len = 15;
 
-    
     ofPushMatrix();
     ofTranslate(pos.x, pos.y);
     
     vector<glm::vec2> out_vertices;
     vector<glm::vec2> in_vertices;
+    
     for (int deg = 0; deg < 360; deg += 8) {
         
-        auto noise_point = glm::vec2(pos.x + radius * cos(deg * DEG_TO_RAD), pos.y + radius * sin(deg * DEG_TO_RAD));
-        float noise_len = ofMap(ofNoise(noise_point.x * 0.01, noise_point.y * 0.01, ofGetFrameNum() * 0.05), 0, 1, 5, len);
+        auto noise_point    = glm::vec2(radius * cos(deg * DEG_TO_RAD), radius * sin(deg * DEG_TO_RAD));
+        float noise_len     = ofMap(ofNoise(noise_point.x * 0.01, noise_point.y * 0.01, ofGetFrameNum() * 0.05), 0, 1, 5, len);
+        float r             = radius + noise_len;
         
-        float r = radius + noise_len;
-        out_vertices.push_back(glm::vec2(r * cos(deg * DEG_TO_RAD), r * sin(deg * DEG_TO_RAD)));
-        
+        float anchor        = radius * 0.75;
+        out_vertices.push_back(glm::vec2(anchor - (r * cos(deg * DEG_TO_RAD)), anchor - (r * sin(deg * DEG_TO_RAD))));
         
     }
     
@@ -211,8 +203,6 @@ void BirdsScene::drawCircleNoise(ofVec2f pos, float radius, ofColor col) {
     
 }
 
-
-
 void BirdsScene::setPitchPct(float pct) {
     
     this->targetPitchPct = pct;
@@ -220,7 +210,6 @@ void BirdsScene::setPitchPct(float pct) {
 }
 
 void BirdsScene::onPitchStart() {
-    
     
     // pick random color for start
     int rdmIndex = floor(ofRandom(0,colors.size()));
@@ -233,19 +222,25 @@ void BirdsScene::onPitchStart() {
     
     endColor =  colors[rdmIndex];
     
+    ofLogNotice("config" ) << configJson["bubble-force-x-min"];
+    
     // choose initial pos
-    ofVec2f initialPos (ofRandom(6, 8),ofRandom(6, 8));
+    ofVec2f initialPos (ofRandom(6, 8),ofRandom(44, 50));
     
     currentParticle = new SimpleParticle();
     currentParticle->setInitialCondition(initialPos.x, initialPos.y,0.0,0.0);
-    currentParticle->scale        = .2;
-    currentParticle->damping      = 0.9;
-    currentParticle->life        = 0.0;
-    currentParticle->depthVel      = ofRandom(10, 20);
-    currentRadius                 = 0.0;
-    
-    radiusVel                   = ofRandom(0.001, 0.003);
-    radiusVelFactor             = 10.0;
+    currentParticle->scale                  = .2;
+    currentParticle->damping                = 0.9;
+    currentParticle->life                   = 0.0;
+    currentParticle->depthVel               = ofRandom(10, 20);
+    currentParticle->storedForceValue       = ofVec2f(ofRandom(configJson["bubble-force-x-min"], configJson["bubble-force-x-max"]),
+                                                      ofRandom(configJson["bubble-force-y-min"], configJson["bubble-force-y-max"]));
+    currentParticle->storedForceRandomness  = .1;
+    currentParticle->storedForceValueAccel  = ofVec2f(ofRandom(configJson["bubble-accel-x-min"], configJson["bubble-accel-x-max"]),
+                                                      ofRandom(configJson["bubble-accel-y-min"], configJson["bubble-accel-y-max"]));
+    currentRadius                           = 0.0;    
+    radiusVel                               = ofRandom(0.001, 0.003);
+    radiusVelFactor                         = 10.0;
     
     ofLogNotice("onPitch start");
 

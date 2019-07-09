@@ -19,6 +19,21 @@ void ArToolKitManager::setup(int width, int height) {
     
 }
 
+void ArToolKitManager::setDelays( int markerLostDelay, int markerFoundDelay) {
+    
+    this->markerLostDelay   = markerLostDelay;
+    this->markerFoundDelay  = markerFoundDelay;
+    
+    for(int i=0; i<trackers.size(); i++) {
+        
+        trackers[i]->timeFoundDelay = markerFoundDelay;
+        trackers[i]->timeLostDelay  = markerLostDelay;
+
+    }
+
+}
+
+
 void ArToolKitManager::loadTrackers() {
     
     ofDirectory dir("markers");
@@ -84,14 +99,18 @@ void ArToolKitManager::loadTrackers() {
             
             string name = dir.getFile(i).getBaseName();
             std::shared_ptr<MagiqueMarker> tracker = std::make_shared<MagiqueMarker>();
+            
             tracker->setup(ofVec2f(inputWidth,inputHeight),ofVec2f(inputWidth,inputHeight), OF_PIXELS_BGR, "../Resources/camera_para.dat", "../Resources/m_"+name+".dat");
-            tracker->markerid = name;
+            tracker->markerid           = name;
+            tracker->timeFoundDelay     = markerFoundDelay;
+            tracker->timeLostDelay      =   markerLostDelay;
             tracker->setImage(&images[i]);
             
             ofAddListener(tracker->evNewMarker, this, &ArToolKitManager::onNewMarker);
             ofAddListener(tracker->evLostMarker, this, &ArToolKitManager::onLostMarker);
             ofAddListener(tracker->solidFoundEvent, this, &ArToolKitManager::onSolidFoundEvent);
             ofAddListener(tracker->solidLostEvent, this, &ArToolKitManager::onSolidLostEvent);
+            
             trackers.push_back(tracker);
             
         }

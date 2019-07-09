@@ -20,6 +20,8 @@ SimpleParticle::SimpleParticle(){
     bIsAlive            = true;
     
     depth               = 0.0;
+    
+    nConnecteds         = 0;
 }
 
 //------------------------------------------------------------
@@ -50,6 +52,18 @@ void SimpleParticle::addForce(float x, float y){
     frc.x = frc.x + x;
     frc.y = frc.y + y;
 }
+
+void SimpleParticle::addStoredForce() {
+    
+    float randomnessX = ofRandom(-storedForceRandomness, storedForceRandomness);
+    float randomnessY = ofRandom(-storedForceRandomness, storedForceRandomness);
+    
+    storedForceValue += storedForceValueAccel;
+    
+    addForce(storedForceValue.x + randomnessX, storedForceValue.y + randomnessY);
+    
+}
+
 
 void SimpleParticle::addNonBackingForce(float mult) {
     

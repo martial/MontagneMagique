@@ -25,6 +25,8 @@ public:
     
     void clean();
     
+    void setDelays( int markerLostDelay, int markerFoundDelay);
+    
     vector<std::shared_ptr<MagiqueMarker>> trackers;
     vector<ofImage> images;
     
@@ -37,6 +39,7 @@ private:
 
     
     int inputWidth, inputHeight;
+    int markerLostDelay, markerFoundDelay;
     
     
     

@@ -379,6 +379,7 @@
 		81967292BFC87A0144BD32C6 /* ofxOscSender.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofxOscSender.cpp; path = ../../../addons/ofxOsc/src/ofxOscSender.cpp; sourceTree = SOURCE_ROOT; };
 		826D2BD7602562E48C8B3953 /* common.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = common.hpp; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv2/core/cuda/common.hpp; sourceTree = SOURCE_ROOT; };
 		82F38A8CEADEE9F485ADC380 /* gsubConfig.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = gsubConfig.h; path = ../../../addons/ofxArtool5/libs/include/AR/gsubConfig.h; sourceTree = SOURCE_ROOT; };
+		83312CA522D4A075005BA786 /* libjpeg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjpeg.a; path = ../../../addons/ofxArtool5/libs/lib/osx/libjpeg.a; sourceTree = "<group>"; };
 		8385D29A22856B8700639A9C /* Ants.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Ants.cpp; sourceTree = "<group>"; };
 		8385D29B22856B8700639A9C /* Ants.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Ants.hpp; sourceTree = "<group>"; };
 		8385D29E22856BAD00639A9C /* SimpleParticle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleParticle.cpp; sourceTree = "<group>"; };
@@ -1344,9 +1345,9 @@
 				0FB83AC7747296DD35C1C295 /* ofxSyphon.h */,
 				32D6F27DC6308427F9A278C1 /* ofxSyphonServer.mm */,
 				46BBCC26D60B589958BF0D03 /* ofxSyphonServer.h */,
+				01FAC3552E00C3620035EA2F /* ofxSyphonClient.h */,
 				03EA4DA95B5E1B8409FC058E /* ofxSyphonClient.mm */,
 				E723BEF4C55D236E24639608 /* ofxSyphonServerDirectory.mm */,
-				01FAC3552E00C3620035EA2F /* ofxSyphonClient.h */,
 				337B812806A0E7D26A029E5A /* ofxSyphonServerDirectory.h */,
 			);
 			name = src;
@@ -1569,10 +1570,10 @@
 		8385D29D22856BAD00639A9C /* SharedSrc */ = {
 			isa = PBXGroup;
 			children = (
+				8385D2A122856BAD00639A9C /* SimpleParticle.hpp */,
 				8385D29E22856BAD00639A9C /* SimpleParticle.cpp */,
 				8385D29F22856BAD00639A9C /* ImageSequencePlayer.hpp */,
 				8385D2A022856BAD00639A9C /* ImageSequencePlayer.cpp */,
-				8385D2A122856BAD00639A9C /* SimpleParticle.hpp */,
 				8385D2A222856BAD00639A9C /* BigBang */,
 			);
 			name = SharedSrc;
@@ -1750,8 +1751,8 @@
 			isa = PBXGroup;
 			children = (
 				0A1F531A55E7375F7F555DAD /* ofxARTNftTracker.h */,
-				79B8656395553C89674E97D0 /* ARMarkerNFT.h */,
 				E9FF6D4B22188406F3A954DF /* ofxARTNftTracker.cpp */,
+				79B8656395553C89674E97D0 /* ARMarkerNFT.h */,
 				85EAD75512968EBBDF93A0D3 /* trackingSub.h */,
 				43EE673A8840DECFA6EEF1A8 /* ofxARTGenericTracker.h */,
 				92C9F669D01D1F260D8E1CFD /* ofxARTNftUtils.h */,
@@ -2046,7 +2047,6 @@
 				D69020935A9F9D5DE4188CEF /* AbstractARScene.hpp */,
 				5D1E74B421334FA4EA8663D5 /* BeesDepthScene.hpp */,
 				9ED63948AB3C1E81D4AA316C /* UndergroundScene.cpp */,
-				9714A7ED697DFA711D49193A /* BirdsScene.cpp */,
 				2C00E6B50A9E8B204684E0D3 /* HoleScene.cpp */,
 				34CB0DD4D5844210BB3E88EC /* EggsScene.hpp */,
 				485FB36D79CE5AE01F6BAF7B /* BeesDepthScene.cpp */,
@@ -2055,6 +2055,7 @@
 				FB128EA9652E08C2D610A3FF /* ArSceneManager.hpp */,
 				EC8DE3D98545F7A4F9C61A60 /* ArSceneManager.cpp */,
 				3B2C1FB58430D86B171F39E3 /* BirdsScene.hpp */,
+				9714A7ED697DFA711D49193A /* BirdsScene.cpp */,
 				60B34DDDC79DEB0226A04C93 /* VideoScene.cpp */,
 			);
 			name = Scenes;
@@ -2447,6 +2448,7 @@
 			children = (
 				83FEE41C2292DE4B00719425 /* libs */,
 				E4B6FCAD0C3E899E008CF71C /* openFrameworks-Info.plist */,
+				83312CA522D4A075005BA786 /* libjpeg.a */,
 				E4EB6923138AFD0F00A09F29 /* Project.xcconfig */,
 				E4B69E1C0A3A1BDC003C02F2 /* src */,
 				E42962AA2163EDD300A6A9E2 /* openFrameworks */,
@@ -3017,6 +3019,7 @@
 					../../../addons/ofxSyphon/libs/Syphon/lib,
 					../../../addons/ofxSyphon/libs/Syphon/lib/osx,
 					../../../addons/ofxSyphon/libs/Syphon/src,
+					"\"$(SRCROOT)/../../../addons/ofxArtool5/libs/include/macosx-universal\"",
 					../../../addons/ofxSyphon/src,
 				);
 				ICON = "$(ICON_NAME_RELEASE)";
@@ -3447,6 +3450,7 @@
 					../../../addons/ofxSyphon/libs/Syphon/lib,
 					../../../addons/ofxSyphon/libs/Syphon/lib/osx,
 					../../../addons/ofxSyphon/libs/Syphon/src,
+					"\"$(SRCROOT)/../../../addons/ofxArtool5/libs/include/macosx-universal\"",
 					../../../addons/ofxSyphon/src,
 				);
 				ICON = "$(ICON_NAME_DEBUG)";
@@ -3607,6 +3611,7 @@
 					../../../addons/ofxSyphon/libs/Syphon/lib,
 					../../../addons/ofxSyphon/libs/Syphon/lib/osx,
 					../../../addons/ofxSyphon/libs/Syphon/src,
+					"\"$(SRCROOT)/../../../addons/ofxArtool5/libs/include/macosx-universal\"",
 					../../../addons/ofxSyphon/src,
 				);
 				ICON = "$(ICON_NAME_RELEASE)";

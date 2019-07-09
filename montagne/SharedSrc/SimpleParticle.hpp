@@ -25,6 +25,7 @@ public:
     
     void resetForce();
     void addForce(float x, float y);
+    void addStoredForce();
     void addNonBackingForce(float mult);
     
     ofVec2f getRandomForceLessThan(float val, float mult);
@@ -64,8 +65,16 @@ public:
     
     int id;
     
+    ofVec2f storedForceValue;
+    float   storedForceRandomness;
+    ofVec2f storedForceValueAccel;
+    
+    int nConnecteds;
+    
 protected:
 private:
+    
+    
 };
 
 

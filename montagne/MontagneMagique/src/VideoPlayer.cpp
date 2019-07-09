@@ -9,10 +9,7 @@
 #include "ofxImgSizeUtils.h"
 
 void VideoPlayer::setup() {
-    
-   
-   
-    
+
 }
 
 void VideoPlayer::update() {
@@ -45,12 +42,9 @@ void VideoPlayer::setVideo(string name, bool loop) {
     
     for(int i=0; i<nFiles; i++) {
         
-        
         if(dir.getName(i) == name ) {
             
             player.load(dir.getPath(i));
-            
-            ofLogNotice("is loop ? ") << loop;
             
             if(!loop)
                 player.setLoopState(OF_LOOP_NONE);

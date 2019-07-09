@@ -54,7 +54,7 @@ public:
         animInMillisDelay           = configJson.value("animInMillisDelay", this->animInMillisDelay);
         animOutMillisDelay          = configJson.value("animOutMillisDelay", this->animOutMillisDelay);
         markerID                    = configJson["marker-id"].get<std::string>();
-        
+
         
     }
     
@@ -121,6 +121,8 @@ protected:
     
     void beginFlip() {
         
+       // scaleFactor = ofMap(ofGetMouseX(), 0, ofGetWidth(), 11, 13);
+        
         ofPushMatrix();
         ofScale(1 / scaleFactor, -1.0 / scaleFactor);
         
@@ -128,8 +130,8 @@ protected:
         float y = - marker->height * scaleFactor + marker->height * scaleFactor * .5;
         
     // weird offset issue
-        x += 4;
-        y -= 4;
+       // x += 4;
+        //y -= 4;
         
         ofTranslate(x,y);
 
@@ -166,8 +168,6 @@ protected:
         ofPopMatrix();
     }
     
- 
-    
     // this is used for fade in / out
     int animInMillisDelay, animOutMillisDelay;
     
@@ -181,9 +181,6 @@ protected:
     int timestamp;
     ofFile file;
     
-
-
-
 };
 
 

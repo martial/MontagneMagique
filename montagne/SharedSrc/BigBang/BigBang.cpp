@@ -10,9 +10,9 @@
 
 void BigBang::setup(string dataPath) {
     
-    radius          = 10.0;
-    threshold       = 80;
-    repulsionScale  = 0.0;
+    radius                  = 10.0;
+    threshold               = 80;
+    repulsionScale          = 0.0;
     maxParticleLife         = 900;
     mode                    = 0;
     lineDistance            = 200;
@@ -167,8 +167,8 @@ void BigBang::draw() {
         // reset forces
         particles[i]->resetForce();
         
-        forceRandomNessScale = 0.1;
-        forceRandomNessScale = 0.1;
+        forceRandomNessScale = 0.2;
+        forceRandomNessScale = 0.2;
         // add some randomness force
         float xFrc = ofRandom(-1.5 * forceRandomNessScale, 1.5 * forceRandomNessScale);
         float yFrc = ofRandom(-1.5 * forceRandomNessScale, 1.5 * forceRandomNessScale);
@@ -233,20 +233,30 @@ void BigBang::draw() {
                 }
             
                 // we draw lines only if we have a minimum distance away from a blob
-                if( minDistFromBlobs > blobDistance) {
                 
-                     for(int j = 0; j < particles.size(); j++) {
+                if( minDistFromBlobs > blobDistance) {
+                    
+                    float diffDistance          = 80;
+                    float diff                  = blobDistance - minDistFromBlobs;
+                    float diffDistanceMapped    = ofClamp(ofNormalize(diff, 0, diffDistance), 0, 1);
+                    
+                    //nConnecteds = 0;
+                    particles[i]->nConnecteds = 0;
+                    for(int j = 0; j < particles.size(); j++) {
                          
                          // not same and not everyone
-                         
-                         if ( i != j && particles[j]->id % 12 == 0) {
+                         if ( i != j && particles[j]->id % 4 == 0 && particles[j]->nConnecteds < 3) {
                            
                              float dist = particles[i]->pos.distance(particles[j]->pos);
                              if ( dist < lineDistance) {
                                  
                                  float a = ofClamp(ofMap(dist, 0, lineDistance, 255, 0), 0, 255);
-                                 ofSetColor(255, a);
+                                 ofSetColor(255, a );
                                  ofDrawLine(particles[i]->pos, particles[j]->pos);
+                                 
+                                 particles[j]->nConnecteds++;
+                                 
+                                 //nConnecteds++;
                              }
                              
                          }
@@ -258,7 +268,6 @@ void BigBang::draw() {
             }
             
         }
-        
       
     }
     
@@ -291,13 +300,7 @@ void BigBang::draw() {
         }
         
     }
-    
-    if(mode == 2) {
-        
-       // contourFinder.draw();
-    }
-    
-    
+  
     if( app->app.arSceneManager.bDebugMode ) {
         
         ofPushMatrix();

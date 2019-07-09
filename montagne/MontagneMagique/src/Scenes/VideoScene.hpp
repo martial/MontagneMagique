@@ -23,7 +23,6 @@ private:
     
     ofVideoPlayer player;
     
-    
 };
 
 #endif /* EggsScene_hpp */

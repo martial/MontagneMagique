@@ -12,9 +12,10 @@ void ofApp::setup(){
     
     currentFrameRate    = 60;
     
-    ofSetCircleResolution(256);
+    ofSetCircleResolution(128);
     ofSetLogLevel(OF_LOG_NOTICE);
-    ofSetFrameRate(60);
+    //ofSetFrameRate(60);
+    ofSetVerticalSync(true);
     
     ofLogNotice("Gl shading version ") <<  glGetString(GL_SHADING_LANGUAGE_VERSION);
     
@@ -30,6 +31,7 @@ void ofApp::setup(){
     syphonDir.setup();
     
     app.setup();
+    app.getArToolKitManager().setDelays(configJson["marker-found-delay"], configJson["marker-lost-delay"]);
 
         
     intputMode          = configJson["auto-start-mode"];
@@ -47,9 +49,7 @@ void ofApp::setup(){
     
     messageString = "";
     
-    
     // -- gui
-    
     parameters.setName("Settings");
     parameters.add(debugMode.set("debugMode",true));
     
@@ -59,7 +59,7 @@ void ofApp::setup(){
     gui.add(bigBangDampingMax.setup("BigBangDmpMax", 0.25, 0.0, 1.0));
     gui.add(bigBangScaleMin.setup("BigBangScaleMin", 3, 0.0, 50.0));
     gui.add(bigBangScaleMax.setup("BigBangScaleMax", 6, 0.0, 50.0));
-    gui.add(bigBangScaleDampingScale.setup("bigBangScaleDampingScale", .35, 0.0, 1.0));
+    gui.add(bigBangScaleDampingScale.setup("bigBangScaleDampingScale", .25, 0.0, 1.0));
     gui.add(bigBangRepulsionFactor.setup("bigBangRepulsionFactor", 1, 0.0, 3));
     
     addMessage("Welcome.");
@@ -101,8 +101,6 @@ void ofApp::setInputMode(int mode) {
             
             resizedFbo.allocate(videoInputWidth, videoInputHeight, GL_RGB);
             trackedVideoInput = &resizedInputImg;
-
-
 
             break;
         
@@ -156,22 +154,23 @@ void ofApp::setInputMode(int mode) {
         
     }
     
-   
-
-    
 }
 
 
 //--------------------------------------------------------------
 void ofApp::update(){
     
+    
+    
     // frame rate & windows title
-    currentFrameRate = 0.92 * currentFrameRate +  (1.0f - 0.92) * ceil(ofGetFrameRate());
+    //currentFrameRate = 0.95 * currentFrameRate +  (1.0f - 0.95) * ceil(ofGetFrameRate());
+    currentFrameRate = ofGetFrameRate();
+
     string sceneName = app.currentSceneName + " / " + app.currentSubSceneName;
     ofSetWindowTitle("Montagne Magique – " + sceneName + " ["+  ofToString(floor(currentFrameRate)) + " fps ]");
     
     oscManager.update();
-    
+
     messageString = "";
     
     switch (intputMode) {
@@ -222,8 +221,8 @@ void ofApp::update(){
             syphonInput.draw(0.0,0.0, videoInputWidth, videoInputHeight);
             ofDisableAlphaBlending();
             resizedFbo.end();
-            resizedFbo.getTexture().setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
-
+            //resizedFbo.getTexture().setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
+            
             resizedFbo.readToPixels(resizedInputPixels);
             resizedInputImg.setFromPixels(resizedInputPixels);
             
@@ -246,6 +245,8 @@ void ofApp::draw(){
     ofBackground(0);
     ofSetColor(255);
     
+    
+    
     if(bDrawPreview && app.getMode() != HAP_MODE) {
         
         cameraRectCanvas = ofxImgSizeUtils::getCenteredRect(ofGetWidth(), ofGetHeight(), videoInputWidth, videoInputHeight, false);
@@ -253,7 +254,6 @@ void ofApp::draw(){
         switch (intputMode) {
                 
             case INPUT_VIDEO:
-               // videoInput.draw(cameraRectCanvas);
                 resizedInputImg.draw(cameraRectCanvas.x, cameraRectCanvas.y, cameraRectCanvas.getWidth(), cameraRectCanvas.getHeight());
 
                 break;
@@ -285,11 +285,9 @@ void ofApp::draw(){
      }
     ofPopMatrix();
     
-    ofTexture & tex = app.fboLayer.getTexture();
     
-    if(tex.isAllocated()) {
-        syphonLayer.publishTexture(&app.fboLayer.getTexture());
-    }
+    syphonLayer.publishTexture(&app.fboLayer.getTexture());
+    
     
     ofSetColor(255);
     
@@ -299,7 +297,8 @@ void ofApp::draw(){
     ofSetColor(255,0,0);
     ofDrawBitmapString(ofToString(floor(currentFrameRate)) + " fps", 20, 20);
     ofSetColor(255, 255);
-
+    
+    
     if(bDrawMessages) {
         ofSetColor(255, 255);
         for(int i=0; i<messages.size(); i++) {
@@ -307,8 +306,6 @@ void ofApp::draw(){
         }
         ofSetColor(255);
     }
-        
-    
     
 }
 
@@ -323,7 +320,6 @@ void ofApp::keyPressed(int key){
 
     if(key == '2')
         setInputMode(INPUT_SYPHON);
-    
     
     if(key == 'g')
         bDrawGui = !bDrawGui;

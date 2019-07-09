@@ -7,7 +7,6 @@
 
 #include "EggsScene.hpp"
 
-
 void EggsScene::setup(string dataPath) {
     
     AbstractARScene::setup(dataPath);
@@ -17,8 +16,6 @@ void EggsScene::setup(string dataPath) {
 
 void EggsScene::update() {
     
-    
-
 }
 
 void EggsScene::draw() {

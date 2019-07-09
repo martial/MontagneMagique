@@ -1,9 +1,17 @@
 {
-  "translate" : {
-    "x" : 85,
-    "y" : -15
-  },
-  "marker-id" : "OISEAU_BULLES_0",
-  "scene-lock": "printemps/oiseaubulles"
-
+    "bubble-force-y-max": 0,
+    "bubble-force-y-min": 0,
+    "bubble-force-x-max": 0,
+    "bubble-force-x-min": 0,
+ 	"bubble-accel-y-max": -0.002,
+    "bubble-accel-y-min": 0,
+    "bubble-accel-x-max": -0.002,
+    "bubble-accel-x-min": 0,
+    "translate":
+    {
+        "x": 85,
+        "y": -15
+    },
+    "marker-id": "OISEAU_BULLES_0",
+    "scene-lock": "printemps/oiseaubulles"
 }

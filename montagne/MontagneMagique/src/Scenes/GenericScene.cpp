@@ -64,6 +64,8 @@ void GenericScene::draw() {
     
     if(pct > 0 ) {
         
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
         ofSetColor(255, pct * 255);
         ofSetRectMode(OF_RECTMODE_CENTER);
         for(int i=0; i < videoPlayers.size(); i++) {
@@ -79,6 +81,7 @@ void GenericScene::draw() {
             }
         }
         ofSetRectMode(OF_RECTMODE_CORNER);
+        glDisable(GL_BLEND);
 
         endFlip();
         
@@ -114,16 +117,17 @@ void GenericScene::onMarkerTracked() {
         
         bool bLoopMode = configJson["videos"][i].value("loop", 1);
         
-
         if(!bLoopMode) {
             
             videoPlayers[i]->setLoopState(OF_LOOP_NONE);
-            videoPlayers[i]->setPosition(0.0);
-            videoPlayers[i]->play();
+           
         } else {
             videoPlayers[i]->setLoopState(OF_LOOP_NORMAL);
 
         }
+        
+        videoPlayers[i]->setPosition(0.0);
+        videoPlayers[i]->play();
         
     }
     
