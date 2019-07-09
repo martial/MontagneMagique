@@ -46,15 +46,15 @@ void BigBang::update() {
     grayImage.threshold(100);
     
     if(mode != 2)
-        contourFinder.findContours(grayImage, 20, (app->videoInputWidth * app->videoInputHeight), 10, false);    // find holes
+        contourFinder.findContours(grayImage, 50, (app->videoInputWidth * app->videoInputHeight), 10, false);    // find holes
     else {
-        contourFinder.findContours(grayImage, 10,(app->videoInputWidth * app->videoInputHeight), 10, false);    // find holes
+        contourFinder.findContours(grayImage, 20,(app->videoInputWidth * app->videoInputHeight), 10, false);    // find holes
 
     }
     
     for (int j = 0; j < contourFinder.nBlobs; j++){
         
-        contourFinder.blobs[j].area *= scale;
+        contourFinder.blobs[j].area     *= scale;
         contourFinder.blobs[j].centroid *= scale;
                                             
     }
@@ -136,8 +136,8 @@ void BigBang::update() {
         
         if(mode != lastMode) {
             
-            //ofLogNotice("gogogo");
             for(int i = 0; i < particles.size(); i ++) {
+                
                 float deadlyLifeTime = maxParticleLife - (maxParticleLife * ofRandom(0.05, 0.1));
                 if(particles[i]->life < deadlyLifeTime) {
                     particles[i]->life = deadlyLifeTime;
@@ -147,7 +147,6 @@ void BigBang::update() {
             
         }
 
-        
     }
     
     lastMode = mode;
@@ -163,12 +162,9 @@ void BigBang::draw() {
         // reset forces
         particles[i]->resetForce();
         
-        forceRandomNessScale = 1;
-        forceRandomNessScale = 1;
-        
         // add some randomness force
-        float xFrc = ofRandom(-1.5 * forceRandomNessScale, 1.5 * forceRandomNessScale);
-        float yFrc = ofRandom(-1.5 * forceRandomNessScale, 1.5 * forceRandomNessScale);
+        float xFrc = ofRandom(-1 * forceRandomNessScale, 1 * forceRandomNessScale);
+        float yFrc = ofRandom(-1 * forceRandomNessScale, 1 * forceRandomNessScale);
         particles[i]->addForce(xFrc, yFrc);
         
         // if we are in mode 0 and 1, add attraction and repulsion forces to the blobs

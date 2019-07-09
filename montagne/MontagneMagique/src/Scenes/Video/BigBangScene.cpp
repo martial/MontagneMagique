@@ -17,8 +17,7 @@ void BigBangScene::setup(string dataPath) {
 void BigBangScene::update() {
     
     bigBang.update();
-
-    
+        
 }
 
 

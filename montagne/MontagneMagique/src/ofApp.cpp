@@ -53,14 +53,17 @@ void ofApp::setup(){
     parameters.setName("Settings");
     parameters.add(debugMode.set("debugMode",true));
     
+    
     gui.setup(parameters);
     
     gui.add(bigBangDampingMin.setup("BigBangDmpMin", 0.1, 0.0, 1.0));
     gui.add(bigBangDampingMax.setup("BigBangDmpMax", 0.25, 0.0, 1.0));
     gui.add(bigBangScaleMin.setup("BigBangScaleMin", 3, 0.0, 50.0));
     gui.add(bigBangScaleMax.setup("BigBangScaleMax", 6, 0.0, 50.0));
-    gui.add(bigBangScaleDampingScale.setup("bigBangScaleDampingScale", .25, 0.0, 1.0));
+    gui.add(bigBangScaleDampingScale.setup("bigBangScaleDampingScale", .65, 0.0, 1.0));
     gui.add(bigBangRepulsionFactor.setup("bigBangRepulsionFactor", 1, 0.0, 3));
+     
+    
     
     addMessage("Welcome.");
     
@@ -159,8 +162,6 @@ void ofApp::setInputMode(int mode) {
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    
-    
     
     // frame rate & windows title
     //currentFrameRate = 0.95 * currentFrameRate +  (1.0f - 0.95) * ceil(ofGetFrameRate());
@@ -297,7 +298,6 @@ void ofApp::draw(){
     ofSetColor(255,0,0);
     ofDrawBitmapString(ofToString(floor(currentFrameRate)) + " fps", 20, 20);
     ofSetColor(255, 255);
-    
     
     if(bDrawMessages) {
         ofSetColor(255, 255);

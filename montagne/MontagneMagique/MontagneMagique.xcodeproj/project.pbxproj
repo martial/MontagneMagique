@@ -2038,7 +2038,7 @@
 			children = (
 				8385D2A822856C6300639A9C /* Eggs */,
 				8385D29922856B8700639A9C /* Ants */,
-				EE7056DC91730BF05F21EDBC /* Video */,
+				EE7056DC91730BF05F21EDBC /* BigBang */,
 				7821BB944D82B9A1CC07B251 /* GenericScene.hpp */,
 				990329DB4664B194883F937A /* GenericScene.cpp */,
 				547C38EB536C83FEAC476C58 /* BeesDepth */,
@@ -2502,13 +2502,13 @@
 			name = superres;
 			sourceTree = "<group>";
 		};
-		EE7056DC91730BF05F21EDBC /* Video */ = {
+		EE7056DC91730BF05F21EDBC /* BigBang */ = {
 			isa = PBXGroup;
 			children = (
 				C93A81A5B38C57C86985EC89 /* BigBangScene.hpp */,
 				5C9B9D65CE1A0E5EB9A6A7B7 /* BigBangScene.cpp */,
 			);
-			name = Video;
+			name = BigBang;
 			sourceTree = "<group>";
 		};
 		EF390536765EAE0B3914B079 /* Eden */ = {
