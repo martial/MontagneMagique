@@ -14,8 +14,8 @@ void ofApp::setup(){
     
     ofSetCircleResolution(128);
     ofSetLogLevel(OF_LOG_NOTICE);
-    //ofSetFrameRate(60);
-    ofSetVerticalSync(true);
+    ofSetFrameRate(60);
+    //ofSetVerticalSync(true);
     
     ofLogNotice("Gl shading version ") <<  glGetString(GL_SHADING_LANGUAGE_VERSION);
     
@@ -35,8 +35,9 @@ void ofApp::setup(){
 
         
     intputMode          = configJson["auto-start-mode"];
-    videoInputWidth     = 1280;
-    videoInputHeight    = 720;
+    videoInputWidth     = 1920;
+    videoInputHeight    = 1080;
+    
     setInputMode(intputMode);
     
     ofAddListener(syphonDir.events.serverAnnounced, this, &ofApp::serverAnnounced);

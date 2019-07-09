@@ -20,8 +20,8 @@ void MontagneApp::setup() {
     shader.load("assets/shaders/shader");
     
     // 1920 x 1080
-    videoOutputWidth = 1280;
-    videoOutputHeight = 720;
+    videoOutputWidth = 1920;
+    videoOutputHeight = 1080;
     
     hapPlayer.setup();
     
@@ -159,7 +159,6 @@ void MontagneApp::drawScene(bool bDraw) {
     
     ofSetColor(255,255);
     glEnable(GL_BLEND);
-
     glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
    // glEnable(GL_BLEND);
@@ -194,8 +193,6 @@ void MontagneApp::drawScene(bool bDraw) {
             
             fboLayer.getTexture().getTextureData().bFlipTexture = true;
             fboLayer.draw(0.0, 0.0,  rect.width, rect.height);
-                
-            
             
             /*
             if(tempFbo.isAllocated()) {
@@ -244,11 +241,12 @@ void MontagneApp::debugDrawTrackers() {
 
 void MontagneApp::setMode(int mode) {
     
+    
     if(this->mode != mode) {
         
         pastMode    = this->mode;
         this->mode  = mode;
-        
+
     }
     
 }
@@ -258,7 +256,7 @@ void MontagneApp::setPastMode() {
 }
 
 
-int  MontagneApp::getMode() {
+int MontagneApp::getMode() {
     
     return this->mode;
 }

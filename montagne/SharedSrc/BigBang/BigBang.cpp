@@ -29,7 +29,7 @@ void BigBang::update() {
     ofApp * app = (ofApp*) ofGetAppPtr();
     
     //scale = 640 / (float)app->videoInputWidth;
-    scale = 2;
+    scale = 3;
     
     // we allocate openCV images if needed
     if(!colorImg.bAllocated) {

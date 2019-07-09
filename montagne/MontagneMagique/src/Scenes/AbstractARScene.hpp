@@ -124,7 +124,7 @@ protected:
        // scaleFactor = ofMap(ofGetMouseX(), 0, ofGetWidth(), 11, 13);
         
         ofPushMatrix();
-        ofScale(1 / scaleFactor, -1.0 / scaleFactor);
+        ofScale( 1.0 / scaleFactor, -1.0 / scaleFactor);
         
         float x = marker->width * scaleFactor * .5;
         float y = - marker->height * scaleFactor + marker->height * scaleFactor * .5;
