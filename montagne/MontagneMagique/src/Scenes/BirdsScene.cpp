@@ -32,9 +32,11 @@ void BirdsScene::update() {
     
     hasConfigChanged();
     
-    float noise = cos((float)ofGetElapsedTimeMillis() / 1000.0f);
-    setPitchPct(noise);
-    
+    bool bGenerateAuto = configJson["auto-bubbles"];
+    if(bGenerateAuto) {
+        float noise = cos((float)ofGetElapsedTimeMillis() / 1000.0f);
+        setPitchPct(noise);
+    }
 }
 
 
@@ -81,8 +83,9 @@ void BirdsScene::draw() {
     if (bIsSinging && targetPitchPct <= 0.0) {
     
         float timeDiff = ofGetElapsedTimeMillis() - pitchTime;
-
-        if(timeDiff > 100) {
+        
+        int pitchEndDelay = configJson["pitch-end-delay"];
+        if(timeDiff > pitchEndDelay) {
             bIsSinging = false;
             onPitchEnd();
         }
@@ -92,12 +95,16 @@ void BirdsScene::draw() {
     float blurRate      = 0.9;
     this->pitchPct      = blurRate * pitchPct   +  (1.0f - blurRate) * targetPitchPct;
     
+    
+    float maxRadius = configJson["bubble-max-radius"];
 
     ofFill();
     // draw the particles
     for (int i=0; i<particles.size(); i++) {
         
         particles[i]->resetForce();
+        
+        particles[i]->depthVel = -ofMap(particles[i]->scale, 0.0, maxRadius, 2, 20);
         //ofVec2f frc (ofRandom(-0.01, -0.02), ofRandom(-0.001, -0.005));
         //frc *= .3;
         //particles[i]->addForce(frc.x, frc.y);
@@ -136,9 +143,15 @@ void BirdsScene::draw() {
             radiusVelFactor -= 0.45;
             radiusVelFactor = ofClamp(radiusVelFactor, 1.0, 99);
             
-            float vel = ofMap(this->targetPitchPct, 0.0, 1.0, -0.08, 0.02);
+            // used for bubble speed
+            float velMax = configJson["bubble-vel-radius"];
+            float vel = ofMap(this->targetPitchPct, 0.0, 1.0, -velMax, -0.01);
             currentRadius += vel * radiusVelFactor;
-            currentParticle->scale = currentRadius ;
+            
+            // set a max for radius
+            currentParticle->scale = ofClamp(currentRadius, -maxRadius, 0 );
+            currentParticle->depthVel = -ofMap(currentParticle->scale, 0.0, maxRadius, 2, 20);
+
             
             ofColor c = startColor;
             c =  c.lerp(endColor, this->targetPitchPct);
@@ -222,7 +235,6 @@ void BirdsScene::onPitchStart() {
     
     endColor =  colors[rdmIndex];
     
-    ofLogNotice("config" ) << configJson["bubble-force-x-min"];
     
     // choose initial pos
     ofVec2f initialPos (ofRandom(6, 8),ofRandom(44, 50));
@@ -242,7 +254,7 @@ void BirdsScene::onPitchStart() {
     radiusVel                               = ofRandom(0.001, 0.003);
     radiusVelFactor                         = 10.0;
     
-    ofLogNotice("onPitch start");
+   // ofLogNotice("onPitch start");
 
 }
 
@@ -250,7 +262,6 @@ void BirdsScene::onPitchEnd() {
     
     particles.push_back(currentParticle);
     currentParticle = NULL;
-    ofLogNotice("onPitch End");
+   // ofLogNotice("onPitch End");
 
-    
 }

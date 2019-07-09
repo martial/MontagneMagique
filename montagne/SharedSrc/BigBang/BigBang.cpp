@@ -20,13 +20,12 @@ void BigBang::setup(string dataPath) {
     forceRandomNessScale    = 1.0;
     fadeInOutPct            = 0.1;
     particlesCreated        = 0;
+    
 }
 
 
 void BigBang::update() {
-    
-    //addParticles(1);
-    
+        
     ofApp * app = (ofApp*) ofGetAppPtr();
     
     //scale = 640 / (float)app->videoInputWidth;
@@ -55,10 +54,8 @@ void BigBang::update() {
     
     for (int j = 0; j < contourFinder.nBlobs; j++){
         
-        
         contourFinder.blobs[j].area *= scale;
         contourFinder.blobs[j].centroid *= scale;
-
                                             
     }
     
@@ -78,14 +75,14 @@ void BigBang::update() {
     
     if(mode == 0) {
         
-        app->bigBangScaleMin = 1.3;
-        app->bigBangScaleMax = 6.5;
+        app->bigBangScaleMin    = 1.3;
+        app->bigBangScaleMax    = 6.5;
 
-        fadeInOutPct = 0.001;
-        maxParticleLife = 900;
-        forceRandomNessScale = 1.0;
-        repulsionScale -= .1;
-        repulsionScale = ofClamp(repulsionScale, 0.0, 10.0);
+        fadeInOutPct            = 0.001;
+        maxParticleLife         = 900;
+        forceRandomNessScale    = 1.0;
+        repulsionScale          -= .1;
+        repulsionScale          = ofClamp(repulsionScale, 0.0, 10.0);
         
     }
     
@@ -93,16 +90,16 @@ void BigBang::update() {
         
         glLineWidth(1);
 
-        lineDistance = 200;
-        app->bigBangScaleMin = 1.3;
-        app->bigBangScaleMax = 4.5;
+        lineDistance            = 200;
+        app->bigBangScaleMin    = 1.3;
+        app->bigBangScaleMax    = 4.5;
         
-        fadeInOutPct = 0.05;
-        maxParticleLife = 900;
-        forceRandomNessScale = 1.0;
+        fadeInOutPct            = 0.05;
+        maxParticleLife         = 900;
+        forceRandomNessScale    = 1.0;
         
-        repulsionScale -= .025;
-        repulsionScale = ofClamp(repulsionScale, 0.0, 10.0);
+        repulsionScale          -= .025;
+        repulsionScale          = ofClamp(repulsionScale, 0.0, 10.0);
         
         if(ofGetFrameNum() % 8 == 0)
             addParticles(2, app->bigBangScaleMin, app->bigBangScaleMax, app->bigBangDampingMin, app->bigBangDampingMax);
@@ -112,22 +109,21 @@ void BigBang::update() {
     if(mode == 2) {
         
         glLineWidth(2);
-        lineDistance = 200;
-        fadeInOutPct = 0.05;
-        maxParticleLife = 5000;
-        forceRandomNessScale = 0.01;
-        repulsionScale = 0.0;
+        lineDistance            = 200;
+        fadeInOutPct            = 0.05;
+        maxParticleLife         = 5000;
+        forceRandomNessScale    = 0.01;
+        repulsionScale          = 0.0;
+        
         if(ofGetFrameNum() % 24 == 0 && particles.size() < 10)
             addParticles(1, app->bigBangScaleMin, app->bigBangScaleMax, app->bigBangDampingMin, app->bigBangDampingMax);
         
         if(mode != lastMode) {
             
-            //ofLogNotice("gogogo");
             for(int i = 0; i < particles.size(); i ++) {
                 float deadlyLifeTime = maxParticleLife - (maxParticleLife * ofRandom(0.05, 0.1));
                 if(particles[i]->life < deadlyLifeTime) {
                     particles[i]->life = deadlyLifeTime;
-                   // ofLogNotice("deadlyLifeTime") << deadlyLifeTime;
 
                 }
             }
@@ -167,8 +163,9 @@ void BigBang::draw() {
         // reset forces
         particles[i]->resetForce();
         
-        forceRandomNessScale = 0.2;
-        forceRandomNessScale = 0.2;
+        forceRandomNessScale = 1;
+        forceRandomNessScale = 1;
+        
         // add some randomness force
         float xFrc = ofRandom(-1.5 * forceRandomNessScale, 1.5 * forceRandomNessScale);
         float yFrc = ofRandom(-1.5 * forceRandomNessScale, 1.5 * forceRandomNessScale);
@@ -195,9 +192,9 @@ void BigBang::draw() {
         particles[i]->update();
         
         // add ease in / out transition
-        
         float durationFadePct = maxParticleLife * fadeInOutPct;
         
+        // add little bit of noise
         float alpha = 1.0;
         if(mode == 2 || mode == 3) {
             
@@ -217,7 +214,10 @@ void BigBang::draw() {
         
         // draw
         ofSetColor(255, 255 * alpha);
-        ofDrawEllipse(particles[i]->pos.x,particles[i]->pos.y, particles[i]->scale * particles[i]->scale, particles[i]->scale * particles[i]->scale);
+        ofDrawEllipse(particles[i]->pos.x,
+                      particles[i]->pos.y,
+                      particles[i]->scale * particles[i]->scale,
+                      particles[i]->scale * particles[i]->scale);
 
         // we draw lines in mode 1
         
@@ -227,9 +227,9 @@ void BigBang::draw() {
             if(contourFinder.nBlobs > 0 ) {
                 
                 float minDistFromBlobs = particles[i]->pos.distance(contourFinder.blobs[0].centroid);
+                
                 for (int j = 1; j < contourFinder.nBlobs; j++){
                     minDistFromBlobs = MIN( minDistFromBlobs,particles[i]->pos.distance(contourFinder.blobs[j].centroid) );
-                    
                 }
             
                 // we draw lines only if we have a minimum distance away from a blob
@@ -378,8 +378,6 @@ void BigBang::addParticles(int nParticles, float minSize, float maxSize, float m
             p->damping      = ofRandom(minDamp, maxDamp);
             p->life         = 0.0;
             particles.push_back(p);
-                
-            
             
         }
         

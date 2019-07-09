@@ -160,7 +160,7 @@ void ArSceneManager::activateMarkersFromScene() {
         
     }
     
-    app->addMessage("setting scene : " + currentScene);
+    app->addMessage("Setting scene : " + currentScene);
     for(int i=0; i<results.size(); i++) {
         app->addMessage(results[i] + ofToString(" markers activated"));
     }
