@@ -10,29 +10,27 @@
 
 void MontagneApp::setup() {
     
-    mode        = TRACKING_MODE;
+    mode        = DRAW_MODE;
     pastMode    = mode;
     
     currentSceneName    = "";
     currentSubSceneName = "";
     
     // masking 
-    shader.load("assets/shaders/shader");
+    //shader.load("assets/shaders/shader");
     
     // 1920 x 1080
-    videoOutputWidth = 1920;
-    videoOutputHeight = 1080;
+    videoOutputWidth    = 1920;
+    videoOutputHeight   = 1080;
     
     hapPlayer.setup();
-    
-    
-
     
 }
 
 void MontagneApp::setupTrackers(int trackerInputWidth, int trackerInputHeight) {
     
     ofLogNotice("Setup trackers for ") << trackerInputWidth << " x " << trackerInputHeight;
+    
     this->trackerInputWidth     = trackerInputWidth;
     this->trackerInputHeight    = trackerInputHeight;
     
@@ -62,14 +60,26 @@ void MontagneApp::updateTrackers(ofBaseHasPixels & input) {
 
      }
     
+    // for draw mode we need to inject pixels to scenes.
+    // TODO maybe just focus on DrawScene class and avoir unnecessary iterations
+    if(mode == DRAW_MODE ) {
+    
+        for(int i=0; i< arToolKitManager.trackers.size(); i++) {
+            
+            if(arToolKitManager.trackers[i]->getIsSolidFound() ) {
+                arSceneManager.updateCamera(i, *arToolKitManager.trackers[i], input);
+            }
+            
+        }
+        
+    }
+    
 }
 
 void MontagneApp::updateScene() {
     
-    arSceneManager.update();
-    hapPlayer.update();
     
-   
+    hapPlayer.update();
     if(mode == HAP_MODE && hapPlayer.player.isLoaded() && hapPlayer.player.getLoopState() == OF_LOOP_NONE ) {
         
         if( hapPlayer.player.getPosition() == 1.0) {
@@ -136,6 +146,12 @@ void MontagneApp::drawScene(bool bDraw) {
     
     }
     
+    if(mode == DRAW_MODE) {
+        
+        arSceneManager.drawScene(1);
+        
+    }
+    
     if(mode == TRACKING_MODE) {
         
         for(int i=0; i< arToolKitManager.trackers.size(); i++) {
@@ -184,7 +200,7 @@ void MontagneApp::drawScene(bool bDraw) {
          
          */
         
-        if(mode == SCENE_MODE || mode == HAP_MODE) {
+        if(mode != TRACKING_MODE ) {
             
             fboLayer.getTexture().getTextureData().bFlipTexture = false;
             fboLayer.draw(0.0, 0.0, rect.width, rect.height);
@@ -260,5 +276,3 @@ int MontagneApp::getMode() {
     
     return this->mode;
 }
-
-

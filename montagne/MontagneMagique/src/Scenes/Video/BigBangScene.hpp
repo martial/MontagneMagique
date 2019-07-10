@@ -21,10 +21,8 @@ public:
     void draw();
     
     BigBang bigBang;
-
     
 private:
-    
     
     
 };

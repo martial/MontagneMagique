@@ -75,7 +75,13 @@ void VideoSampler::update(){
     fadePct.update(1.0f / 30.0f);
     recordFadePct.update(1.0f / 30.0f);
         
-    if(nPixels > 0 ) {
+    if(nPixels > 0) {
+        
+        if(!bIsPlaying) {
+            currentFrame = 0;
+            currentFramef = 0.0;
+            return;
+        }
         
         if( loopMode == OF_LOOP_NORMAL) {
             
@@ -100,12 +106,9 @@ void VideoSampler::update(){
         }
 
         currentFramef += (bReverse) ? -speedPct : speedPct;
-        
         currentFrame = round(currentFramef);
-        
         // we store the frame only in one direction ( before inverting it )
         previousFrame = currentFrame;
-        
         currentFrame = ofClamp(currentFrame, 0, nPixels - 1);
         
     }
@@ -422,12 +425,18 @@ void VideoSampler::onFadeRecordEndHandler(ofxAnimatable::AnimationEvent & e) {
 
 void VideoSampler::play(){
     
-    currentFrame = 0;
-    bIsPlaying = true;
+    currentFramef   = 0;
+    currentFrame    = 0;
+    bIsPlaying      = true;
     fadePct.animateTo(1.0);
+    
+    
 }
 
 void VideoSampler::stop(){
+    
+    currentFramef   = 0;
+    currentFrame    = 0;
     bIsPlaying = false;
     fadePct.animateTo(0.0);
 

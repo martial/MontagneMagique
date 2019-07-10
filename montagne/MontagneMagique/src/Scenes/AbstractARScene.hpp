@@ -88,6 +88,9 @@ public:
     virtual void update(){};
     virtual void draw(){};
     
+    virtual void updateCamera(ofBaseHasPixels & input){};
+
+    
     string markerID, name;
     string assetsDir;
     std::shared_ptr<MagiqueMarker> marker;

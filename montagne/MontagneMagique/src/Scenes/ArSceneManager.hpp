@@ -19,7 +19,7 @@ public:
     
     void loadAutoScenes();
     void setup(vector<std::shared_ptr<MagiqueMarker>> & trackers);
-    void update();
+    void updateCamera(int markerIndex, MagiqueMarker & marker,  ofBaseHasPixels & input);
     void drawScene(int sceneIndex);
     void draw(int markerIndex, MagiqueMarker & marker);
     

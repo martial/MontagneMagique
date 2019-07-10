@@ -6,14 +6,13 @@
 //
 
 #include "ArSceneManager.hpp"
-#include "UndergroundScene.hpp"
-#include "EggsScene.hpp"
 #include "VideoScene.hpp"
 #include "BigBangScene.hpp"
-#include "BeesDepthScene.hpp"
 #include "BirdsScene.hpp"
 #include "GenericScene.hpp"
 #include "HoleScene.hpp"
+#include "DrawScene.hpp"
+
 #include "ofApp.h"
 
 
@@ -21,28 +20,23 @@ void ArSceneManager::setup(vector<std::shared_ptr<MagiqueMarker>> & trackers) {
     
     bDebugMode = false;
     
-    // UndergroundScene * undergroundScene = new UndergroundScene();
-   // undergroundScene->setup("underground");
-    
-   // EggsScene * eggsScene = new EggsScene();
-   // eggsScene->setup("eggs");
-    
-   // VideoScene * videoScene = new VideoScene();
-   // videoScene->setup("video");
-    
     // HoleScene * holeScene = new HoleScene();
     // holeScene->setup("HOLE");
     
     BigBangScene * bigBangScene = new BigBangScene();
     bigBangScene->setup("bigbang");
     
-    BirdsScene * birdsScene = new BirdsScene();
+    DrawScene * drawScene       = new DrawScene();
+    drawScene->setup("draw");
+    
+    BirdsScene * birdsScene      = new BirdsScene();
     birdsScene->setup("OISEAU_BULLES");
     
     //BeesDepthScene * beesScene = new BeesDepthScene();
     //beesScene->setup("PRINTEMPS_ARBRE_ABEILLES");
     
     scenes.push_back(bigBangScene);
+    scenes.push_back(drawScene);
     scenes.push_back(birdsScene);
    // scenes.push_back(beesScene);
    // scenes.push_back(holeScene);
@@ -93,10 +87,13 @@ void ArSceneManager::loadAutoScenes() {
 }
 
 
-void ArSceneManager::update() {
+void ArSceneManager::updateCamera(int markerIndex, MagiqueMarker & marker,  ofBaseHasPixels & input) {
     
-    //scenes[0]->update();
-
+    int sceneIndex = getSceneIndexForMarkerID(marker.markerid);
+    
+    if(sceneIndex >= 0) {
+         scenes[sceneIndex]->updateCamera(input);
+    }
     
 }
 

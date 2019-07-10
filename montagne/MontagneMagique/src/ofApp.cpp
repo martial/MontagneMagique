@@ -114,11 +114,14 @@ void ofApp::setInputMode(int mode) {
             
             cameraInput.listDevices();
             cameraInput.setDeviceID(deviceId);
+            
+            videoInputWidth    = 640;
+            videoInputHeight   = 360;
+            
             cameraInput.setup(videoInputWidth, videoInputHeight);
             trackedVideoInput = &cameraInput;
             
-            videoInputWidth    = 640;
-            videoInputHeight   = 480;
+           
             
             break;
             
@@ -206,6 +209,9 @@ void ofApp::update(){
             if(cameraInput.isFrameNew()) {
                 app.updateTrackers(cameraInput);
             }
+            
+            resizedInputImg.setFromPixels(cameraInput.getPixels());
+            resizedInputImg.resize(videoInputWidth, videoInputHeight);
             
             break;
             

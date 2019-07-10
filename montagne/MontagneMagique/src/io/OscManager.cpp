@@ -8,6 +8,8 @@
 #include "OscManager.hpp"
 #include "BigBangScene.hpp"
 #include "BirdsScene.hpp"
+#include "DrawScene.hpp"
+
 #include "ofApp.h"
 
 void OscManager::setup(int receiverPort, int senderPort, string senderIp) {
@@ -21,7 +23,6 @@ void OscManager::update() {
     
     ofApp * app = (ofApp*) ofGetAppPtr();
 
-    
     while(receiver.hasWaitingMessages()){
         
         // get the next message
@@ -40,7 +41,7 @@ void OscManager::update() {
                  
                  if(splitted[1] == "stop") {
                      
-                     this->montagneApp->setPastMode();
+                    this->montagneApp->setPastMode();
                      
                  } else {
                  
@@ -57,11 +58,10 @@ void OscManager::update() {
                      app->app.hapPlayer.setVideo(splitted[1], true);
                      
                  }
-                
                  
              }
+            
         }
-        
         
         // Setting scene conf ----------------------------------------------------------------------------------------------------
         
@@ -86,11 +86,7 @@ void OscManager::update() {
                 app->app.currentSceneName       = "";
                 app->app.currentSubSceneName    = "";
                 
-                
-                
             }
-            
-            
             
             // we check for scene-locks here
             this->sceneManager->activateMarkersFromScene();
@@ -107,6 +103,7 @@ void OscManager::update() {
         // set modes
         
         if(app->app.currentSceneName == "cosmogonie" ) {
+            
             this->montagneApp->setMode(SCENE_MODE);
 
         } else {
@@ -188,7 +185,7 @@ void OscManager::update() {
             float minFriction   = m.getArgAsFloat(3);
             float maxFriction   = m.getArgAsFloat(4);
             
-            bigBangScene->bigBang.addParticles(m.getArgAsInt(0), minSize, maxSize, minFriction, maxFriction);
+            bigBangScene->bigBang.addParticles(nParticles, minSize, maxSize, minFriction, maxFriction);
             
         }
         
@@ -216,10 +213,8 @@ void OscManager::update() {
         }
         
 
-        app->addMessage( m.getAddress());
+        app->addMessage(m.getAddress());
         
-        
-                
     }
     
     app = NULL;
@@ -248,6 +243,13 @@ void OscManager::keyPressed(int key) {
         
     }
     
+    if(key == 's') {
+        
+        DrawScene * drawScene = (DrawScene*) this->sceneManager->getSceneIndexForPath("draw");
+        drawScene->captureShapes();
+        
+    }
+    
     if( key == OF_KEY_RIGHT) {
         
         BigBangScene * bigBangScene = (BigBangScene*) this->sceneManager->getSceneIndexForPath("bigbang");
@@ -270,7 +272,6 @@ void OscManager::setMontagneApp(MontagneApp * app) {
     this->montagneApp = app;
     
 }
-
 
 void OscManager::sendMessage(string adress, string label) {
     
