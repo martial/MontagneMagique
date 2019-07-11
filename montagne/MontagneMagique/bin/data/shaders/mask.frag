@@ -13,10 +13,11 @@ void main()
     float a = texel0.a;
     if(texel1.r == 0 && texel1.g == 0 && texel1.b == 0) {
         
-        gl_FragColor = vec4(1,0,0,0);
+        gl_FragColor = vec4(texel0.rgb, a);
+
 
     } else {
-        gl_FragColor = vec4(texel0.rgb, a);
+        gl_FragColor = vec4(1,0,0,0);
 
     }
         

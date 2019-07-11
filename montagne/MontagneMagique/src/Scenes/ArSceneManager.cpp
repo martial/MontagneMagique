@@ -104,6 +104,13 @@ void ArSceneManager::drawScene(int sceneIndex) {
     
 }
 
+void ArSceneManager::drawOffScreen(int sceneIndex) {
+    
+    scenes[sceneIndex]->drawOffScreen();
+
+}
+
+
 
 void ArSceneManager::draw(int markerIndex, MagiqueMarker & marker) {
     

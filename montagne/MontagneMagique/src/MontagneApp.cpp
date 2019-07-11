@@ -229,6 +229,22 @@ void MontagneApp::drawScene(bool bDraw) {
 
 }
 
+void MontagneApp::drawOffScreen() {
+    
+    if(mode == TRACKING_MODE) {
+        
+        
+    }
+    
+    if(mode == DRAW_MODE) {
+        
+        arSceneManager.drawOffScreen(1);
+        
+    }
+    
+}
+
+
 
 void MontagneApp::processDebugDraw() {
     

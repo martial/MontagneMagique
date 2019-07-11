@@ -154,7 +154,7 @@ void ofApp::setInputMode(int mode) {
     // reset trackers if size is different
     if(oldVideoInputWidth != videoInputWidth ||  oldVideoInputHeight != videoInputHeight ) {
         
-        ofSetWindowShape(videoInputWidth, videoInputHeight);
+        ofSetWindowShape(videoInputWidth, videoInputHeight*2);
         app.getArToolKitManager().clean();
         app.setupTrackers(videoInputWidth, videoInputHeight);
         app.setupFbos();
@@ -293,14 +293,27 @@ void ofApp::draw(){
      }
     ofPopMatrix();
     
-    
     syphonLayer.publishTexture(&app.fboLayer.getTexture());
     
     
     ofSetColor(255);
     
-    if(bDrawGui)
-        gui.draw();
+    
+    
+    
+   
+    
+    // draw camera at the bottom and messages
+    
+    ofPushMatrix();
+    if(ofGetWidth() == videoInputWidth && ofGetHeight() == videoInputHeight*2) {
+        ofTranslate(0.0, videoInputHeight);
+    } else {
+        ofTranslate(ofGetWidth() - videoInputWidth, 0.0);
+    }
+   
+    
+    app.drawOffScreen();
     
     ofSetColor(255,0,0);
     ofDrawBitmapString(ofToString(floor(currentFrameRate)) + " fps", 20, 20);
@@ -313,6 +326,11 @@ void ofApp::draw(){
         }
         ofSetColor(255);
     }
+    
+    ofPopMatrix();
+    
+    if(bDrawGui)
+        gui.draw();
     
 }
 

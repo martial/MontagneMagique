@@ -58,6 +58,11 @@ public:
         
     }
     
+    void saveConfigJson() {
+        
+        ofSaveJson(this->dataPath + "/config.json", configJson);
+    }
+    
     virtual float getInOuPct() {
         
         if(!marker)
@@ -87,6 +92,7 @@ public:
     
     virtual void update(){};
     virtual void draw(){};
+    virtual void drawOffScreen(){};
     
     virtual void updateCamera(ofBaseHasPixels & input){};
 

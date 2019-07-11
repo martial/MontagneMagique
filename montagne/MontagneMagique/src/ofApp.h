@@ -12,7 +12,6 @@
 #define INPUT_SYPHON 2
 #define INPUT_IMAGE 3
 
-
 class ofApp : public ofBaseApp{
 
 	public:

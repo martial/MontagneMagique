@@ -202,6 +202,19 @@ void OscManager::update() {
             
         }
         
+        if(m.getAddress() == "/event/drawn/aperture") {
+            
+            DrawScene * drawScene = (DrawScene*) this->sceneManager->getSceneIndexForPath("draw");
+            drawScene->setAperture(m.getArgAsFloat(0));
+            
+        }
+        
+        if(m.getAddress() == "/event/drawn/thresold") {
+            
+            DrawScene * drawScene = (DrawScene*) this->sceneManager->getSceneIndexForPath("draw");
+            drawScene->setTreshold(m.getArgAsFloat(0));
+        }
+        
         if(m.getAddress() == "/event/printemps/oiseau/pitch") {
             
             BirdsScene * birds = (BirdsScene*) this->sceneManager->getSceneIndexForPath("OISEAU_BULLES");
@@ -247,6 +260,20 @@ void OscManager::keyPressed(int key) {
         
         DrawScene * drawScene = (DrawScene*) this->sceneManager->getSceneIndexForPath("draw");
         drawScene->captureShapes();
+        
+    }
+    
+    if(key == 'c') {
+        
+        DrawScene * drawScene = (DrawScene*) this->sceneManager->getSceneIndexForPath("draw");
+        drawScene->clear();
+        
+    }
+    
+    if(key == 'S') {
+        
+        DrawScene * drawScene = (DrawScene*) this->sceneManager->getSceneIndexForPath("draw");
+        drawScene->save();
         
     }
     

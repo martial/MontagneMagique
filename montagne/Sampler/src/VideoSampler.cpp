@@ -435,8 +435,7 @@ void VideoSampler::play(){
 
 void VideoSampler::stop(){
     
-    currentFramef   = 0;
-    currentFrame    = 0;
+    
     bIsPlaying = false;
     fadePct.animateTo(0.0);
 

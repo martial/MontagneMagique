@@ -11,6 +11,11 @@
 #include <stdio.h>
 #include "AbstractARScene.hpp"
 #include "ofxOpenCv.h"
+#include "ofxPostProcessing.h"
+
+#define SHAPE_TYPE_VECTOR 0
+#define SHAPE_TYPE_IMG 1
+#define SHAPE_TYPE_BOTH 2
 
 class VectorObject {
   
@@ -24,9 +29,15 @@ public:
     
     float       rot;
     float       rotationVel;
+    
+    int         type;
+    
     VectorObject() {
-        scalez = ofRandom(-2000, -1000);
-        scaleVel = ofRandom(50, 100);
+        
+        type = SHAPE_TYPE_VECTOR;
+        
+        scalez = ofRandom(-10000, -10000);
+        scaleVel = ofRandom(50, 50);
         
         rot = 0;
         rotationVel = ofRandom(10);
@@ -35,37 +46,43 @@ public:
     void updateScale() {
         
         rot += rotationVel;
-
-        
         scalez += scaleVel;
         if(scalez > 1000)
-             scalez = ofRandom(-2000, -1000);
+            scalez = ofRandom(-5000, -4000);
     }
     
     void draw() {
         
-        ofPath p;
-        p.moveTo(line.getVertices()[0]);
-        for(int j=0; j<line.getVertices().size(); j++) {
+        if(type == SHAPE_TYPE_VECTOR)  {
+        
+            ofPath p;
+            p.moveTo(line.getVertices()[0]);
+            for(int j=0; j<line.getVertices().size(); j++) {
+                
+                float randx = ofRandom(-1, 1);
+                float randy = ofRandom(-1, 1);
+                
+                ofVec2f pnt = line.getVertices()[j];
+                pnt.x += randx;
+                pnt.y += randy;
+                
+                p.curveTo(pnt);
+            }
+            p.close();
             
-            float randx = ofRandom(-1, 1);
-            float randy = ofRandom(-1, 1);
+            p.setColor(path.getFillColor());
+            p.setStrokeColor(path.getStrokeColor());
+            p.setStrokeWidth(0);
             
-            ofVec2f pnt = line.getVertices()[j];
-            pnt.x += randx;
-            pnt.y += randy;
+            p.draw();
             
-            p.curveTo(pnt);
         }
-        p.close();
         
-        p.setColor(path.getFillColor());
-        p.setStrokeColor(path.getStrokeColor());
-        p.setStrokeWidth(0);
-        
-        //p.draw();
-        
-        img.draw(line.getBoundingBox().x,line.getBoundingBox().y);
+        if(type == SHAPE_TYPE_IMG)  {
+
+            img.draw(line.getBoundingBox().x,line.getBoundingBox().y);
+            
+        }
         
     }
     
@@ -81,12 +98,20 @@ public:
     void setup(string name);
     void update();
     void draw();
+    void drawOffScreen();
+
     void updateCamera(ofBaseHasPixels & input);
     void onMarkerTracked();
     
     void captureImages();
     void captureShapes();
-
+    void clear();
+    void undo();
+    void save();
+    
+    void setTreshold(float thresold);
+    void setAperture(float aperture);
+    void loadFolder(string folder); // todo
     
 private:
     
@@ -102,6 +127,13 @@ private:
     vector<ofPolyline>          lines;
     vector<ofPath>              paths;
     vector<VectorObject>        vectorObjects;
+    
+    // scene stuff
+    ofxPostProcessing post;
+    ofEasyCam cam;
+    ofLight light;
+    
+    shared_ptr<DofPass> dofPass;
 
 };
 

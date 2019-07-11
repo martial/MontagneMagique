@@ -28,6 +28,7 @@ public:
     void updateTrackers(ofBaseHasPixels & input);
     void updateScene();
     void drawScene(bool bDraw = true);
+    void drawOffScreen();
 
     void processDebugDraw();
     void debugDrawTrackers();

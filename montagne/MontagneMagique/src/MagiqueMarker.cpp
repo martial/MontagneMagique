@@ -144,8 +144,8 @@ void MagiqueMarker::beginAR() {
         // store in memory and smooth
         for(int i=0; i<16; i++) {
             
-           currentPose[i] = filters[i].predict_and_correct( mk->pose.T[i]);
-           // currentPose[i] = mk->pose.T[i];
+            currentPose[i] = filters[i].predict_and_correct( mk->pose.T[i]);
+            //currentPose[i] = mk->pose.T[i];
             
         }
         

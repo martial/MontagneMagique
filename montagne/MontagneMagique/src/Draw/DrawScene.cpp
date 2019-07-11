@@ -26,7 +26,28 @@ void DrawScene::setup(string dataPath) {
         
     }
     
+    post.init(1920, 1080);
+    post.setFlip(true);
+    //post.createPass<BloomPass>()->setEnabled(true);
+    dofPass = post.createPass<DofPass>();
+    dofPass->setEnabled(true);
     
+    
+    
+}
+
+void DrawScene::setTreshold(float thresold) {
+    
+    configJson["thresold"] = thresold;
+    saveConfigJson();
+}
+void DrawScene::setAperture(float aperture) {
+    
+    configJson["aperture"] = aperture;
+    saveConfigJson();
+    
+}
+void DrawScene::loadFolder(string folder) {
     
 }
 
@@ -37,7 +58,10 @@ void DrawScene::update() {
 
     thresold = configJson["thresold"];
     
-    thresold = ofMap(ofGetMouseX(), 0, ofGetWidth(), 0, 300);
+    float aperture = configJson["aperture"];
+
+    dofPass->setAperture(aperture);
+  // dofPass->setFocus(focus);
 
     if(hasConfigChanged()) {
         
@@ -57,10 +81,6 @@ void DrawScene::update() {
     }
     
   //  ofLogNotice("thresopld ") << thresold;
-
-    
-    
-    
     float scale = 3;
     
     // we allocate openCV images if needed
@@ -75,7 +95,8 @@ void DrawScene::update() {
     
     // we do the countour finding
     colorImg.setFromPixels(app->resizedInputImg.getPixels());
-    
+    //colorImg.mirror(true, false);
+
     grayImage = colorImg;
     grayImage.threshold(thresold);
     
@@ -87,6 +108,7 @@ void DrawScene::update() {
         contourFinder.blobs[j].centroid *= scale;
         
     }
+
     
 }
 
@@ -128,7 +150,6 @@ void DrawScene::captureImages() {
         // we create an image for each shape and then set a mask.
         ofImage shape;
         shape.setFromPixels(pix);
-        
         shape.crop(contourFinder.blobs[i].boundingRect.x, contourFinder.blobs[i].boundingRect.y, contourFinder.blobs[i].boundingRect.width, contourFinder.blobs[i].boundingRect.height);
         shape.save("drawn_images/imagetest_"+ofToString(i)+".png");
         
@@ -142,7 +163,7 @@ void DrawScene::captureShapes() {
     // we already have it ! grayImage ( inverted though )
     
     ofTexture mask;
-    //grayImage.invert();
+    grayImage.invert();
     mask.loadData(grayImage.getPixels());
     mask.draw(0.0,0.0);
     
@@ -189,7 +210,6 @@ void DrawScene::captureShapes() {
         for(int j=0; j<line.getVertices().size(); j++) {
             p.curveTo(line.getVertices()[j]);
         }
-        
         p.close();
         
         int rdmIndex = floor(ofRandom(colors.size()));
@@ -205,7 +225,10 @@ void DrawScene::captureShapes() {
         ofImage shape;
         shape.setFromPixels(pix);
         
-        shape.crop(contourFinder.blobs[i].boundingRect.x, contourFinder.blobs[i].boundingRect.y, contourFinder.blobs[i].boundingRect.width, contourFinder.blobs[i].boundingRect.height);
+        shape.crop(contourFinder.blobs[i].boundingRect.x,
+                   contourFinder.blobs[i].boundingRect.y,
+                   contourFinder.blobs[i].boundingRect.width,
+                   contourFinder.blobs[i].boundingRect.height);
         
         VectorObject obj;
         obj.line = line;
@@ -214,19 +237,17 @@ void DrawScene::captureShapes() {
         
         vectorObjects.push_back(obj);
         
-        
-        //p.draw();
-        
     }
-    
-    
     
 }
 
 
 void DrawScene::draw() {
     
-    
+    ofEnableDepthTest();
+
+    post.begin();
+
     ofPushMatrix();
     ofEnableAlphaBlending();
     ofScale(3,3);
@@ -259,7 +280,19 @@ void DrawScene::draw() {
   //  contourFinder.draw();
     
     ofPopMatrix();
+    post.end();
+    
+    ofDisableDepthTest();
 }
+
+void DrawScene::clear() {
+    
+    lines.clear();
+    paths.clear();
+    vectorObjects.clear();
+    
+}
+
 
 
 void DrawScene::onMarkerTracked() {
@@ -267,3 +300,52 @@ void DrawScene::onMarkerTracked() {
     
     
 }
+
+void DrawScene::save() {
+    
+    // first create a folder with current time
+    string folder   = ofToString(std::time(nullptr));
+    string path     = "shapes/" + folder;
+    ofDirectory f;
+    f.createDirectory(path);
+    f.close();
+    
+    ofJson result;
+    for(int i=0; i < vectorObjects.size(); i++ ) {
+        
+        ofJson shape;
+        
+        for(int j=0; j < vectorObjects[i].line.getVertices().size(); j++) {
+            
+            ofJson pnt;
+            pnt["x"] = vectorObjects[i].line.getVertices()[j].x;
+            pnt["y"] = vectorObjects[i].line.getVertices()[j].y;
+
+            shape["pnts"].push_back(pnt);
+            
+        }
+        
+        // save all images
+        string imgPath = path + "/image_"+ofToString(i) + ".png";
+        vectorObjects[i].img.save(imgPath);
+        
+        shape["img"] = imgPath;
+        result["shapes"].push_back(shape);
+        
+        ofSaveJson(path + "/shapes.json", result);
+        
+    }
+    
+    
+}
+
+void DrawScene::drawOffScreen() {
+    
+    ofApp * app = (ofApp*) ofGetAppPtr();
+    ofSetColor(255);
+    app->resizedInputImg.draw(0.0,0.0);
+    
+    contourFinder.draw();
+}
+
+
