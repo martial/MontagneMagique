@@ -11,6 +11,7 @@
 void DrawScene::setup(string dataPath) {
     
     AbstractARScene::setup(dataPath);
+    
     shader.load("shaders/mask");
     
     for(int i=0; i<configJson["colors"].size(); i++) {
@@ -23,16 +24,12 @@ void DrawScene::setup(string dataPath) {
         
         colors.push_back(c);
         
-        
     }
     
     post.init(1920, 1080);
     post.setFlip(true);
-    //post.createPass<BloomPass>()->setEnabled(true);
     dofPass = post.createPass<DofPass>();
     dofPass->setEnabled(true);
-    
-    
     
 }
 
@@ -56,10 +53,7 @@ void DrawScene::update() {
     
     ofApp * app = (ofApp*) ofGetAppPtr();
 
-    thresold = configJson["thresold"];
-    
     float aperture = configJson["aperture"];
-
     dofPass->setAperture(aperture);
   // dofPass->setFocus(focus);
 
@@ -80,7 +74,6 @@ void DrawScene::update() {
         
     }
     
-  //  ofLogNotice("thresopld ") << thresold;
     float scale = 3;
     
     // we allocate openCV images if needed
@@ -89,8 +82,6 @@ void DrawScene::update() {
         colorImg.allocate(app->videoInputWidth,app->videoInputHeight);
         grayImage.allocate(app->videoInputWidth,app->videoInputHeight);
         
-        
-        
     }
     
     // we do the countour finding
@@ -98,6 +89,8 @@ void DrawScene::update() {
     //colorImg.mirror(true, false);
 
     grayImage = colorImg;
+    
+    float thresold = configJson["thresold"];
     grayImage.threshold(thresold);
     
     contourFinder.findContours(grayImage, 20, (app->videoInputWidth*.75 * app->videoInputHeight * .75), 10, true);
@@ -269,16 +262,12 @@ void DrawScene::draw() {
         vectorObjects[i].updateScale();
         vectorObjects[i].draw();
         
-       
-        
         ofPopMatrix();
         
     }
     
-    
     //grayImage.draw(0.0,0.0);
   //  contourFinder.draw();
-    
     ofPopMatrix();
     post.end();
     
@@ -293,11 +282,7 @@ void DrawScene::clear() {
     
 }
 
-
-
 void DrawScene::onMarkerTracked() {
-    
-    
     
 }
 
@@ -347,5 +332,3 @@ void DrawScene::drawOffScreen() {
     
     contourFinder.draw();
 }
-
-

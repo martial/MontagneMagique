@@ -118,9 +118,7 @@ private:
     ofxCvColorImage         colorImg;
     ofxCvGrayscaleImage     grayImage;
     ofxCvContourFinder      contourFinder;
-    
-    float thresold;
-    
+        
     ofShader shader;
     
     vector<ofColor>             colors;
