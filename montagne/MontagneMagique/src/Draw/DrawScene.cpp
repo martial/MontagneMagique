@@ -26,12 +26,22 @@ void DrawScene::setup(string dataPath) {
         
     }
     
-    post.init(1920, 1080);
-    post.setFlip(true);
+    ofApp * app = (ofApp*)ofGetAppPtr();
+    post.init(app->videoOutputWidth, app->videoOutputHeight);
     dofPass = post.createPass<DofPass>();
     dofPass->setEnabled(true);
+    post.setFlip(true);
+   
+
+}
+
+void DrawScene::setMarker(shared_ptr<MagiqueMarker> marker) {
+    
+    AbstractARScene::setMarker(marker);
+    
     
 }
+
 
 void DrawScene::setTreshold(float thresold) {
     
@@ -74,8 +84,8 @@ void DrawScene::update() {
         
     }
     
-    float scale = 3;
-    
+    float scale =  (float)app->videoOutputWidth / (float)app->videoInputWidth;
+
     // we allocate openCV images if needed
     if(!colorImg.bAllocated) {
         
@@ -86,7 +96,7 @@ void DrawScene::update() {
     
     // we do the countour finding
     colorImg.setFromPixels(app->resizedInputImg.getPixels());
-    //colorImg.mirror(true, false);
+    colorImg.mirror(true, false);
 
     grayImage = colorImg;
     
@@ -150,7 +160,7 @@ void DrawScene::captureImages() {
     
 }
 
-void DrawScene::captureShapes() {
+void DrawScene::captureShapes(int mode) {
     
     // first we simply create a mask
     // we already have it ! grayImage ( inverted though )
@@ -185,7 +195,7 @@ void DrawScene::captureShapes() {
      
      */
     
-    float tolerance =ofMap(ofGetMouseY(), 0, ofGetHeight(), 0, 10);
+    float tolerance = ofMap(ofGetMouseY(), 0, ofGetHeight(), 0, 10);
     
     for (int i = 0; i < contourFinder.nBlobs; i++){
         
@@ -224,6 +234,7 @@ void DrawScene::captureShapes() {
                    contourFinder.blobs[i].boundingRect.height);
         
         VectorObject obj;
+        obj.type = mode;
         obj.line = line;
         obj.path = p;
         obj.img = shape;
@@ -305,7 +316,6 @@ void DrawScene::save() {
             ofJson pnt;
             pnt["x"] = vectorObjects[i].line.getVertices()[j].x;
             pnt["y"] = vectorObjects[i].line.getVertices()[j].y;
-
             shape["pnts"].push_back(pnt);
             
         }
@@ -330,5 +340,10 @@ void DrawScene::drawOffScreen() {
     ofSetColor(255);
     app->resizedInputImg.draw(0.0,0.0);
     
+    ofPushMatrix();
+    ofTranslate(0.0, app->resizedInputImg.getHeight());
+    ofScale(1, -1, 1);
     contourFinder.draw();
+    ofPopMatrix();
+    
 }

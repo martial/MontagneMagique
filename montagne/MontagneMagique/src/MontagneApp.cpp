@@ -16,13 +16,6 @@ void MontagneApp::setup() {
     currentSceneName    = "";
     currentSubSceneName = "";
     
-    // masking 
-    //shader.load("assets/shaders/shader");
-    
-    // 1920 x 1080
-    videoOutputWidth    = 1920;
-    videoOutputHeight   = 1080;
-    
     hapPlayer.setup();
     
 }
@@ -60,19 +53,7 @@ void MontagneApp::updateTrackers(ofBaseHasPixels & input) {
 
      }
     
-    // for draw mode we need to inject pixels to scenes.
-    // TODO maybe just focus on DrawScene class and avoir unnecessary iterations
-    if(mode == DRAW_MODE ) {
     
-        for(int i=0; i< arToolKitManager.trackers.size(); i++) {
-            
-            if(arToolKitManager.trackers[i]->getIsSolidFound() ) {
-                arSceneManager.updateCamera(i, *arToolKitManager.trackers[i], input);
-            }
-            
-        }
-        
-    }
     
 }
 
@@ -92,7 +73,7 @@ void MontagneApp::updateScene() {
 }
 
 
-void MontagneApp::drawScene(bool bDraw) {
+void MontagneApp::drawScene() {
     
      // see if we have a mask around..
     /*
@@ -134,6 +115,9 @@ void MontagneApp::drawScene(bool bDraw) {
 
     ofClear(0, 0);
     
+    //tex.getTextureData().bFlipTexture = true;
+    //tex.draw(0,0);
+    
     if(mode == HAP_MODE) {
         
         hapPlayer.draw(videoOutputWidth, videoOutputHeight);
@@ -171,7 +155,8 @@ void MontagneApp::drawScene(bool bDraw) {
     //ofDisableAlphaBlending();
     fboLayer.end();
     
-    ofRectangle rect = ofxImgSizeUtils::getCenteredRect(ofGetWidth(), ofGetHeight(), videoOutputWidth, videoOutputHeight, false);
+    
+    ofRectangle rect = ofxImgSizeUtils::getCenteredRect(ofGetWidth(), (ofGetHeight() == 360*2) ? ofGetHeight() / 2 : ofGetHeight(), videoOutputWidth, videoOutputHeight, false);
     
     ofSetColor(255,255);
     glEnable(GL_BLEND);
@@ -180,8 +165,7 @@ void MontagneApp::drawScene(bool bDraw) {
    // glEnable(GL_BLEND);
     //glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     
-    if(bDraw) {
-        
+    
         /*
         // if we have a mask.. draw it for now
         if(bHasMask && maskFbo && maskFbo->isAllocated()) {
@@ -200,32 +184,21 @@ void MontagneApp::drawScene(bool bDraw) {
          
          */
         
-        if(mode != TRACKING_MODE ) {
-            
-            fboLayer.getTexture().getTextureData().bFlipTexture = false;
-            fboLayer.draw(0.0, 0.0, rect.width, rect.height);
-            
-        } else {
-            
-            fboLayer.getTexture().getTextureData().bFlipTexture = true;
-            fboLayer.draw(0.0, 0.0,  rect.width, rect.height);
-            
-            /*
-            if(tempFbo.isAllocated()) {
-                
-                tempFbo.getTexture().getTextureData().bFlipTexture = true;
-                tempFbo.draw(0.0, 0.0,  rect.width, rect.height);
-            }
-             */
-            
-        }
-      
+    if(mode != TRACKING_MODE ) {
+        
+        fboLayer.getTexture().getTextureData().bFlipTexture = false;
+        fboLayer.draw(0.0, 0.0, rect.width, rect.height);
+        
+    } else {
+        
+        fboLayer.getTexture().getTextureData().bFlipTexture = true;
+        fboLayer.draw(0.0, 0.0,  rect.width, rect.height);
+        
        
         
     }
+ 
     glDisable(GL_BLEND);
-
-
 
 }
 

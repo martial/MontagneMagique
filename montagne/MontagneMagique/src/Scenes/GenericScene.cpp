@@ -11,7 +11,7 @@
 void GenericScene::setup(string dataPath) {
     
     AbstractARScene::setup(dataPath);
-    loadVideos();
+    //loadVideos();
     
     
 }
@@ -111,8 +111,10 @@ void GenericScene::setLoopMode(ofLoopType loopMode) {
 
 void GenericScene::onMarkerTracked() {
     
+    
+    loadVideos();
     // if video is not in loop, we restart again
-    int numOfVideos = configJson["videos"].size();
+    int numOfVideos = videoPlayers.size();
     for(int i=0; i < numOfVideos; i++) {
         
         bool bLoopMode = configJson["videos"][i].value("loop", 1);
@@ -129,6 +131,15 @@ void GenericScene::onMarkerTracked() {
         videoPlayers[i]->setPosition(0.0);
         videoPlayers[i]->play();
         
+    }
+    
+}
+
+void GenericScene::onMarkerLost() {
+    
+    for(int i=0; i < videoPlayers.size(); i++) {
+        videoPlayers[i]->close();
+        videoPlayers[i] = NULL;
     }
     
 }

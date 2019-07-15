@@ -12,13 +12,14 @@
 #include "GenericScene.hpp"
 #include "HoleScene.hpp"
 #include "DrawScene.hpp"
-
 #include "ofApp.h"
 
 
 void ArSceneManager::setup(vector<std::shared_ptr<MagiqueMarker>> & trackers) {
     
     bDebugMode = false;
+    
+    ofLogNotice("SETUP ar scene manager");
     
     // HoleScene * holeScene = new HoleScene();
     // holeScene->setup("HOLE");
@@ -47,12 +48,10 @@ void ArSceneManager::setup(vector<std::shared_ptr<MagiqueMarker>> & trackers) {
         
         int sceneIndex = getSceneIndexForMarkerID(trackers[i]->markerid);
         if(sceneIndex >= 0)
-            scenes[sceneIndex]->marker = trackers[i];
+            scenes[sceneIndex]->setMarker(trackers[i]);
         
     }
     
-   // birdsScene->marker->bIsAlwaysActive = true;
-
 
 }
 

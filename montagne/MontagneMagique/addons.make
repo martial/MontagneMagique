@@ -1,7 +1,11 @@
 ofxAnimatable
 ofxArtool5
+ofxBlackmagic
 ofxGui
 ofxHapPlayer
 ofxOpenCv
 ofxOsc
+ofxPSBlend
+ofxPostProcessing
 ofxSyphon
+ofxTimeMeasurements

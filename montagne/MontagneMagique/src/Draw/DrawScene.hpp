@@ -96,6 +96,7 @@ public:
     DrawScene() {};
     
     void setup(string name);
+    void setMarker(shared_ptr<MagiqueMarker> marker);
     void update();
     void draw();
     void drawOffScreen();
@@ -104,7 +105,7 @@ public:
     void onMarkerTracked();
     
     void captureImages();
-    void captureShapes();
+    void captureShapes(int mode = SHAPE_TYPE_VECTOR);
     void clear();
     void undo();
     void save();

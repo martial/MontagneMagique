@@ -14,8 +14,8 @@ void ofApp::setup(){
     
     ofSetCircleResolution(128);
     ofSetLogLevel(OF_LOG_NOTICE);
-    ofSetFrameRate(60);
-    //ofSetVerticalSync(true);
+   // ofSetFrameRate(60);
+    ofSetVerticalSync(true);
     
     ofLogNotice("Gl shading version ") <<  glGetString(GL_SHADING_LANGUAGE_VERSION);
     
@@ -28,15 +28,20 @@ void ofApp::setup(){
     else
         exit();
     
+
+    intputMode              = configJson["auto-start-mode"];
+    videoInputWidth         = configJson["input-width"];
+    videoInputHeight        = configJson["input-height"];
+    videoOutputWidth        = configJson["output-width"];;
+    videoOutputHeight       = configJson["output-height"];;
+    
     syphonDir.setup();
     
+    app.videoOutputWidth    = videoOutputWidth;
+    app.videoOutputHeight   = videoOutputHeight;
+
     app.setup();
     app.getArToolKitManager().setDelays(configJson["marker-found-delay"], configJson["marker-lost-delay"]);
-
-        
-    intputMode          = configJson["auto-start-mode"];
-    videoInputWidth     = 1920;
-    videoInputHeight    = 1080;
     
     setInputMode(intputMode);
     
@@ -63,8 +68,6 @@ void ofApp::setup(){
     gui.add(bigBangScaleMax.setup("BigBangScaleMax", 6, 0.0, 50.0));
     gui.add(bigBangScaleDampingScale.setup("bigBangScaleDampingScale", .65, 0.0, 1.0));
     gui.add(bigBangRepulsionFactor.setup("bigBangRepulsionFactor", 1, 0.0, 3));
-     
-    
     
     addMessage("Welcome.");
     
@@ -72,8 +75,14 @@ void ofApp::setup(){
     addMessage("Press d to debug markers");
     addMessage("Press p to draw preview");
     addMessage("Press m to show hide messages");
+    addMessage("Press t to draw time measurements");
     addMessage("Press o and send an OSC test message on ip " + ofToString(configJson["osc-out-ip"]) + " and port " + ofToString(configJson["osc-out-port"]));
     addMessage("Your current OSC input port is " + ofToString(configJson["osc-in-port"]));
+    
+    
+    TIME_SAMPLE_SET_FRAMERATE(60.0f); //specify a target framerate
+    ofxTimeMeasurements::instance()->setEnabled(false);
+
 
 }
 
@@ -88,6 +97,14 @@ void ofApp::setInputMode(int mode) {
     string filename         = configJson["video-filename"];
     string videoUrl         = "videos/" + filename;
     
+    ofFboSettings settings;
+    settings.depthStencilAsTexture = false;
+    settings.internalformat = GL_RGB;
+    settings.width = videoInputWidth;
+    settings.height = videoInputHeight;
+    settings.useDepth = false;
+    settings.useStencil = false;
+    
     switch (intputMode) {
             
         case INPUT_VIDEO:
@@ -100,28 +117,29 @@ void ofApp::setInputMode(int mode) {
             
             trackedVideoInput = &videoInput;
             
-            videoInputWidth    = 640;
-            videoInputHeight   = 360;
-            
-            resizedFbo.allocate(videoInputWidth, videoInputHeight, GL_RGB);
+            resizedFbo.allocate(settings);
             trackedVideoInput = &resizedInputImg;
 
             break;
         
         case INPUT_CAMERA:
             
-            ofLogNotice("set camera ") << videoInputWidth << " " << videoInputHeight;
+#ifdef USE_SAMPLER
+            
+            sampler.setup();
+            
+            resizedFbo.allocate(videoInputWidth, videoInputHeight, GL_RGB);
+            trackedVideoInput = &resizedInputImg;
+            
+            bDrawSampler = true;
+#else
             
             cameraInput.listDevices();
             cameraInput.setDeviceID(deviceId);
-            
-            videoInputWidth    = 640;
-            videoInputHeight   = 360;
-            
             cameraInput.setup(videoInputWidth, videoInputHeight);
             trackedVideoInput = &cameraInput;
             
-           
+#endif
             
             break;
             
@@ -139,11 +157,7 @@ void ofApp::setInputMode(int mode) {
             
             syphonInput.setup();
             syphonInput.set(configJson["syphon-input-name"], configJson["syphon-input-app"]);
-            
-            videoInputWidth    = 640;
-            videoInputHeight   = 360;
-            
-            resizedFbo.allocate(videoInputWidth, videoInputHeight, GL_RGB);
+            resizedFbo.allocate(settings);
             
             trackedVideoInput = &resizedInputImg;
             
@@ -152,14 +166,14 @@ void ofApp::setInputMode(int mode) {
     }
     
     // reset trackers if size is different
-    if(oldVideoInputWidth != videoInputWidth ||  oldVideoInputHeight != videoInputHeight ) {
+    //if(oldVideoInputWidth != videoInputWidth ||  oldVideoInputHeight != videoInputHeight ) {
         
         ofSetWindowShape(videoInputWidth, videoInputHeight*2);
         app.getArToolKitManager().clean();
         app.setupTrackers(videoInputWidth, videoInputHeight);
         app.setupFbos();
         
-    }
+    //}
     
 }
 
@@ -167,20 +181,36 @@ void ofApp::setInputMode(int mode) {
 //--------------------------------------------------------------
 void ofApp::update(){
     
+#ifdef USE_SAMPLER
+    TS_START("sampler");
+    sampler.update();
+    TS_STOP("sampler");
+
+    
+#endif
+    
+    
+    TS_START("Window-title");
+
     // frame rate & windows title
     //currentFrameRate = 0.95 * currentFrameRate +  (1.0f - 0.95) * ceil(ofGetFrameRate());
     currentFrameRate = ofGetFrameRate();
 
     string sceneName = app.currentSceneName + " / " + app.currentSubSceneName;
     ofSetWindowTitle("Montagne Magique – " + sceneName + " ["+  ofToString(floor(currentFrameRate)) + " fps ]");
-    
+    TS_STOP("Window-title");
+
+    TS_START("OSC");
     oscManager.update();
+    TS_STOP("OSC");
 
     messageString = "";
-    
+   // TS_START("image");
+
     switch (intputMode) {
             
         case INPUT_VIDEO:
+            
             
             videoInput.update();
             
@@ -204,6 +234,31 @@ void ofApp::update(){
             
         case INPUT_CAMERA:
             
+#ifdef USE_SAMPLER
+            
+            sampler.update();
+            
+            TS_START("main-fbo");
+            resizedFbo.begin();
+            ofClear(0, 0, 0, 0);
+            sampler.cam.getColorTexture().draw(0,0,videoInputWidth, videoInputHeight);
+            //sampler.mainFbo.draw(0.0,0.0, videoInputWidth, videoInputHeight);
+            resizedFbo.end();
+            TS_STOP("main-fbo");
+            
+            resizedFbo.getTexture().setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
+            TS_START("resize-fbo");
+            resizedFbo.getTexture().readToPixels(resizedInputPixels);
+            TS_STOP("resize-fbo");
+            
+            TS_START("setpixels-fbo");
+            resizedInputImg.setFromPixels(resizedInputPixels);
+            TS_STOP("setpixels-fbo");
+            
+            app.updateTrackers(resizedInputImg);
+            
+#else
+            
             cameraInput.update();
             
             if(cameraInput.isFrameNew()) {
@@ -213,6 +268,10 @@ void ofApp::update(){
             resizedInputImg.setFromPixels(cameraInput.getPixels());
             resizedInputImg.resize(videoInputWidth, videoInputHeight);
             
+#endif
+            
+            
+            
             break;
             
         case INPUT_IMAGE:
@@ -221,43 +280,61 @@ void ofApp::update(){
             break;
             
         case INPUT_SYPHON:
+
             
-            
+            TS_START("main-fbo");
             resizedFbo.begin();
-            ofEnableAlphaBlending();
             ofClear(0, 0, 0, 0);
             syphonInput.draw(0.0,0.0, videoInputWidth, videoInputHeight);
-            ofDisableAlphaBlending();
             resizedFbo.end();
+            TS_STOP("main-fbo");
+             
             //resizedFbo.getTexture().setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
-            
-            resizedFbo.readToPixels(resizedInputPixels);
+            TS_START("resize-fbo");
+            resizedFbo.getTexture().readToPixels(resizedInputPixels);
+            TS_STOP("resize-fbo");
+            TS_START("setpixels-fbo");
             resizedInputImg.setFromPixels(resizedInputPixels);
+            TS_STOP("setpixels-fbo");
             
+            //resizedInputImg = syphonInput;
+
+            TS_START("tracker");
+
             if(resizedInputPixels.getWidth() == videoInputWidth && resizedInputPixels.getHeight() == videoInputHeight )
                 app.updateTrackers(resizedInputImg);
             else
                 messageString = "Syphon stream is not " + ofToString(videoInputWidth) + " x " + ofToString(videoInputHeight) + " (tracking disabled)";
  
+            TS_STOP("tracker");
             break;
             
-    }
+            
 
+            
+    }
+    
+   // TS_STOP("image");
+
+    TS_START("update-scene");
     app.updateScene();
+    TS_STOP("update-scene");
 
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
     
+    TS_START("draw-camera");
+
+    
     ofBackground(0);
     ofSetColor(255);
     
     
-    
     if(bDrawPreview && app.getMode() != HAP_MODE) {
         
-        cameraRectCanvas = ofxImgSizeUtils::getCenteredRect(ofGetWidth(), ofGetHeight(), videoInputWidth, videoInputHeight, false);
+        cameraRectCanvas = ofxImgSizeUtils::getCenteredRect(ofGetWidth(), (ofGetHeight() == videoInputHeight*2) ? ofGetHeight() / 2 : ofGetHeight(), videoInputWidth, videoInputHeight, false);
 
         switch (intputMode) {
                 
@@ -267,12 +344,12 @@ void ofApp::draw(){
                 break;
                 
             case INPUT_CAMERA:
-                cameraInput.draw(cameraRectCanvas);
+                resizedInputImg.draw(cameraRectCanvas);
 
                 break;
                 
             case INPUT_IMAGE:
-                imageInput.draw(cameraRectCanvas);
+                resizedInputImg.draw(cameraRectCanvas);
                 break;
                 
             case INPUT_SYPHON:
@@ -282,41 +359,44 @@ void ofApp::draw(){
         }
         
     }
-        
+    
+    TS_STOP("draw-camera");
+
+    
+    TS_START("draw-scene");
+
     ofPushMatrix();
     ofTranslate(cameraRectCanvas.x, cameraRectCanvas.y);
      if(!bDebugTrackers) {
-         app.drawScene(bDrawPreview);
+         app.drawScene();
      } else {
          app.processDebugDraw();
          app.debugDrawTrackers();
      }
     ofPopMatrix();
-    
+    TS_STOP("draw-scene");
+
+    TS_START("publish-syphon");
     syphonLayer.publishTexture(&app.fboLayer.getTexture());
+    TS_STOP("publish-syphon");
+
     
-    
+    TS_START("draw-offscreen");
+
     ofSetColor(255);
-    
-    
-    
-    
-   
-    
     // draw camera at the bottom and messages
     
     ofPushMatrix();
     if(ofGetWidth() == videoInputWidth && ofGetHeight() == videoInputHeight*2) {
         ofTranslate(0.0, videoInputHeight);
     } else {
-        ofTranslate(ofGetWidth() - videoInputWidth, 0.0);
+        ofTranslate(0.0, 0.0);
     }
-   
-    
+
     app.drawOffScreen();
     
     ofSetColor(255,0,0);
-    ofDrawBitmapString(ofToString(floor(currentFrameRate)) + " fps", 20, 20);
+    ofDrawBitmapString("Montagne Magique | " + ofToString(floor(currentFrameRate)) + " fps", 20, 20);
     ofSetColor(255, 255);
     
     if(bDrawMessages) {
@@ -329,9 +409,15 @@ void ofApp::draw(){
     
     ofPopMatrix();
     
+    TS_STOP("draw-offscreen");
+
+    
     if(bDrawGui)
         gui.draw();
     
+    
+   // if(bDrawSampler)
+     //   sampler.draw();
 }
 
 //--------------------------------------------------------------
@@ -352,6 +438,9 @@ void ofApp::keyPressed(int key){
     if(key == 'o')
         oscManager.sendMessage("/OF/test", "This is a test");
     
+    if(key == 't')
+        ofxTimeMeasurements::instance()->setEnabled(!ofxTimeMeasurements::instance()->getEnabled());
+    
     if(key == 'd') {
         
         app.arSceneManager.setDebugMode(!app.arSceneManager.bDebugMode);
@@ -366,8 +455,14 @@ void ofApp::keyPressed(int key){
     if(key == 'p')
         bDrawPreview =!bDrawPreview;
     
+    if(key == 'f')
+        ofToggleFullscreen();
+    
     if(key == 'm')
         bDrawMessages =!bDrawMessages;
+    
+   // if(key == 's')
+     //   bDrawSampler = !bDrawSampler;
     
     
     oscManager.keyPressed(key);
@@ -469,7 +564,10 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 //--------------------------------------------------------------
 void ofApp::exit() {
     
-    ofLogNotice("exit OF");
+#ifdef USE_SAMPLER
+    sampler.cam.close();
+#endif
+   // ofLogNotice("exit OF");
 }
 
 //these are our directory's callbacks
@@ -477,7 +575,7 @@ void ofApp::serverAnnounced(ofxSyphonServerDirectoryEventArgs &arg)
 {
     for( auto& dir : arg.servers ){
         
-        ofLogNotice("ofxSyphonServerDirectory Server Announced")<<" Server Name: "<<dir.serverName <<" | App Name: "<<dir.appName;
+        //ofLogNotice("ofxSyphonServerDirectory Server Announced")<<" Server Name: "<<dir.serverName <<" | App Name: "<<dir.appName;
         
         if(configJson["auto-link-syphon"] && dir.serverName != "MM-OF-Layer") {
             syphonInput.set(dir.serverName, dir.appName);
@@ -488,7 +586,7 @@ void ofApp::serverAnnounced(ofxSyphonServerDirectoryEventArgs &arg)
         }
         
         if(dir.serverName != "MM-OF-Layer")
-            addMessage("Server Name: " + dir.serverName + " | App Name: " + dir.appName);
+            addMessage("Server Name: " + dir.serverName + " | App Name: " + dir.appName + " " + ofToString(syphonInput.getWidth()) + "x" +  ofToString(syphonInput.getHeight()));
         
     }
 }

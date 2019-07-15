@@ -34,6 +34,7 @@ public:
     void setImage(ofImage * image);
     ofImage * image;
     float width, height;
+    int videoOutputWidth, videoOutputHeight;
     
     bool getIsSolidFound();
     int timeFoundElapsed, timeLostElapsed;

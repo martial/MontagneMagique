@@ -6,11 +6,18 @@
 #include "OscManager.hpp"
 #include "ofxGui.h"
 #include "ofxHapPlayer.h"
+#include "ofxTimeMeasurements.h"
 
 #define INPUT_VIDEO 0
 #define INPUT_CAMERA 1
 #define INPUT_SYPHON 2
 #define INPUT_IMAGE 3
+
+//#define USE_SAMPLER
+
+#ifdef USE_SAMPLER
+#include "Sampler.hpp"
+#endif
 
 class ofApp : public ofBaseApp{
 
@@ -40,7 +47,8 @@ class ofApp : public ofBaseApp{
         void setInputMode(int mode);
     
         int videoInputWidth, videoInputHeight;
-    
+        int videoOutputWidth, videoOutputHeight;
+
         MontagneApp app;
     
         ofBaseHasPixels * trackedVideoInput;
@@ -91,5 +99,10 @@ class ofApp : public ofBaseApp{
         bool bDrawMessages;
     
         float currentFrameRate;
+    
+#ifdef USE_SAMPLER
+        Sampler sampler;
+        bool bDrawSampler;
+#endif
     
 };

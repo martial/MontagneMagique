@@ -14,8 +14,6 @@
 #include "ofxBlackMagic.h"
 #endif
 
-#define PORT 9999
-
 class ofApp : public ofBaseApp {
 
 	public:
@@ -53,7 +51,9 @@ class ofApp : public ofBaseApp {
 #endif
     
         int camWidth, camHeight;
-        vector<VideoSampler> samplers;
+        int outputWidth, outputHeight;
+    
+        vector<VideoSampler*> samplers;
         ofImage camImage;
     
         int currentSampler;
@@ -61,7 +61,6 @@ class ofApp : public ofBaseApp {
         ofPixels pixs;
 
         ofFbo mainFbo;
-        ofFbo tempFbo;
         ofFbo camFbo;
         ofxPSBlend psBlend;
     
@@ -74,4 +73,7 @@ class ofApp : public ofBaseApp {
         int blendId;
     
         bool bDrawThumbs;
+    
+        ofJson configJson;
+        
 };

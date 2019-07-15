@@ -91,6 +91,22 @@ void OscManager::update() {
             // we check for scene-locks here
             this->sceneManager->activateMarkersFromScene();
             
+            // set modes
+            
+            if(app->app.currentSceneName == "cosmogonie" ) {
+                
+                this->montagneApp->setMode(SCENE_MODE);
+                
+            } else if(app->app.currentSceneName == "ete" ) {
+                
+                this->montagneApp->setMode(DRAW_MODE);
+                
+            } else {
+                
+                this->montagneApp->setMode(TRACKING_MODE);
+                
+            }
+            
         }
         
         
@@ -100,16 +116,7 @@ void OscManager::update() {
              
         }
         
-        // set modes
         
-        if(app->app.currentSceneName == "cosmogonie" ) {
-            
-            this->montagneApp->setMode(SCENE_MODE);
-
-        } else {
-            this->montagneApp->setMode(TRACKING_MODE);
-
-        }
        
         if(m.getAddress() == "/scene/cosmogonie/accueilpublic") {
             
@@ -173,6 +180,10 @@ void OscManager::update() {
             
         }
         
+        if(m.getAddress() == "/scene/ete/voloiseau") {
+            
+        }
+        
         // Events ----------------------------------------------------------------------------------------------------
         
         if(m.getAddress() == "/event/cosmogonie/particules") {
@@ -213,6 +224,24 @@ void OscManager::update() {
             
             DrawScene * drawScene = (DrawScene*) this->sceneManager->getSceneIndexForPath("draw");
             drawScene->setTreshold(m.getArgAsFloat(0));
+        }
+        
+        if(m.getAddress() == "/event/drawn/captureimg") {
+            
+            DrawScene * drawScene = (DrawScene*) this->sceneManager->getSceneIndexForPath("draw");
+            drawScene->captureShapes(SHAPE_TYPE_IMG);
+        }
+        
+        if(m.getAddress() == "/event/drawn/capturevector") {
+        
+            DrawScene * drawScene = (DrawScene*) this->sceneManager->getSceneIndexForPath("draw");
+            drawScene->captureShapes(SHAPE_TYPE_VECTOR);
+        }
+        
+        if(m.getAddress() == "/event/drawn/clear") {
+            
+            DrawScene * drawScene = (DrawScene*) this->sceneManager->getSceneIndexForPath("draw");
+            drawScene->clear();
         }
         
         if(m.getAddress() == "/event/printemps/oiseau/pitch") {

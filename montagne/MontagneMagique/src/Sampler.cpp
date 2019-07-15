@@ -1,55 +1,60 @@
-#include "ofApp.h"
+//
+//  Sampler.cpp
+//  MontagneMagique
+//
+//  Created by Martial Geoffre-Rouland on 12/07/2019.
+//
 
-//--------------------------------------------------------------
-void ofApp::setup(){
+#include "Sampler.hpp"
+
+
+void Sampler::setup(){
     
     
-    ofSetLogLevel(OF_LOG_VERBOSE);
+    bDrawThumbs     = false;
     
-    bDrawThumbs = true;
-    
-    configJson      = ofLoadJson("config.json");
+    configJson      = ofLoadJson("config-sampler.json");
     outputWidth     = configJson["output-width"];
     outputHeight    = configJson["output-height"];
     
-    ofSetFrameRate(configJson["desired-frame-rate"]);
+    //ofSetFrameRate(configJson["desired-frame-rate"]);
     
 #ifdef BLACKMAGIC
     
     camWidth    = 1920;
     camHeight   = 1080;
     
-    #ifdef VIDEO_TEST
-        videoPlayer.load("video.mp4");
-        videoPlayer.play();
-    #else
+#ifdef VIDEO_TEST
+    videoPlayer.load("video.mp4");
+    videoPlayer.play();
+#else
     
-        cam.setup(camWidth, camHeight, 25);
-
-    #endif
+    cam.setup(camWidth, camHeight, 50);
+    
+#endif
     
 #else
     
     camWidth        = 640;
     camHeight       = 480;
-   
+    
     cam.listDevices();
     int deviceId = configJson["camera-device-id"];
     cam.setDeviceID(deviceId);
-    cam.setup(camWidth, camHeight, 30);
-
+    cam.setup(camWidth, camHeight, 25);
+    
 #endif
     
     currentSampler = -1;
     
     for( int i=0; i<4; i++) {
         
-        VideoSampler * sampler = new VideoSampler();
-        sampler->id = ofToString(i);
-        sampler->setup(outputWidth, outputHeight);
+        VideoSampler sampler;
+        sampler.id = ofToString(i);
+        sampler.setup(outputWidth, outputHeight);
         samplers.push_back(sampler);
     }
-
+    
     ofFboSettings settings;
     settings.depthStencilAsTexture = false;
     settings.internalformat = GL_RGBA;
@@ -68,11 +73,11 @@ void ofApp::setup(){
     // setup blending shaders to ouput & deinterlace shader
     psBlend.setup(outputWidth, outputHeight);
     blendId = psBlend.getBlendId( "BlendLightenf");
-
-    deinterlaceShader.load("150-deinterlace");
-
+    
+    deinterlaceShader.load("shaders/deinterlace");
+    
     // set syphon
-    syphonLayer.setName("Yris-OF-Layer");
+    //syphonLayer.setName("Yris-OF-Layer");
     
     // osc
     int port = configJson["osc-in-port"];
@@ -90,9 +95,8 @@ void ofApp::setup(){
 
 
 //--------------------------------------------------------------
-void ofApp::update(){
+void Sampler::update(){
     
-    ofSetWindowTitle("Sampler " + ofToString(ceil(ofGetFrameRate())));
     parseOsc();
     
     // if frame new..
@@ -103,144 +107,131 @@ void ofApp::update(){
     if(videoPlayer.isFrameNew()) {
 #else
     if(cam.update()) {
-    
+            
 #endif
-    
+            
 #else
     cam.update();
     if(cam.isFrameNew()) {
 #endif
-        
+                
         camFbo.begin();
         ofClear(0,0,0,0);
         
         ofEnableAlphaBlending();
         deinterlaceShader.begin();
         deinterlaceShader.setUniform1f("opacity", 1.0);
-
-#ifdef BLACKMAGIC
-        
-        #ifdef VIDEO_TEST
-            videoPlayer.draw(0.0,0.0, outputWidth, outputHeight);
-        #else
-            cam.getColorTexture().draw(0,0, outputWidth, outputHeight);
-        #endif
-        
-#else
-        cam.draw(0, 0, outputWidth, outputHeight);
-#endif
-
-        deinterlaceShader.end();
-        camFbo.end();
-        
-        //camFbo.readToPixels(pixs);
-        
-        for(int i=0; i < samplers.size(); i++) {
-            
-#ifdef BLACKMAGIC
-            
-            if( samplers[i]->bIsRecording ) {
-                samplers[i]->grabFrame(camFbo.getTexture());
-            }
                 
-#else
-            if( samplers[i]->bIsRecording && cam.getPixels().isAllocated()){
-                samplers[i]->grabFrame(camFbo.getTexture());
-            }
-#endif
-                
-            samplers[i]->update();
-
-                    
-        }
-        
-        // redraw with opacity
-        
-        camFbo.begin();
-        ofClear(0,0,0,0);
-        ofEnableAlphaBlending();
-        deinterlaceShader.begin();
-        deinterlaceShader.setUniform1f("opacity", cameraFadePct.getCurrentValue());
-        
 #ifdef BLACKMAGIC
-        
+                
 #ifdef VIDEO_TEST
         videoPlayer.draw(0.0,0.0, outputWidth, outputHeight);
 #else
         cam.getColorTexture().draw(0,0, outputWidth, outputHeight);
 #endif
-        
+                
 #else
         cam.draw(0, 0, outputWidth, outputHeight);
 #endif
-        
+                
         deinterlaceShader.end();
         camFbo.end();
-        
-        // draw into main fbo
-        ofSetColor(255, 255);
-        mainFbo.begin();
-        ofClear(0,0);
-        ofEnableAlphaBlending();
-        camFbo.draw(0,0);
-        mainFbo.end();
-        
-        
+                
         for(int i=0; i < samplers.size(); i++) {
+                
+#ifdef BLACKMAGIC
+                    
+            if( samplers[i].bIsRecording ) {
+                samplers[i].grabFrame(camFbo.getTexture());
+            }
+                    
+#else
+            if( samplers[i].bIsRecording && cam.getPixels().isAllocated()){
+                samplers[i].grabFrame(camFbo.getTexture());
+            }
+#endif
+                
+            samplers[i].update();
             
-            //mainFbo.getTexture().getTextureData().bFlipTexture = true;
-            
-            // get blend
-            psBlend.begin();
-            mainFbo.draw(0.0,0.0);
-            psBlend.end();
-            
-            // draw back into main fbo
-            mainFbo.begin();
-            ofEnableAlphaBlending();
-            ofPushMatrix();
-            ofScale(1, -1, 1);
-            ofTranslate(0, -outputHeight);
-            ofSetColor(255, 255 * samplers[i]->fadePct.getCurrentValue());
-            psBlend.draw(samplers[i]->getTextureFbo().getTexture(), blendId);
-            ofPopMatrix();
-            mainFbo.end();
             
         }
         
-        
-        syphonLayer.publishTexture(&mainFbo.getTexture());
-
-        
     }
         
-      
-    
         
-        cameraFadePct.update(1.0 / 60.0f);
 
+    // redraw with opacity
+    /*
+     camFbo.begin();
+     ofClear(0,0,0,0);
+     ofEnableAlphaBlending();
+     deinterlaceShader.begin();
+     deinterlaceShader.setUniform1f("opacity", cameraFadePct.getCurrentValue());
+     
+     #ifdef BLACKMAGIC
+     
+     #ifdef VIDEO_TEST
+     videoPlayer.draw(0.0,0.0, outputWidth, outputHeight);
+     #else
+     cam.getColorTexture().draw(0,0, outputWidth, outputHeight);
+     #endif
+     
+     #else
+     cam.draw(0, 0, outputWidth, outputHeight);
+     #endif
+     
+     deinterlaceShader.end();
+     camFbo.end();
+     */
+        
+    // draw into main fbo
+    ofSetColor(255, 255);
+    mainFbo.begin();
+    ofClear(0,0);
+    ofEnableAlphaBlending();
+    camFbo.draw(0,0);
+    mainFbo.end();
+    
+    
+    for(int i=0; i < samplers.size(); i++) {
+        
+        //mainFbo.getTexture().getTextureData().bFlipTexture = true;
+        
+        // get blend
+        psBlend.begin();
+        mainFbo.draw(0.0,0.0);
+        psBlend.end();
+        
+        // draw back into main fbo
+        mainFbo.begin();
+        ofEnableAlphaBlending();
+        ofPushMatrix();
+       // ofScale(1, -1, 1);
+        //ofTranslate(0, -samplers[i].getTextureFbo().getHeight());
+        ofSetColor(255, 255 * samplers[i].fadePct.getCurrentValue());
+        psBlend.draw(samplers[i].getTextureFbo().getTexture(), blendId);
+        ofPopMatrix();
+        mainFbo.end();
+        
+    }
+    
+    cameraFadePct.update(1.0 / 60.0f);
+    
 }
 
 //--------------------------------------------------------------
-void ofApp::draw(){
+void Sampler::draw(){
     
-   
+    
     ofEnableAlphaBlending();
-    
-    //mainFbo.getTexture().getTextureData().bFlipTexture = false;
-
-    
-    
- 
-  
     ofBackground(0);
-
+    
 #ifdef BLACKMAGIC
-
+    
     float scale = 18;
 #else
     float scale = 10;
-
+    
 #endif
     float w = camWidth / scale;
     float h = camHeight / scale;
@@ -256,27 +247,26 @@ void ofApp::draw(){
     ofSetColor(96);
     ofDrawRectangle(0.0, 0.0, ofGetWidth(), h + 10);
     ofSetColor(255);
-
+    
     // draw cam
 #ifdef BLACKMAGIC
     
-    #ifdef VIDEO_TEST
+#ifdef VIDEO_TEST
     ofTexture & camTexture = videoPlayer.getTexture();
-    #else
+#else
     ofTexture & camTexture = cam.getColorTexture();
-    #endif
+#endif
     
 #else
-    
     ofTexture & camTexture = cam.getTexture();
-
+    
 #endif
     
     // draw rectangle following camera fade
     ofSetColor(255 * cameraFadePct.getCurrentValue());
     ofDrawRectangle(xOffset -2 , y -2, w + 4, h + 4);
     ofSetColor(255,255);
-
+    
     // draw camera thumb
     camTexture.draw(xOffset, y, w, h);
     ofDrawBitmapString("Camera", xOffset, y + h + 16);
@@ -286,18 +276,18 @@ void ofApp::draw(){
         for(int i=0; i< samplers.size(); i++) {
             
             x = xOffset + ( i + 1 ) * (xOffset + w);
-            samplers[i]->drawThumb(x, y, w, h );
+            samplers[i].drawThumb(x, y, w, h );
             
             ofSetColor(126,255);
-            ofDrawRectangle(x-2, y + h +2, samplers[i]->getPosition() * w+4, 18);
+            ofDrawRectangle(x-2, y + h +2, samplers[i].getPosition() * w+4, 18);
             ofSetColor(255,255);
-
-            //string str = "Track " + ofToString(i) + " ("+ofToString(samplers[i]->getNFramesInMemory()) + "/)" + ofToString(MAX_FRAMES);
+            
+            //string str = "Track " + ofToString(i) + " ("+ofToString(samplers[i].getNFramesInMemory()) + "/)" + ofToString(MAX_FRAMES);
             string str = "Track " + ofToString(i);
             ofDrawBitmapString(str, x, y + h + 16);
-
+            
         }
-    
+        
     }
     
     
@@ -312,24 +302,23 @@ void ofApp::draw(){
     ofPopMatrix();
     
     // publish fbo
-
+    //syphonLayer.publishTexture(&mainFbo.getTexture());
     
     
-
 }
-    
-void ofApp::fadeIn(int sec) {
+
+void Sampler::fadeIn(int sec) {
     
     cameraFadePct.setDuration(sec);
-
-}
     
-void ofApp::fadeOut(int sec) {
+}
+
+void Sampler::fadeOut(int sec) {
     cameraFadePct.setDuration(sec);
-
-}
     
-void ofApp::parseOsc() {
+}
+
+void Sampler::parseOsc() {
     
     // check for waiting messages
     while(receiver.hasWaitingMessages()){
@@ -338,7 +327,7 @@ void ofApp::parseOsc() {
         ofxOscMessage m;
         receiver.getNextMessage(m);
         
-        //ofLogNotice("message" ) << m.getAddress();
+        ofLogNotice("message" ) << m.getAddress();
         
         // check for mouse moved message
         if(m.getAddress() == "/yris/camera/play"){
@@ -347,11 +336,11 @@ void ofApp::parseOsc() {
             
             if (status == 0)
                 cameraFadePct.animateTo(0.0);
-
+            
             else
                 cameraFadePct.animateTo(1.0);
-
-
+            
+            
         }
         
         if(m.getAddress() == "/yris/camera/fadein"){
@@ -372,24 +361,24 @@ void ofApp::parseOsc() {
             
             int id = m.getArgAsInt32(0);
             int status = m.getArgAsInt32(1);
-
+            
             if(id == 0) {
                 
                 for ( int i=0; i<samplers.size(); i++) {
                     
-                     if (status == 1)
-                         samplers[i]->play();
+                    if (status == 1)
+                        samplers[i].play();
                     else
-                        samplers[i]->stop();
-
+                        samplers[i].stop();
+                    
                 }
                 
             } else {
                 
                 if (status == 1)
-                    samplers[id - 1]->play();
+                    samplers[id - 1].play();
                 else
-                    samplers[id - 1]->stop();
+                    samplers[id - 1].stop();
                 
             }
             
@@ -406,21 +395,21 @@ void ofApp::parseOsc() {
                     
                     
                     if (status == 1)
-                        samplers[i]->startRecord();
+                        samplers[i].startRecord();
                     else
-                        samplers[i]->stopRecord();
+                        samplers[i].stopRecord();
                     
                 }
                 
             } else {
                 
                 if (status == 1)
-                    samplers[id - 1]->startRecord();
+                    samplers[id - 1].startRecord();
                 else
-                    samplers[id - 1]->stopRecord();
+                    samplers[id - 1].stopRecord();
                 
             }
-
+            
         }
         
         if(m.getAddress() == "/yris/track/fadein"){
@@ -431,13 +420,13 @@ void ofApp::parseOsc() {
             if(id == 0) {
                 
                 for ( int i=0; i<samplers.size(); i++) {
-                    samplers[i]->fadeIn(sec);
+                    samplers[i].fadeIn(sec);
                     
                 }
                 
             } else {
-                samplers[id - 1]->fadeIn(sec);
-
+                samplers[id - 1].fadeIn(sec);
+                
             }
             
         }
@@ -450,12 +439,12 @@ void ofApp::parseOsc() {
             if(id == 0) {
                 
                 for ( int i=0; i<samplers.size(); i++) {
-                    samplers[i]->fadeOut(sec);
+                    samplers[i].fadeOut(sec);
                 }
                 
             } else {
                 
-                samplers[id - 1]->fadeOut(sec);
+                samplers[id - 1].fadeOut(sec);
                 
             }
             
@@ -467,9 +456,9 @@ void ofApp::parseOsc() {
                 
                 if(loop == "loop") {
                     
-                    samplers[i]->setLoopMode(OF_LOOP_NORMAL);
+                    samplers[i].setLoopMode(OF_LOOP_NORMAL);
                 } else {
-                    samplers[i]->setLoopMode(OF_LOOP_PALINDROME);
+                    samplers[i].setLoopMode(OF_LOOP_PALINDROME);
                     
                 }
             }
@@ -481,10 +470,10 @@ void ofApp::parseOsc() {
             
             for ( int i=0; i<samplers.size(); i++) {
                 if(recordmode == "fade") {
-                    samplers[i]->recordFadePct.setDuration(2.0);
+                    samplers[i].recordFadePct.setDuration(2.0);
                 } else {
-                    samplers[i]->recordFadePct.setDuration(0.0);
-
+                    samplers[i].recordFadePct.setDuration(0.0);
+                    
                 }
             }
             
@@ -498,9 +487,9 @@ void ofApp::parseOsc() {
             
             for ( int i=0; i<samplers.size(); i++) {
                 if(afterRecord == "none") {
-                    samplers[i]->bPlayOnstop = false;
+                    samplers[i].bPlayOnstop = false;
                 } else {
-                    samplers[i]->bPlayOnstop = true;
+                    samplers[i].bPlayOnstop = true;
                     
                 }
             }
@@ -515,13 +504,13 @@ void ofApp::parseOsc() {
             if(id == 0) {
                 
                 for ( int i=0; i<samplers.size(); i++) {
-                    samplers[i]->setSpeed(speed);
+                    samplers[i].setSpeed(speed);
                 }
                 
             } else {
                 
-                samplers[id - 1]->setSpeed(speed);
-
+                samplers[id - 1].setSpeed(speed);
+                
             }
             
         }
@@ -529,86 +518,16 @@ void ofApp::parseOsc() {
         if(m.getAddress() == "/yris/setblend"){
             
             blendId = m.getArgAsInt32(0);
-
+            
         }
         
         if(m.getAddress() == "/yris/setspeedsmooth"){
             
         }
         
-      
-        
-    }
-}
-
-//--------------------------------------------------------------
-void ofApp::keyPressed(int key){
- 
- 
-    if(key == ' ') {
-        
-        bDrawThumbs = !bDrawThumbs;
-            
         
         
     }
-    
-    
-    
-    
 }
 
-//--------------------------------------------------------------
-void ofApp::keyReleased(int key){
 
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
-
-}
-
-void ofApp::exit() {
-        
-        cam.close();
-}

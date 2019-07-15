@@ -20,6 +20,8 @@ void VideoSampler::setup(int width, int height) {
     bReverse        = false;
     loopMode        = OF_LOOP_PALINDROME;
     
+    hasCopiedPixels = false;
+    
     currentFrame    = 0;
     currentFramef   = 0.0;
     previousFrame   = 0;
@@ -53,28 +55,54 @@ void VideoSampler::setup(int width, int height) {
     
     texture.loadData(pixs);
     
+    frameSize = 1920*1080*3;
+    
+#ifdef USE_FBO
+    
+    ofFboSettings settings;
+    settings.depthStencilAsTexture = false;
+    settings.internalformat = GL_RGB;
+    settings.width = width;
+    settings.height = height;
+    settings.useDepth = false;
+    settings.useStencil = false;
+    
     for (int i=0; i<MAX_FRAMES; i++) {
         
-        shared_ptr<ofFbo> t(new ofFbo);
+        ofFbo fbo;
         
-        t->allocate(1920, 1080, GL_RGB);
-        t->begin();
-        ofClear(255,0);
-        t->end();
-        samples.push_back(t);
+        fbo.allocate(settings);
         
-        
-    
-        tempSamples.push_back(t);
+        samples.push_back(fbo);
+        tempSamples.push_back(fbo);
         
     }
+    
+#else
+    
+    
+    for(int i = 0; i < MAX_FRAMES; i++) {
+        
+        ofPixels pixels;
+        //pixels.allocate(width, height, 3);
+        
+        samples.push_back(pixels);
+        tempSamples.push_back(pixels);
+        
+    }
+    
+#endif
 }
 
 void VideoSampler::update(){
     
-    fadePct.update(1.0f / 30.0f);
-    recordFadePct.update(1.0f / 30.0f);
-        
+    fadePct.update(1.0f / 25.0f);
+    recordFadePct.update(1.0f / 25.0f);
+    
+    if(id == "0") {
+        //ofLogNotice("sampler" + id) << "nPixels : " << nPixels << ", nTempPixels : " << nTempPixels << " recordFadePct : " << recordFadePct.getCurrentValue();
+    }
+    
     if(nPixels > 0) {
         
         if(!bIsPlaying) {
@@ -107,6 +135,7 @@ void VideoSampler::update(){
 
         currentFramef += (bReverse) ? -speedPct : speedPct;
         currentFrame = round(currentFramef);
+        
         // we store the frame only in one direction ( before inverting it )
         previousFrame = currentFrame;
         currentFrame = ofClamp(currentFrame, 0, nPixels - 1);
@@ -174,20 +203,28 @@ ofFbo & VideoSampler::getTextureFbo(bool bForceOpacity) {
     
     bool bIsRecordFading = (recordFadePct.getCurrentValue() > 0);
     
-    if( bIsRecording && bIsRecordFading) {
+    
+    if( bIsRecording && bIsRecordFading ) {
         
         // if recording, and we are still faded
         // animation is stored in temp samples.
         // we need to see the realtime in the back, so let's grab a frame at nTempPixels - 1
         
-        int lastFrame = nTempPixels - 1;
+        int lastFrame = (nTempPixels == 0) ? 0 : nTempPixels - 1;
         //ofTexture tempTexture;
        // tempTexture.loadData(tempSamples[lastFrame]);
        // tempTexture.draw(0,0);
         
-        tempSamples[lastFrame]->draw(0,0);
+#ifdef USE_FBO
         
-        //ofLogNotice("Drawing in back real time at ") << lastFrame << " for " << nTempPixels;
+        tempSamples[lastFrame].draw(0,0);
+
+#else
+        ofTexture tempTexture;
+        tempTexture.loadData(tempSamples[lastFrame]);
+        tempTexture.draw(0.0, 0.0);
+        
+#endif
         
     }
     
@@ -198,14 +235,24 @@ ofFbo & VideoSampler::getTextureFbo(bool bForceOpacity) {
         // for front, we have various options
         // if we are recording, but fade is done – we just set the currentFrame in last position
         
-        shared_ptr<ofFbo> texture;
+#ifdef USE_FBO
+        ofFbo  * texture;
+#else
+        ofTexture texture;
+
+#endif
         if(bIsRecording && !bIsRecordFading) {
             
-            int frame = nPixels - 1;
+            int frame = (nPixels == 0) ? 0 : nPixels - 1;
+            
             //getTexture(frame);
             //texture.clear();
             //texture.loadData(samples[frame]);
-            texture = samples[frame];
+#ifdef USE_FBO
+            texture = &samples[frame];
+#else
+            texture.loadData(samples[frame]);
+#endif
             position = frame / (float)nPixels;
 
             //ofLogNotice("Drawing in front real time at ") << frame << " for " << nPixels;
@@ -215,7 +262,12 @@ ofFbo & VideoSampler::getTextureFbo(bool bForceOpacity) {
             //getTexture();
            // texture.clear();
             //texture.loadData(samples[currentFrame]);
-            texture = samples[currentFrame];
+            
+#ifdef USE_FBO
+            texture = &samples[currentFrame];
+#else
+            texture.loadData(samples[currentFrame]);
+#endif
             position = currentFrame / (float)nPixels;
 
             //ofLogNotice("Drawing in front still loop at ") << currentFrame;
@@ -224,7 +276,7 @@ ofFbo & VideoSampler::getTextureFbo(bool bForceOpacity) {
         
         
         // we load the texture with current frame.
-        if(texture && texture->isAllocated()) {
+        if(texture->isAllocated()) {
             
             if( !bFirstRecord && bIsRecordFading ) {
                 
@@ -275,12 +327,15 @@ void VideoSampler::startRecord(){
     nTempPixels = 0;
     
     //stop();
-    bIsRecording = true;
+    bIsRecording    = true;
+    hasCopiedPixels = false;
     
     // start fade for recording
-    recordFadePct.reset(1);
-    recordFadePct.animateTo(0);
-
+    if(bIsPlaying) {
+        recordFadePct.reset(1);
+        recordFadePct.animateTo(0);
+    }
+    
     ofAddListener(recordFadePct.animFinished, this, &VideoSampler::onFadeRecordEndHandler);
     
 }
@@ -291,10 +346,8 @@ void VideoSampler::stopRecord(){
     
     bIsRecording = false;
     
-    if(nTempPixels > 0 ) {
-        
-        recordFadePct.reset(0);
-        recordFadePct.pause();
+    if(nTempPixels > 0 && !hasCopiedPixels) {
+     
         copyTempPixels();
         
     }
@@ -321,40 +374,46 @@ int VideoSampler::getNFramesInMemory() {
     return nPixels;
     
 }
-    
 
-/*
-void VideoSampler::grabFrame(ofPixels  pixels) {
-    
-    // if we have a recording fade, we need to store pixels to temp buffer
+#ifndef USE_FBO
+
+void VideoSampler::grabFrame(ofPixels & pixs) {
     
     bool bIsRecordFading = (recordFadePct.getCurrentValue() > 0);
-
+    
     if( bIsRecordFading ) {
-
-        tempSamples[nTempPixels].clear();
-        tempSamples[nTempPixels] = pixels;
+        
+        //tempSamples[nTempPixels]->clear();
+        
+        // Draw into FBO
+       
+        tempSamples[nTempPixels] = pixs;
         nTempPixels++;
         
-    
+        
     } else {
-    
+        
+        nTempPixels = 0;
         // store to new
-        if(nPixels <= 600) {
-            samples[nPixels].clear();
-            samples[nPixels] = pixels;
+        if(nPixels < MAX_FRAMES) {
+            
+            //memcpy(samples[nPixels], frame, frameSize*sizeof(unsigned char));
+            samples[nPixels] = pixs;
+            nTempPixels++;
+            
             nPixels++;
             
+        } else {
+            //stopRecord();
         }
         
     }
     
-    
 }
- 
- */
+#endif
 
-void VideoSampler::grabFrame(ofFbo & texture) {
+#ifdef USE_FBO
+void VideoSampler::grabFrame(ofTexture & texture) {
     
     // if we have a recording fade, we need to store pixels to temp buffer
     
@@ -365,22 +424,23 @@ void VideoSampler::grabFrame(ofFbo & texture) {
         //tempSamples[nTempPixels]->clear();
         
         // Draw into FBO
-        tempSamples[nTempPixels]->begin();
-        ofClear(255,0);
+        
+        tempSamples[nTempPixels].begin();
+        //ofClear(255,0);
         texture.draw(0.0,0.0);
-        tempSamples[nTempPixels]->end();
+        tempSamples[nTempPixels].end();
         nTempPixels++;
         
         
     } else {
         
+        nTempPixels = 0;
         // store to new
         if(nPixels < MAX_FRAMES) {
             //samples[nPixels]->clear();
-            samples[nPixels]->begin();
+            samples[nPixels].begin();
             texture.draw(0.0,0.0);
-            samples[nPixels]->end();
-            
+            samples[nPixels].end();
             nPixels++;
             
         }
@@ -389,26 +449,32 @@ void VideoSampler::grabFrame(ofFbo & texture) {
     
     
 }
+#endif
 
 void VideoSampler::copyTempPixels() {
     
     if(nTempPixels > 0 ) {
         
-        nPixels = nTempPixels;
-        samples = tempSamples;
-        nTempPixels = 0;
-        currentFrame = nPixels - 1;
-
-         /*
-        //memcpy(samples, tempSamples, 600 * sizeof * samples );
-        for(int i=0; i<600; i++) {
-            
-            samples[i] = tempSamples[i];
-            if(i >= nTempPixels)
-                samples[i]->clear();
+        
+        if(id == "0") {
+            //ofLogNotice("!!COPY!! sampler" + id) << "nPixels : " << nPixels << ", nTempPixels : " << nTempPixels << " recordFadePct : " << recordFadePct.getCurrentValue();
         }
-         */
-       
+        nPixels         = nTempPixels;
+        
+#ifdef USE_FBO
+
+        samples         = tempSamples;
+#else
+        //memcpy(samples, tempSamples, MAX_FRAMES * sizeof * samples );
+        samples         = tempSamples;
+        for(int i=0; i<MAX_FRAMES; i++) {
+            //memcpy(samples[i], tempSamples[i], frameSize * sizeof(unsigned char));
+        }
+#endif
+        
+        nTempPixels     = 0;
+        currentFrame    = nPixels - 1;
+        hasCopiedPixels = true;
         
     }
     bFirstRecord = false;
@@ -417,8 +483,8 @@ void VideoSampler::copyTempPixels() {
 
 void VideoSampler::onFadeRecordEndHandler(ofxAnimatable::AnimationEvent & e) {
     
-    
-    copyTempPixels();
+    if(!hasCopiedPixels)
+        copyTempPixels();
 }
 
 

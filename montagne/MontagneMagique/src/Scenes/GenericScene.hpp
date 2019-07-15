@@ -25,7 +25,8 @@ public:
     void draw();
     
     void onMarkerTracked();
-    
+    void onMarkerLost();
+
     void setLoopMode(ofLoopType loopMode);
     
 private:

@@ -27,7 +27,7 @@ public:
     void setupFbos();
     void updateTrackers(ofBaseHasPixels & input);
     void updateScene();
-    void drawScene(bool bDraw = true);
+    void drawScene();
     void drawOffScreen();
 
     void processDebugDraw();

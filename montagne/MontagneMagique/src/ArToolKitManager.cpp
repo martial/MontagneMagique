@@ -14,7 +14,7 @@ void ArToolKitManager::setup(int width, int height) {
     inputWidth  = width;
     inputHeight = height;
     
-    trackers.reserve(10);
+    //trackers.reserve(10);
     loadTrackers();
     
 }

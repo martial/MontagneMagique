@@ -11,8 +11,8 @@
 #include "ofMain.h"
 #include "ofxAnimatableFloat.h"
 
-#define MAX_FRAMES 300
-
+#define MAX_FRAMES 200
+#define USE_FBO
 class VideoSampler {
   
 public:
@@ -30,8 +30,13 @@ public:
     void stopRecord();
     void toggleRecord();
 
-    //void grabFrame(ofPixels  pixels);
-    void grabFrame(ofFbo  & texture);
+#ifdef USE_FBO
+    void grabFrame(ofTexture  & texture);
+
+#else
+    void grabFrame(ofPixels & pixs);
+
+#endif
 
     void setLoopMode(int mode);
     
@@ -53,22 +58,30 @@ public:
     ofxAnimatableFloat fadePct, recordFadePct;
     
     int getNFramesInMemory();
+    string         id;
+    
+    int frameSize;
+    
+    int ouputWidth, outputHeight;
     
 private:
     
     
    // ofPixels    samples[600];
-    //ofPixels    tempSamples[600];
-    
+    //ofPixels    tempSamples[600];    
     //ofFbo       samples[600];
     //ofFbo       tempSamples[600];
-    
     //vector<ofFbo*> samples;
     //vector<ofFbo*> tempSamples;
+#ifdef USE_FBO
+    vector<ofFbo> samples;
+    vector<ofFbo> tempSamples;
+#else
     
-    vector<shared_ptr<ofFbo>> samples;
-    vector<shared_ptr<ofFbo>> tempSamples;
+    vector<ofPixels> samples;
+    vector<ofPixels> tempSamples;
 
+#endif
 
     
     void        copyTempPixels();
@@ -88,6 +101,9 @@ private:
     float       fadeDuration;
     
     void        onFadeRecordEndHandler(ofxAnimatable::AnimationEvent & e);
+    
+    bool        hasCopiedPixels;
+    
 };
 
 #endif /* VideoSampler_hpp */

@@ -21,6 +21,7 @@ MagiqueMarker::MagiqueMarker() {
     timeLostDelay   = 50;
     timeFound       = ofGetElapsedTimeMillis();
     timeLost        = ofGetElapsedTimeMillis();
+    
         
     timeSolidFoundElapsed = 0;
     timeSolidLostElapsed  = 0;
@@ -41,8 +42,8 @@ MagiqueMarker::MagiqueMarker() {
     // TODO move this in another place ofApp or config 
     // get viewport size
     ofApp * app = (ofApp*)ofGetAppPtr();
-    viewportSize.x = app->app.videoOutputWidth;
-    viewportSize.y = app->app.videoOutputHeight;
+    videoOutputWidth = app->videoOutputWidth;
+    videoOutputHeight = app->videoOutputHeight;
 
 }
 
@@ -58,11 +59,13 @@ void MagiqueMarker::updateBlank() {
     
     ofImage img;
     img.allocate(camSize.x,camSize.y, OF_IMAGE_COLOR);
+    
     for(int i=0; i<camSize.x*camSize.y; i++ )
         img.setColor(i, ofColor(0));
     
     this->update(img.getPixels().getData());
     int dummy = 0;
+    
     ofNotifyEvent(evLostMarker, dummy);
     this->bIsSolidFound = false;
     
@@ -135,7 +138,10 @@ void MagiqueMarker::beginAR() {
     
     ARMarkerNFT * mk = &getSelectedMarker();
     
-    ofRectangle r (0,0, 1920, 1080);
+    ofRectangle r(0,0, videoOutputWidth,videoOutputHeight);
+    
+    
+    
     ofPushView();
     ofViewport(r);
     loadProjectionMatrix();
@@ -146,7 +152,6 @@ void MagiqueMarker::beginAR() {
             
             currentPose[i] = filters[i].predict_and_correct( mk->pose.T[i]);
             //currentPose[i] = mk->pose.T[i];
-            
         }
         
         bTracked = true;
@@ -167,7 +172,7 @@ void MagiqueMarker::beginHardAR() {
     
     ARMarkerNFT * mk = &getSelectedMarker();
     
-    ofRectangle r(0,0,viewportSize.x,viewportSize.y);
+    ofRectangle r(0,0, videoOutputWidth,videoOutputHeight);
     ofPushView();
     ofViewport(r);
     loadProjectionMatrix();

@@ -38,6 +38,12 @@ public:
         
     }
     
+    virtual void setMarker(shared_ptr<MagiqueMarker> marker) {
+        
+        this->marker = marker;
+        
+    }
+    
     void loadConfigJson() {
         
         file.open(this->dataPath + "/config.json");
@@ -129,8 +135,6 @@ public:
 protected:
     
     void beginFlip() {
-        
-       // scaleFactor = ofMap(ofGetMouseX(), 0, ofGetWidth(), 11, 13);
         
         ofPushMatrix();
         ofScale( 1.0 / scaleFactor, -1.0 / scaleFactor);

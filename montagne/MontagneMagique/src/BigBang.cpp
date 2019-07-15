@@ -28,8 +28,7 @@ void BigBang::update() {
         
     ofApp * app = (ofApp*) ofGetAppPtr();
     
-    //scale = 640 / (float)app->videoInputWidth;
-    scale = 3;
+    scale =  (float)app->videoOutputWidth / (float)app->videoInputWidth;
     
     // we allocate openCV images if needed
     if(!colorImg.bAllocated) {
@@ -84,6 +83,9 @@ void BigBang::update() {
         repulsionScale          -= .1;
         repulsionScale          = ofClamp(repulsionScale, 0.0, 10.0);
         
+        nConnectedGap           = 4;
+        nConnectedMax           = 3;
+        
     }
     
     if(mode == 1) {
@@ -101,6 +103,9 @@ void BigBang::update() {
         repulsionScale          -= .025;
         repulsionScale          = ofClamp(repulsionScale, 0.0, 10.0);
         
+        nConnectedGap           = 2;
+        nConnectedMax           = 6;
+        
         if(ofGetFrameNum() % 8 == 0)
             addParticles(2, app->bigBangScaleMin, app->bigBangScaleMax, app->bigBangDampingMin, app->bigBangDampingMax);
         
@@ -114,6 +119,9 @@ void BigBang::update() {
         maxParticleLife         = 5000;
         forceRandomNessScale    = 0.01;
         repulsionScale          = 0.0;
+        
+        nConnectedGap           = 2;
+        nConnectedMax           = 6;
         
         if(ofGetFrameNum() % 24 == 0 && particles.size() < 10)
             addParticles(1, app->bigBangScaleMin, app->bigBangScaleMax, app->bigBangDampingMin, app->bigBangDampingMax);
@@ -173,11 +181,11 @@ void BigBang::draw() {
             for (int j = 0; j < contourFinder.nBlobs; j++){
                 
                 if(repulsionScale > 0.0) {
-                    particles[i]->addRepulsionForce(contourFinder.blobs[j].centroid, 1920 * 5, repulsionScale);
+                    particles[i]->addRepulsionForce(contourFinder.blobs[j].centroid, app->videoOutputWidth * 5, repulsionScale);
                 }
                 
-                particles[i]->addRepulsionForce(contourFinder.blobs[j].centroid, 1920 * 5, 0.3);
-                particles[i]->addAttractionForce(contourFinder.blobs[j].centroid,1920 * 5, 0.8);
+                particles[i]->addRepulsionForce(contourFinder.blobs[j].centroid,  app->videoOutputWidth * 5, 0.3);
+                particles[i]->addAttractionForce(contourFinder.blobs[j].centroid, app->videoOutputWidth * 5, 0.8);
                
                
             }
@@ -241,7 +249,7 @@ void BigBang::draw() {
                     for(int j = 0; j < particles.size(); j++) {
                          
                          // not same and not everyone
-                         if ( i != j && particles[j]->id % 4 == 0 && particles[j]->nConnecteds < 3) {
+                         if ( i != j && particles[j]->id % nConnectedGap && particles[j]->nConnecteds < nConnectedMax) {
                            
                              float dist = particles[i]->pos.distance(particles[j]->pos);
                              if ( dist < lineDistance) {
@@ -319,22 +327,22 @@ void BigBang::addParticles(int nParticles, float minSize, float maxSize, float m
     // we get positions from the borders
     if(mode == 0 ) {
         
-            for(int i=0; i<1920; i++) {
+            for(int i=0; i<app->videoOutputWidth; i++) {
             
             ofVec2f pos(i, 0.0);
             positions.push_back(pos);
             
-            ofVec2f posy(i, 1080);
+            ofVec2f posy(i, app->videoOutputHeight);
             positions.push_back(posy);
             
         }
         
-        for(int i=0; i<1080; i++) {
+        for(int i=0; i<app->videoOutputHeight; i++) {
             
             ofVec2f pos(0.0, i);
             positions.push_back(pos);
             
-            ofVec2f posy(1920, i);
+            ofVec2f posy(app->videoOutputWidth, i);
             positions.push_back(posy);
             
         }
@@ -354,7 +362,7 @@ void BigBang::addParticles(int nParticles, float minSize, float maxSize, float m
     else if ( mode == 2 ) {
         
         for (int j = 0; j < 100; j++){
-            positions.push_back(ofVec2f(ofRandom(1920),ofRandom(1080)));
+            positions.push_back(ofVec2f(ofRandom(app->videoOutputWidth),ofRandom(app->videoOutputHeight)));
         }
         
     }

@@ -53,6 +53,8 @@ private:
     
     int                 lastMode;
     
+    int                 nConnectedMax, nConnectedGap;
+    
     
 };
 
