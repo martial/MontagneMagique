@@ -37,7 +37,7 @@ public:
         
         type = SHAPE_TYPE_VECTOR;
         
-        scalez = ofRandom(-10000, -10000);
+        scalez = ofRandom(-10000, -8000);
         scaleVel = ofRandom(50, 50);
         
         rot = 0;
@@ -49,7 +49,8 @@ public:
         rot += rotationVel;
         scalez += scaleVel;
         if(scalez > 1000)
-            scalez = ofRandom(-5000, -4000);
+            scalez = ofRandom(-10000, -8000);
+            //scalez *= 2;
     }
   
     void draw() {
@@ -87,6 +88,10 @@ public:
         
     }
     
+    bool operator < (const VectorObject &other) const {
+        return scalez < other.scalez;
+    }
+    
     
 };
 
@@ -105,7 +110,6 @@ public:
     void updateCamera(ofBaseHasPixels & input);
     void onMarkerTracked();
     
-    void captureImages();
     void captureShapes(int mode = SHAPE_TYPE_VECTOR);
     void clear();
     void undo();

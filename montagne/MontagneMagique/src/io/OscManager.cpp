@@ -288,7 +288,7 @@ void OscManager::keyPressed(int key) {
     if(key == 's') {
         
         DrawScene * drawScene = (DrawScene*) this->sceneManager->getSceneIndexForPath("draw");
-        drawScene->captureShapes();
+        drawScene->captureShapes(SHAPE_TYPE_IMG);
         
     }
     

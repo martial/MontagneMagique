@@ -64,8 +64,6 @@ void DrawScene::setAperture(float aperture) {
 }
 void DrawScene::loadFolder(string folder) {
     
-    ofLogNotice("loadFolder ") << folder;
-  
     // first load shapes
     ofJson shapesJson;
     shapesJson = ofLoadJson(folder + "/shapes.json");
@@ -166,6 +164,9 @@ void DrawScene::update() {
         contourFinder.blobs[j].centroid *= scale;
         
     }
+    
+    // sort shapes by depth / scale
+    sort(vectorObjects.begin(), vectorObjects.end());
 
     
 }
@@ -175,45 +176,7 @@ void DrawScene::updateCamera(ofBaseHasPixels & input){
     
 }
 
-void DrawScene::captureImages() {
-    
-    // first we simply create a mask
-    // we already have it ! grayImage ( inverted though )
-    
-    ofTexture mask;
-    grayImage.invert();
-    mask.loadData(grayImage.getPixels());
-    mask.draw(0.0,0.0);
-    
-    // create a fbo for masking...
-    ofFbo fbo;
-    fbo.allocate(grayImage.width, grayImage.height, GL_RGBA);
-    fbo.begin();
-    ofEnableAlphaBlending();
-    ofClear(255, 0);
-    shader.begin();
-    shader.setUniformTexture("imageMask", mask, 1);
-    colorImg.draw(0.0,0.0);
-    shader.end();
-    fbo.end();
-    
-    ofEnableAlphaBlending();
-    
-    ofPixels pix;
-    fbo.readToPixels(pix);
-    
-    // basically we have to loop into the shapes
-    for (int i = 0; i < contourFinder.nBlobs; i++){
-        
-        // we create an image for each shape and then set a mask.
-        ofImage shape;
-        shape.setFromPixels(pix);
-        shape.crop(contourFinder.blobs[i].boundingRect.x, contourFinder.blobs[i].boundingRect.y, contourFinder.blobs[i].boundingRect.width, contourFinder.blobs[i].boundingRect.height);
-        shape.save("drawn_images/imagetest_"+ofToString(i)+".png");
-        
-    }
-    
-}
+
 
 void DrawScene::captureShapes(int mode) {
     
@@ -221,7 +184,7 @@ void DrawScene::captureShapes(int mode) {
     // we already have it ! grayImage ( inverted though )
     
     ofTexture mask;
-    grayImage.invert();
+    //grayImage.invert();
     mask.loadData(grayImage.getPixels());
     mask.draw(0.0,0.0);
     
@@ -247,7 +210,6 @@ void DrawScene::captureShapes(int mode) {
     lines.clear();
     paths.clear();
     vectorObjects.clear();
-     
      */
     
     float tolerance = ofMap(ofGetMouseY(), 0, ofGetHeight(), 0, 10);
