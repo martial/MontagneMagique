@@ -12,6 +12,7 @@
 #include "AbstractARScene.hpp"
 #include "ofxOpenCv.h"
 #include "ofxPostProcessing.h"
+#include "BirdSprite.hpp"
 
 #define SHAPE_TYPE_VECTOR 0
 #define SHAPE_TYPE_IMG 1
@@ -133,6 +134,9 @@ private:
     ofLight light;
     
     shared_ptr<DofPass> dofPass;
+    
+    BirdSprite bird;
+
 
 };
 

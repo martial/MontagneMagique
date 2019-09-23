@@ -18,7 +18,6 @@
 		11DF9AB1B4EAA63E3B190CA0 /* ofxSyphonServerDirectory.mm in Sources */ = {isa = PBXBuildFile; fileRef = E723BEF4C55D236E24639608 /* ofxSyphonServerDirectory.mm */; };
 		169D3C72FDE6C5590A1616F5 /* ofxCvFloatImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B6A03390302D5A2C9F0E4AB /* ofxCvFloatImage.cpp */; };
 		1CD33E884D9E3358252E82A1 /* ofxToggle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 907C5B5E104864A2D3A25745 /* ofxToggle.cpp */; };
-		1CF23CA353F373B0D0183D7B /* VideoManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 99F196D7708B5047FF777BA3 /* VideoManager.cpp */; };
 		1D5F3298C2FA073628012944 /* ofxCvContourFinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C76DE5C29BDBD2CAA1DD0021 /* ofxCvContourFinder.cpp */; };
 		1E615236D6D182DED6C8A8B2 /* RenderPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 54F36382628E4D0FF07206D7 /* RenderPass.cpp */; };
 		1F558B76FB3412843DDAA031 /* ofxSyphonClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 03EA4DA95B5E1B8409FC058E /* ofxSyphonClient.mm */; };
@@ -77,6 +76,7 @@
 		83287A6722D8B1BE004633F5 /* libavcodec.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83287A5A22D8B1BD004633F5 /* libavcodec.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83287A6822D8B1BE004633F5 /* libswresample.2.3.100.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83287A5B22D8B1BD004633F5 /* libswresample.2.3.100.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		837220E80EB56CD44AD27F2A /* ofxSlider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15F2C6477A769C03A56D1401 /* ofxSlider.cpp */; };
+		83D98DE72338F672007566B9 /* BirdSprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D98DE52338F672007566B9 /* BirdSprite.cpp */; };
 		852E0891794923EE7583C621 /* ofxInputField.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 44B351490B620D04E1E7C52D /* ofxInputField.cpp */; };
 		853E0BA2F448076739446874 /* ofxColorPicker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 181D363B6DD54D1FA6309C43 /* ofxColorPicker.cpp */; };
 		856AA354D08AB4B323081444 /* ofxBaseGui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9604B925D32EE39065747725 /* ofxBaseGui.cpp */; };
@@ -284,7 +284,6 @@
 		312C4E5B5888B0E1B0260A34 /* fast_math.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = fast_math.hpp; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv2/core/fast_math.hpp; sourceTree = SOURCE_ROOT; };
 		319268D200F1BA567E4CCFF9 /* cxeigen.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = cxeigen.hpp; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv/cxeigen.hpp; sourceTree = SOURCE_ROOT; };
 		31BE73BA37686CA4E4904323 /* matchers.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = matchers.hpp; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv2/stitching/detail/matchers.hpp; sourceTree = SOURCE_ROOT; };
-		323B8BA4CA9FBEE652F5C632 /* VideoManager.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = VideoManager.hpp; path = src/VideoManager.hpp; sourceTree = SOURCE_ROOT; };
 		3257139B759DE3ED39A9944A /* shape_transformer.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = shape_transformer.hpp; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv2/shape/shape_transformer.hpp; sourceTree = SOURCE_ROOT; };
 		32D6F27DC6308427F9A278C1 /* ofxSyphonServer.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = ofxSyphonServer.mm; path = ../../../addons/ofxSyphon/src/ofxSyphonServer.mm; sourceTree = SOURCE_ROOT; };
 		3320E3391BCC52FB025EF699 /* warp_shuffle.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = warp_shuffle.hpp; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv2/core/cuda/warp_shuffle.hpp; sourceTree = SOURCE_ROOT; };
@@ -509,6 +508,8 @@
 		83287A5922D8B1BD004633F5 /* libavformat.57.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavformat.57.dylib; path = bin/MontagneMagique.app/Contents/Frameworks/libavformat.57.dylib; sourceTree = "<group>"; };
 		83287A5A22D8B1BD004633F5 /* libavcodec.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavcodec.dylib; path = bin/MontagneMagique.app/Contents/Frameworks/libavcodec.dylib; sourceTree = "<group>"; };
 		83287A5B22D8B1BD004633F5 /* libswresample.2.3.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libswresample.2.3.100.dylib; path = bin/MontagneMagique.app/Contents/Frameworks/libswresample.2.3.100.dylib; sourceTree = "<group>"; };
+		83D98DE52338F672007566B9 /* BirdSprite.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BirdSprite.cpp; sourceTree = "<group>"; };
+		83D98DE62338F672007566B9 /* BirdSprite.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = BirdSprite.hpp; sourceTree = "<group>"; };
 		83F10DECDFF16F9F1E67D731 /* ofxTimeMeasurements.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxTimeMeasurements.h; path = ../../../addons/ofxTimeMeasurements/src/ofxTimeMeasurements.h; sourceTree = SOURCE_ROOT; };
 		8486E17E15F382EB308D3CD6 /* reduce.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = reduce.hpp; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv2/cudev/block/detail/reduce.hpp; sourceTree = SOURCE_ROOT; };
 		84C059AA681D7088B742D8E8 /* cuda.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = cuda.hpp; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv2/core/cuda.hpp; sourceTree = SOURCE_ROOT; };
@@ -566,7 +567,6 @@
 		990329DB4664B194883F937A /* GenericScene.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = GenericScene.cpp; path = src/Scenes/GenericScene.cpp; sourceTree = SOURCE_ROOT; };
 		990ABB3DEC8443E5B5505F14 /* vec_math.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = vec_math.hpp; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv2/cudev/util/vec_math.hpp; sourceTree = SOURCE_ROOT; };
 		995617CF6C395A89058EF74F /* ocl_perf.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ocl_perf.hpp; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv2/ts/ocl_perf.hpp; sourceTree = SOURCE_ROOT; };
-		99F196D7708B5047FF777BA3 /* VideoManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = VideoManager.cpp; path = src/VideoManager.cpp; sourceTree = SOURCE_ROOT; };
 		9A048549F08C6DFFA79E6DEF /* ofxCvGrayscaleImage.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxCvGrayscaleImage.h; path = ../../../addons/ofxOpenCv/src/ofxCvGrayscaleImage.h; sourceTree = SOURCE_ROOT; };
 		9A16CBF2E8CFE43AF54FE6F5 /* ofxCvHaarFinder.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofxCvHaarFinder.cpp; path = ../../../addons/ofxOpenCv/src/ofxCvHaarFinder.cpp; sourceTree = SOURCE_ROOT; };
 		9A45223FE8C83E9650095279 /* limits.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = limits.hpp; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv2/core/cuda/limits.hpp; sourceTree = SOURCE_ROOT; };
@@ -1459,6 +1459,8 @@
 		432D36188698948F14FAF817 /* Draw */ = {
 			isa = PBXGroup;
 			children = (
+				83D98DE52338F672007566B9 /* BirdSprite.cpp */,
+				83D98DE62338F672007566B9 /* BirdSprite.hpp */,
 				1C1B82077C759538C76412DA /* DrawScene.hpp */,
 				8B9AD2CD3A22D655A999C52E /* DrawScene.cpp */,
 			);
@@ -1814,6 +1816,13 @@
 				83287A4122D8B1A2004633F5 /* libswresample.dylib */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		83D98DE42338F663007566B9 /* openFrameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = openFrameworks;
 			sourceTree = "<group>";
 		};
 		85C7093CD15404193A7664FD /* Utils */ = {
@@ -2340,6 +2349,9 @@
 		C9A8C2EA34B35E4BED69D33C /* Scenes */ = {
 			isa = PBXGroup;
 			children = (
+				961471FAB40CFD59ADDDB582 /* Birds */,
+				432D36188698948F14FAF817 /* Draw */,
+				83D98DE42338F663007566B9 /* openFrameworks */,
 				EE7056DC91730BF05F21EDBC /* Video */,
 				7821BB944D82B9A1CC07B251 /* GenericScene.hpp */,
 				547C38EB536C83FEAC476C58 /* BeesDepth */,
@@ -2782,7 +2794,6 @@
 				C06493CDB013BE6318B0D96E /* Video */,
 				134C164BF61A21BC904CD5AB /* ofxImgSizeUtils.h */,
 				C9A8C2EA34B35E4BED69D33C /* Scenes */,
-				99F196D7708B5047FF777BA3 /* VideoManager.cpp */,
 				060BA561C75D00407A840430 /* MontagneApp.cpp */,
 				D0F86930EB9F7CE5E4029745 /* ofxImgSizeUtils.cpp */,
 				D72634EFAB162235913ADF19 /* VideoPlayer.cpp */,
@@ -2794,10 +2805,7 @@
 				768E1F920FD366DE34532CFE /* MagiqueMarker.hpp */,
 				C0F975BB2C39D6CE9AA2C580 /* BigBang.cpp */,
 				C2474869FB735C9054B79367 /* ArToolKitManager.hpp */,
-				961471FAB40CFD59ADDDB582 /* Birds */,
-				323B8BA4CA9FBEE652F5C632 /* VideoManager.hpp */,
 				4D7386792F42A678664AEB3B /* MontagneApp.hpp */,
-				432D36188698948F14FAF817 /* Draw */,
 				3CD6A718BC9F0D27CF836A3E /* Hole */,
 			);
 			path = src;
@@ -3031,7 +3039,6 @@
 				6400CEE910B3BB39A59D5BCD /* ArSceneManager.cpp in Sources */,
 				004E930F43249443B3C77C9B /* BeesDepthScene.cpp in Sources */,
 				EEA288FEB86ED462167BF7F5 /* GenericScene.cpp in Sources */,
-				1CF23CA353F373B0D0183D7B /* VideoManager.cpp in Sources */,
 				D5B2AF3357C01A6959F4E63B /* MontagneApp.cpp in Sources */,
 				AC37F4F59371F5835D2FA7BB /* ofxImgSizeUtils.cpp in Sources */,
 				B5AD0C336F04005F83EC6681 /* VideoPlayer.cpp in Sources */,
@@ -3046,6 +3053,7 @@
 				52C77060FBB9307AEFDAE8C6 /* ofxAnimatable.cpp in Sources */,
 				5D067CF087427621DD1E64B8 /* ofxAnimatableFloat.cpp in Sources */,
 				2C61E47DDBFD642D87E63940 /* ofxAnimatableQueue.cpp in Sources */,
+				83D98DE72338F672007566B9 /* BirdSprite.cpp in Sources */,
 				BC054B7D3B48B395B1D87F2E /* ofxAnimatableOfPoint.cpp in Sources */,
 				C012CA9313FB8AACE2F1868D /* ofxARTNftTracker.cpp in Sources */,
 				BA1ADE30C05C01103C1BE219 /* ARMarkerNFT.c in Sources */,

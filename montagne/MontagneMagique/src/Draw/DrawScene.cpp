@@ -31,6 +31,8 @@ void DrawScene::setup(string dataPath) {
     dofPass = post.createPass<DofPass>();
     dofPass->setEnabled(true);
     post.setFlip(true);
+    
+    bird.setup();
    
 
 }
@@ -277,12 +279,17 @@ void DrawScene::draw() {
         
     }
     
-    //grayImage.draw(0.0,0.0);
-  //  contourFinder.draw();
+   
+
     ofPopMatrix();
+
     post.end();
     
+    
     ofDisableDepthTest();
+    
+    bird.draw();
+
 }
 
 void DrawScene::clear() {

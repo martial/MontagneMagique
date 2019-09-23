@@ -43,6 +43,7 @@ private:
     float currentRadius, radiusVel, radiusVelFactor;
     
     float globalScale;
+    
 };
 
 #endif /* BirdsScene_hpp */
