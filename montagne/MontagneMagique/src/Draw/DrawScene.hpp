@@ -51,7 +51,7 @@ public:
         if(scalez > 1000)
             scalez = ofRandom(-5000, -4000);
     }
-    
+  
     void draw() {
         
         if(type == SHAPE_TYPE_VECTOR)  {

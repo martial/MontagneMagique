@@ -27,5 +27,6 @@
         }
     ],
     "thresold": 100,
+    "auto-load-folder": "shapes/1562832820",
     "marker-id": ""
 }

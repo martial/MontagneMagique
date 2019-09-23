@@ -26,6 +26,12 @@ void DrawScene::setup(string dataPath) {
         
     }
     
+    // check if config.json has a load folder parameter
+    string shapesFolder = configJson.value("auto-load-folder", "");
+    if (!shapesFolder.empty()) {
+        loadFolder(shapesFolder);
+    }
+    
     ofApp * app = (ofApp*)ofGetAppPtr();
     post.init(app->videoOutputWidth, app->videoOutputHeight);
     dofPass = post.createPass<DofPass>();
@@ -57,6 +63,53 @@ void DrawScene::setAperture(float aperture) {
     
 }
 void DrawScene::loadFolder(string folder) {
+    
+    ofLogNotice("loadFolder ") << folder;
+  
+    // first load shapes
+    ofJson shapesJson;
+    shapesJson = ofLoadJson(folder + "/shapes.json");
+    
+    for(int i=0; i<shapesJson["shapes"].size(); i++) {
+        
+        ofPolyline line;
+        for(int j=0; j<shapesJson["shapes"][i]["pnts"].size(); j++) {
+
+            float x = shapesJson["shapes"][i]["pnts"][j]["x"];
+            float y = shapesJson["shapes"][i]["pnts"][j]["y"];
+            line.addVertex(x,y);
+            lines.push_back(line);
+        }
+        
+        ofPath p;
+        p.moveTo(line.getVertices()[0]);
+        for(int j=0; j<line.getVertices().size(); j++) {
+            p.curveTo(line.getVertices()[j]);
+        }
+        p.close();
+        
+        int rdmIndex = floor(ofRandom(colors.size()));
+        ofColor c = colors[rdmIndex];
+        
+        p.setColor(c);
+        p.setStrokeColor(ofColor(0,0,0));
+        p.setStrokeWidth(0);
+        
+        paths.push_back(p);
+        
+        ofImage shape;
+        string url = shapesJson["shapes"][i]["img"];
+        shape.load(url);
+        
+        VectorObject obj;
+        obj.type = SHAPE_TYPE_IMG;
+        obj.line = line;
+        obj.path = p;
+        obj.img = shape;
+        
+        vectorObjects.push_back(obj);
+        
+    }
     
 }
 
