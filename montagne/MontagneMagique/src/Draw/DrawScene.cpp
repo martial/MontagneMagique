@@ -165,6 +165,16 @@ void DrawScene::update() {
         
     }
     
+    // release objects
+    for(int i=vectorObjects.size()-1; i >= 0; i-- ) {
+
+        if(vectorObjects[i].opacity <= 0.0f) {
+            vectorObjects[i].clear();
+            vectorObjects.erase (vectorObjects.begin()+i);
+        }
+        
+    }
+    
     // sort shapes by depth / scale
     sort(vectorObjects.begin(), vectorObjects.end());
 
@@ -278,7 +288,6 @@ void DrawScene::draw() {
     for(int i=0; i < vectorObjects.size(); i++ ) {
         
         // copy color attributes
-        
         ofPushMatrix();
         ofTranslate(vectorObjects[i].line.getCentroid2D().x, vectorObjects[i].line.getCentroid2D().y);
        // ofRotateZ(vectorObjects[i].rot);
@@ -314,6 +323,17 @@ void DrawScene::clear() {
     vectorObjects.clear();
     
 }
+
+void DrawScene::quit() {
+    
+    for(int i=0; i < vectorObjects.size(); i++ ) {
+
+        vectorObjects[i].opacityVel = - ofRandom(0.001, 0.002);
+        
+    }
+    
+}
+
 
 void DrawScene::onMarkerTracked() {
     

@@ -205,7 +205,6 @@ void ofApp::update(){
     TS_STOP("OSC");
 
     messageString = "";
-   // TS_START("image");
 
     switch (intputMode) {
             
@@ -309,13 +308,8 @@ void ofApp::update(){
             TS_STOP("tracker");
             break;
             
-            
-
-            
     }
     
-   // TS_STOP("image");
-
     TS_START("update-scene");
     app.updateScene();
     TS_STOP("update-scene");

@@ -306,6 +306,13 @@ void OscManager::keyPressed(int key) {
         
     }
     
+    if(key == 'Q') {
+        
+        DrawScene * drawScene = (DrawScene*) this->sceneManager->getSceneIndexForPath("draw");
+        drawScene->quit();
+        
+    }
+    
     if( key == OF_KEY_RIGHT) {
         
         BigBangScene * bigBangScene = (BigBangScene*) this->sceneManager->getSceneIndexForPath("bigbang");

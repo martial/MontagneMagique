@@ -25,23 +25,27 @@ public:
     ofPath      path;
     ofPolyline  line;
     ofImage     img;
+    
     float       scalez;
     float       scaleVel;
     
     float       rot;
     float       rotationVel;
     
+    float       opacity;
+    float       opacityVel;
+
     int         type;
     
     VectorObject() {
         
-        type = SHAPE_TYPE_VECTOR;
-        
-        scalez = ofRandom(-10000, -8000);
-        scaleVel = ofRandom(50, 50);
-        
-        rot = 0;
+        type        = SHAPE_TYPE_VECTOR;
+        scalez      = ofRandom(-10000, -8000);
+        scaleVel    = ofRandom(50, 50);
+        rot         = 0;
         rotationVel = ofRandom(10);
+        opacity     = .5;
+        opacityVel  = 0.0;
     }
     
     void updateScale() {
@@ -51,6 +55,10 @@ public:
         if(scalez > 1000)
             scalez = ofRandom(-10000, -8000);
             //scalez *= 2;
+        
+        // decrease opacity for ending
+        opacity += opacityVel;
+        
     }
   
     void draw() {
@@ -72,9 +80,16 @@ public:
             }
             p.close();
             
+            ofColor fillColor   = path.getFillColor();
+            ofColor strokeColor = path.getStrokeColor();
+            
+            fillColor.a *= opacity;
+            strokeColor.a *= opacity;
+            
             p.setColor(path.getFillColor());
             p.setStrokeColor(path.getStrokeColor());
             p.setStrokeWidth(0);
+            
             
             p.draw();
             
@@ -82,9 +97,19 @@ public:
         
         if(type == SHAPE_TYPE_IMG)  {
 
+            ofSetColor(255, 255 * opacity);
             img.draw(line.getBoundingBox().x,line.getBoundingBox().y);
             
         }
+        
+        
+    }
+    
+    void clear() {
+        
+        path.clear();
+        line.clear();
+        img.clear();
         
     }
     
@@ -117,7 +142,9 @@ public:
     
     void setTreshold(float thresold);
     void setAperture(float aperture);
-    void loadFolder(string folder); // todo
+    void loadFolder(string folder);
+    
+    void quit();
     
 private:
     
