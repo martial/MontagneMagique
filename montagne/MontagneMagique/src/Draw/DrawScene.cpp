@@ -118,7 +118,12 @@ void DrawScene::update() {
 
     float aperture = configJson["aperture"];
     dofPass->setAperture(aperture);
-  // dofPass->setFocus(focus);
+    
+    float focus = configJson["focus"];
+    dofPass->setFocus(focus);
+
+    float maxBlur = configJson["max-blur"];
+    dofPass->setMaxBlur(maxBlur);
 
     if(hasConfigChanged()) {
         
@@ -137,8 +142,6 @@ void DrawScene::update() {
         
     }
     
-    float scale =  (float)app->videoOutputWidth / (float)app->videoInputWidth;
-
     // we allocate openCV images if needed
     if(!colorImg.bAllocated) {
         
@@ -158,6 +161,8 @@ void DrawScene::update() {
     
     contourFinder.findContours(grayImage, 20, (app->videoInputWidth*.75 * app->videoInputHeight * .75), 10, true);
     
+    float scale =  (float)app->videoOutputWidth / (float)app->videoInputWidth;
+
     for (int j = 0; j < contourFinder.nBlobs; j++){
         
         contourFinder.blobs[j].area     *= scale;
@@ -165,7 +170,7 @@ void DrawScene::update() {
         
     }
     
-    // release objects
+    // release objects if invisible
     for(int i=vectorObjects.size()-1; i >= 0; i-- ) {
 
         if(vectorObjects[i].opacity <= 0.0f) {
