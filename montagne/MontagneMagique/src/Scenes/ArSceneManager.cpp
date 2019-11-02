@@ -24,14 +24,20 @@ void ArSceneManager::setup(vector<std::shared_ptr<MagiqueMarker>> & trackers) {
     // HoleScene * holeScene = new HoleScene();
     // holeScene->setup("HOLE");
     
-    BigBangScene * bigBangScene = new BigBangScene();
+    BigBangScene * bigBangScene     = new BigBangScene();
     bigBangScene->setup("bigbang");
     
-    DrawScene * drawScene       = new DrawScene();
+    DrawScene * drawScene           = new DrawScene();
     drawScene->setup("draw");
     
-    BirdsScene * birdsScene      = new BirdsScene();
+    BirdsScene * birdsScene         = new BirdsScene();
     birdsScene->setup("OISEAU_BULLES");
+    
+    BirdsScene * otherBirdScene     = new BirdsScene();
+    otherBirdScene->setup("OISEAU_BULLES2");
+    
+    BirdsScene * staticBirdScene     = new BirdsScene();
+    staticBirdScene->setup("OISEAU_BULLES3");
     
     //BeesDepthScene * beesScene = new BeesDepthScene();
     //beesScene->setup("PRINTEMPS_ARBRE_ABEILLES");
@@ -39,6 +45,9 @@ void ArSceneManager::setup(vector<std::shared_ptr<MagiqueMarker>> & trackers) {
     scenes.push_back(bigBangScene);
     scenes.push_back(drawScene);
     scenes.push_back(birdsScene);
+    scenes.push_back(otherBirdScene);
+    scenes.push_back(staticBirdScene);
+
    // scenes.push_back(beesScene);
    // scenes.push_back(holeScene);
 
@@ -132,6 +141,8 @@ void ArSceneManager::activateAllMarkers() {
 
 void ArSceneManager::activateMarkersFromScene() {
     
+    bool unlockAll = false;
+    
     ofApp * app = (ofApp*) ofGetAppPtr();
     string currentScene = app->app.currentSceneName + "/" + app->app.currentSubSceneName;
 
@@ -141,6 +152,11 @@ void ArSceneManager::activateMarkersFromScene() {
         // if no marker skip obviously
         if(!scenes[i]->marker)
             continue;
+        
+        if(unlockAll) {
+            scenes[i]->marker->bIsActive = true;
+            continue;
+        }
         
         // bIsAlwaysActive means that It will always be detected
         if(scenes[i]->marker->bIsAlwaysActive) {

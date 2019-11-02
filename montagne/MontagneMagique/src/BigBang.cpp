@@ -21,6 +21,8 @@ void BigBang::setup(string dataPath) {
     fadeInOutPct            = 0.1;
     particlesCreated        = 0;
     
+    //particleImage.load("assets/images/particle.png");
+    //particleImage.setAnchorPoint(particleImage.getWidth() * .5, particleImage.getHeight() * .5);
 }
 
 
@@ -218,10 +220,20 @@ void BigBang::draw() {
         
         // draw
         ofSetColor(255, 255 * alpha);
+        
+        float size = particles[i]->scale * particles[i]->scale;
+        
+       // float imgSize = particleImage.getWidth();
+        //float particleSize = ofMap(size, 0, imgSize,  )
+        //particleImage
+        
+      
+        
         ofDrawEllipse(particles[i]->pos.x,
                       particles[i]->pos.y,
                       particles[i]->scale * particles[i]->scale,
                       particles[i]->scale * particles[i]->scale);
+        
 
         // we draw lines in mode 1
         
@@ -313,7 +325,15 @@ void BigBang::draw() {
         ofPopMatrix();
         
     }
-    
+   
+    /*
+    // draw one white point
+    float a = cos(ofGetElapsedTimef() * .5) * 255;
+    ofSetColor(255,0,0);
+    ofSetColor(255, 255 * a);
+    ofDrawEllipse(800,
+                  600, 50, 50);
+    */
     
 
 }

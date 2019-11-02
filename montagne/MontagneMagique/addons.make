@@ -1,6 +1,7 @@
 ofxAnimatable
 ofxArtool5
 ofxBlackmagic
+ofxFastFboReader
 ofxGui
 ofxHapPlayer
 ofxOpenCv

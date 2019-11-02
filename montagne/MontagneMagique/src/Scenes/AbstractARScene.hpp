@@ -136,49 +136,57 @@ protected:
     
     void beginFlip() {
         
-        ofPushMatrix();
-        ofScale( 1.0 / scaleFactor, -1.0 / scaleFactor);
-        
-        float x = marker->width * scaleFactor * .5;
-        float y = - marker->height * scaleFactor + marker->height * scaleFactor * .5;
-        
-    // weird offset issue
-       // x += 4;
-        //y -= 4;
-        
-        ofTranslate(x,y);
+        if(this->marker) {
+            
+            ofPushMatrix();
+            ofScale( 1.0 / scaleFactor, -1.0 / scaleFactor);
+            
+            float x = marker->width * scaleFactor * .5;
+            float y = - marker->height * scaleFactor + marker->height * scaleFactor * .5;
+            
+        // weird offset issue
+           // x += 4;
+            //y -= 4;
+            
+            ofTranslate(x,y);
 
-        if(!configJson["translate"].is_null() && configJson["translate"].is_object()) {
-            ofTranslate(configJson["translate"]["x"],configJson["translate"]["y"]);
+            if(!configJson["translate"].is_null() && configJson["translate"].is_object()) {
+                ofTranslate(configJson["translate"]["x"],configJson["translate"]["y"]);
+            }
+            
         }
         
     }
     
     void endFlip() {
         
-        if(bDebugMarker) {
-            
-            if(!configJson["translate"].is_null() && configJson["translate"].is_object()) {
-                float offsetx = configJson["translate"]["x"];
-                float offsety = configJson["translate"]["y"];
-                ofTranslate(-offsetx, -offsety);
+        if(this->marker) {
+
+            if(bDebugMarker) {
+                
+                if(!configJson["translate"].is_null() && configJson["translate"].is_object()) {
+                    float offsetx = configJson["translate"]["x"];
+                    float offsety = configJson["translate"]["y"];
+                    ofTranslate(-offsetx, -offsety);
+                }
+                
+                ofSetRectMode(OF_RECTMODE_CENTER);
+                ofSetColor(255, 125);
+                marker->image->draw(0.0,0.0);
+                ofSetColor(255, 255);
+                
+                ofPushMatrix();
+                ofSetColor(255, 0, 0);
+                ofDrawLine(-10, 0, 10, 0);
+                ofDrawLine(0, -10, 0, 10);
+                ofPopMatrix();
+                ofSetRectMode(OF_RECTMODE_CORNER);
+                
             }
             
-            ofSetRectMode(OF_RECTMODE_CENTER);
-            ofSetColor(255, 125);
-            marker->image->draw(0.0,0.0);
-            ofSetColor(255, 255);
-            
-            ofPushMatrix();
-            ofSetColor(255, 0, 0);
-            ofDrawLine(-10, 0, 10, 0);
-            ofDrawLine(0, -10, 0, 10);
             ofPopMatrix();
-            ofSetRectMode(OF_RECTMODE_CORNER);
             
         }
-        
-        ofPopMatrix();
     }
     
     // this is used for fade in / out

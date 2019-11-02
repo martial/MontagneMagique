@@ -10,8 +10,8 @@
     "bubble-accel-x-max": -0.0007,
     "bubble-accel-x-min": 0.00005,
     "pitch-end-delay": 50, 
-    "bubble-max-radius": 10,
-    "bubble-vel-radius": 0.04,
+    "bubble-max-radius": 400,
+    "bubble-vel-radius": 0.08,
     "auto-bubbles": false,
 
 
@@ -20,6 +20,6 @@
         "x": 100,
         "y": -40
     },
-    "marker-id": "OISEAU_BULLES_0",
-    "scene-lock": "printemps/oiseaubulles"
+    "marker-id": "null",
+    "scene-lock": ""
 }

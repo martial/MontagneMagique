@@ -4,6 +4,6 @@
     "osc-in-port": 9999,
     "output-height": 1080,
     "output-width": 1920,
-	"desired-frame-rate": 30
+	"desired-frame-rate": 25
     
 }

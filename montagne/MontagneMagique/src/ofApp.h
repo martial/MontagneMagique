@@ -7,6 +7,7 @@
 #include "ofxGui.h"
 #include "ofxHapPlayer.h"
 #include "ofxTimeMeasurements.h"
+#include "ofxFastFboReader.h"
 
 #define INPUT_VIDEO 0
 #define INPUT_CAMERA 1
@@ -64,6 +65,7 @@ class ofApp : public ofBaseApp{
         ofxSyphonClient             syphonInput;
         ofxSyphonServer             syphonLayer;
 
+        ofxFastFboReader            reader;
         ofFbo                       resizedFbo;
         ofPixels                    resizedInputPixels;
         ofImage                     resizedInputImg;

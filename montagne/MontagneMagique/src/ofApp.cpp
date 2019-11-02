@@ -14,8 +14,8 @@ void ofApp::setup(){
     
     ofSetCircleResolution(128);
     ofSetLogLevel(OF_LOG_NOTICE);
-   // ofSetFrameRate(60);
-    ofSetVerticalSync(true);
+    ofSetFrameRate(60);
+   // ofSetVerticalSync(true);
     
     ofLogNotice("Gl shading version ") <<  glGetString(GL_SHADING_LANGUAGE_VERSION);
     
@@ -83,6 +83,7 @@ void ofApp::setup(){
     TIME_SAMPLE_SET_FRAMERATE(60.0f); //specify a target framerate
     ofxTimeMeasurements::instance()->setEnabled(false);
 
+    reader.setAsync(true);
 
 }
 
@@ -166,14 +167,14 @@ void ofApp::setInputMode(int mode) {
     }
     
     // reset trackers if size is different
-    //if(oldVideoInputWidth != videoInputWidth ||  oldVideoInputHeight != videoInputHeight ) {
+   // if(oldVideoInputWidth != videoInputWidth ||  oldVideoInputHeight != videoInputHeight ) {
         
         ofSetWindowShape(videoInputWidth, videoInputHeight*2);
         app.getArToolKitManager().clean();
         app.setupTrackers(videoInputWidth, videoInputHeight);
         app.setupFbos();
         
-    //}
+   // }
     
 }
 
@@ -185,16 +186,13 @@ void ofApp::update(){
     TS_START("sampler");
     sampler.update();
     TS_STOP("sampler");
-
-    
 #endif
     
     
     TS_START("Window-title");
-
     // frame rate & windows title
-    //currentFrameRate = 0.95 * currentFrameRate +  (1.0f - 0.95) * ceil(ofGetFrameRate());
-    currentFrameRate = ofGetFrameRate();
+    currentFrameRate = 0.95 * currentFrameRate +  (1.0f - 0.95) * ceil(ofGetFrameRate());
+    //currentFrameRate = ofGetFrameRate();
 
     string sceneName = app.currentSceneName + " / " + app.currentSubSceneName;
     ofSetWindowTitle("Montagne Magique – " + sceneName + " ["+  ofToString(floor(currentFrameRate)) + " fps ]");
@@ -210,9 +208,9 @@ void ofApp::update(){
             
         case INPUT_VIDEO:
             
-            
+            TS_START("UPDATE FBO");
+
             videoInput.update();
-            
             resizedFbo.begin();
             ofEnableAlphaBlending();
             ofClear(0, 0, 0, 0);
@@ -220,15 +218,25 @@ void ofApp::update(){
             ofDisableAlphaBlending();
             resizedFbo.end();
             resizedFbo.getTexture().setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
+            TS_STOP("UPDATE FBO");
+
+            TS_START("READ PIXELS");
+            reader.readToPixels(resizedFbo, resizedInputPixels);
+            TS_STOP("READ PIXELS");
             
-            resizedFbo.readToPixels(resizedInputPixels);
+            TS_START("SET PIXELS");
             resizedInputImg.setFromPixels(resizedInputPixels);
-            
+            TS_STOP("SET PIXELS");
+
+            TS_START("UPDATE TRACKER");
+
             if(resizedInputPixels.getWidth() == videoInputWidth && resizedInputPixels.getHeight() == videoInputHeight )
                 app.updateTrackers(resizedInputImg);
             else
                 addMessage("Syphon stream is not " + ofToString(videoInputWidth) + " x " + ofToString(videoInputHeight) + " (tracking disabled)");
-            
+            TS_STOP("UPDATE TRACKER");
+
+
             break;
             
         case INPUT_CAMERA:
@@ -280,7 +288,6 @@ void ofApp::update(){
             
         case INPUT_SYPHON:
 
-            
             TS_START("main-fbo");
             resizedFbo.begin();
             ofClear(0, 0, 0, 0);
@@ -326,9 +333,9 @@ void ofApp::draw(){
     ofSetColor(255);
     
     
-    if(bDrawPreview && app.getMode() != HAP_MODE) {
+    if(bDrawPreview ) {
         
-        cameraRectCanvas = ofxImgSizeUtils::getCenteredRect(ofGetWidth(), (ofGetHeight() == videoInputHeight*2) ? ofGetHeight() / 2 : ofGetHeight(), videoInputWidth, videoInputHeight, false);
+        cameraRectCanvas = ofxImgSizeUtils::getCenteredRect(ofGetWidth(), (ofGetHeight() == videoInputHeight * 2.0f) ? ofGetHeight() * 0.5f : ofGetHeight(), videoInputWidth, videoInputHeight, false);
 
         switch (intputMode) {
                 
@@ -358,11 +365,14 @@ void ofApp::draw(){
 
     
     TS_START("draw-scene");
-
     ofPushMatrix();
     ofTranslate(cameraRectCanvas.x, cameraRectCanvas.y);
      if(!bDebugTrackers) {
-         app.drawScene();
+         
+        // if(bDrawPreview ) {
+             app.drawScene();
+         //}
+         
      } else {
          app.processDebugDraw();
          app.debugDrawTrackers();
@@ -387,7 +397,9 @@ void ofApp::draw(){
         ofTranslate(0.0, 0.0);
     }
 
-    app.drawOffScreen();
+    if(bDrawPreview ) {
+        app.drawOffScreen();
+    }
     
     ofSetColor(255,0,0);
     ofDrawBitmapString("Montagne Magique | " + ofToString(floor(currentFrameRate)) + " fps", 20, 20);
@@ -432,6 +444,8 @@ void ofApp::keyPressed(int key){
     if(key == 'o')
         oscManager.sendMessage("/OF/test", "This is a test");
     
+   
+    
     if(key == 't')
         ofxTimeMeasurements::instance()->setEnabled(!ofxTimeMeasurements::instance()->getEnabled());
     
@@ -455,6 +469,22 @@ void ofApp::keyPressed(int key){
     if(key == 'm')
         bDrawMessages =!bDrawMessages;
     
+    // send random video
+    if(key == 'v') {
+        
+        ofDirectory dir("videos");
+        dir.allowExt("mov");
+        dir.allowExt("mp4");
+        
+        dir.listDir();
+        dir.sort();
+        int nFiles = dir.size();
+        int rdmIndex = floor(ofRandom(nFiles));
+        string vid = dir.getName(rdmIndex);
+        oscManager.sendMessage("/video/"+vid, "This is a test");
+        
+    }
+    
    // if(key == 's')
      //   bDrawSampler = !bDrawSampler;
     
@@ -466,8 +496,7 @@ void ofApp::keyPressed(int key){
 void ofApp::addMessage(string message) {
     
     
-    if(!bDrawPreview)
-        return;
+ 
     
     if(messages.size() > 10) {
         messages.erase(messages.begin());

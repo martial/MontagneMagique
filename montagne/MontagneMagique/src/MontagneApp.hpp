@@ -15,8 +15,9 @@
 
 #define TRACKING_MODE 0
 #define SCENE_MODE 1
-#define HAP_MODE 2
+//#define HAP_MODE 2
 #define DRAW_MODE 3
+#define BUBBLES_MODE 4
 
 class MontagneApp {
   

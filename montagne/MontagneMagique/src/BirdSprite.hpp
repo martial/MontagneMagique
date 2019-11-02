@@ -16,19 +16,21 @@ public:
     
     void setup();
     void update();
-    void draw();
+    void draw(float x, float y, float scale);
     
 private:
     
     ofImage bodyImage;
-    vector<ofImage> images;
-    
+    vector<ofImage> images, stillImages;
+    vector<ofImage> * currentSet;
     float currFrame, vel;
     
     float timeElapsed;
     int delay;
     
     float posY, blurredPosY;
+    
+    bool bWaitForFrame;
 };
 
 #endif /* BirdSprite_hpp */

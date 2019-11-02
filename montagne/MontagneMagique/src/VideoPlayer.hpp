@@ -19,15 +19,20 @@ public:
     void setup();
     void update();
     void draw(float maxWidth, float maxHeight);
-    
+    void stop();
     void setVideo(string name, bool loop = false);
     
+    void preloadVideos();
+    
     ofxHapPlayer player;
-
+    vector<ofxHapPlayer*> players;
     
 private:
     
-    ofJson configJson;
+    bool    bPreloadVideos;
+    int     currentPlayerIndex;
+    
+    ofJson  configJson;
     
 };
 

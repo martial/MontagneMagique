@@ -36,6 +36,8 @@ void BirdsScene::update() {
     if(bGenerateAuto) {
         float noise = cos((float)ofGetElapsedTimeMillis() / 1000.0f);
         setPitchPct(noise);
+        
+
     }
 }
 
@@ -44,7 +46,7 @@ void BirdsScene::draw() {
     
     float pct = getInOuPct();
     
-    if(pct <= 0 || !this->marker->getIsSolidFound())
+    if(this->marker && (pct <= 0 || !this->marker->getIsSolidFound()))
         return;
     
     float scale = 20;
@@ -69,11 +71,11 @@ void BirdsScene::draw() {
         if(!bIsSinging) {
             onPitchStart();
         }
+        
         pitchTime = ofGetElapsedTimeMillis();
             
         bIsSinging = true;
-        
-        
+                
     }
     
     if(bIsSinging && targetPitchPct > 0.0)
@@ -134,7 +136,7 @@ void BirdsScene::draw() {
         drawCircle(particles[i]->pos, particles[i]->scale * scale, particles[i]->color);
         
     }
-    
+        
     // if we are singing, let's grow the particle
     if(currentParticle ) {
         
@@ -144,9 +146,9 @@ void BirdsScene::draw() {
             radiusVelFactor = ofClamp(radiusVelFactor, 1.0, 99);
             
             // used for bubble speed
-            float velMax = configJson["bubble-vel-radius"];
-            float vel = ofMap(this->targetPitchPct, 0.0, 1.0, -velMax, -0.01);
-            currentRadius += vel * radiusVelFactor;
+            float velMax    = configJson["bubble-vel-radius"];
+            float vel       = ofMap(this->targetPitchPct, 0.0, 1.0, -velMax, -0.01);
+            currentRadius   += vel * radiusVelFactor;
             
             // set a max for radius
             currentParticle->scale = ofClamp(currentRadius, -maxRadius, 0 );
@@ -176,6 +178,8 @@ void BirdsScene::draw() {
     }
     
     endFlip();
+    
+    
     
 }
 
@@ -238,6 +242,19 @@ void BirdsScene::onPitchStart() {
     
     // choose initial pos
     ofVec2f initialPos (ofRandom(6, 8),ofRandom(44, 50));
+    
+    if(!this->marker) {
+        
+        float middlex       = 1920 * .5;
+        float middley       = 1080 * .5;
+        float randomRange   = 100;
+
+        initialPos.set(
+                       ofRandom(middlex - randomRange,middlex + randomRange),
+                       ofRandom(middley - randomRange,middley + randomRange)
+                       );
+        
+    }
     
     currentParticle = new SimpleParticle();
     currentParticle->setInitialCondition(initialPos.x, initialPos.y,0.0,0.0);

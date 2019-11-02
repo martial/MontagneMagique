@@ -55,6 +55,7 @@ private:
     
     int                 nConnectedMax, nConnectedGap;
     
+    ofImage             particleImage;
     
 };
 

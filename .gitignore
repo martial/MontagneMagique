@@ -30,6 +30,7 @@
 /montagne/MontagneMagique/bin/data/autoscenes/template/PRINTEMPS_OURS_ZZZ_HAP.mov
 /montagne/Sampler/obj/*
 
+/montagne/MontagneMagique/bin/data/assets/images/*
 
 *.mov
 *.hap

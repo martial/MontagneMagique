@@ -1,0 +1,24 @@
+{
+    "bubble-force-y-max": 0.00001,
+    "bubble-force-y-min": 0,
+    "bubble-force-x-max": 0,
+    "bubble-force-x-min": 0,
+
+    "bubble-accel-y-max": -0.001,
+    "bubble-accel-y-min": -0.0005,
+    "bubble-accel-x-max": -0.0001,
+    "bubble-accel-x-min": 0.00001,
+    "pitch-end-delay": 50, 
+    "bubble-max-radius": 100,
+    "bubble-vel-radius": 0.1,
+    "auto-bubbles": false,
+
+
+    "translate":
+    {
+        "x": 10,
+        "y": -50
+    },
+    "marker-id": "OISEAU_BULLE_PIOU_PIOU_0",
+    "scene-lock": "printemps/oiseaubulles"
+}

@@ -103,7 +103,7 @@ void ArToolKitManager::loadTrackers() {
             tracker->setup(ofVec2f(inputWidth,inputHeight),ofVec2f(inputWidth,inputHeight), OF_PIXELS_BGR, "../Resources/camera_para.dat", "../Resources/m_"+name+".dat");
             tracker->markerid           = name;
             tracker->timeFoundDelay     = markerFoundDelay;
-            tracker->timeLostDelay      =   markerLostDelay;
+            tracker->timeLostDelay      = markerLostDelay;
             tracker->setImage(&images[i]);
             
             ofAddListener(tracker->evNewMarker, this, &ArToolKitManager::onNewMarker);

@@ -37,11 +37,12 @@ void MontagneApp::setupTrackers(int trackerInputWidth, int trackerInputHeight) {
 void MontagneApp::setupFbos() {
     
     debugFboLayer.allocate(trackerInputWidth, trackerInputHeight);
-    fboLayer.allocate(videoOutputWidth, videoOutputHeight, GL_RGBA32F_ARB);
+    fboLayer.allocate(videoOutputWidth, videoOutputHeight, GL_RGBA);
     fboLayer.getTexture().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
         
     maskFbo = new ofFbo();
-    maskFbo->allocate(videoOutputWidth, videoOutputHeight, GL_RGBA32F_ARB);
+    maskFbo->allocate(videoOutputWidth, videoOutputHeight, GL_RGBA);
+    
 }
 
 
@@ -53,14 +54,14 @@ void MontagneApp::updateTrackers(ofBaseHasPixels & input) {
 
      }
     
-    
-    
 }
 
 void MontagneApp::updateScene() {
     
     
     hapPlayer.update();
+    
+    /*
     if(mode == HAP_MODE && hapPlayer.player.isLoaded() && hapPlayer.player.getLoopState() == OF_LOOP_NONE ) {
         
         if( hapPlayer.player.getPosition() == 1.0) {
@@ -69,6 +70,8 @@ void MontagneApp::updateScene() {
         }
         
     }
+     
+     */
     
 }
 
@@ -109,21 +112,13 @@ void MontagneApp::drawScene() {
      */
     
     fboLayer.begin();
-    //ofEnableAlphaBlending();
-    //glBlendFuncSeparate(GL_ONE, GL_SRC_COLOR, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    ofEnableAlphaBlending();
+    glEnable(GL_BLEND);
+   // glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    glBlendFuncSeparate(GL_ONE, GL_SRC_COLOR, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
     ofClear(0, 0);
     
-    //tex.getTextureData().bFlipTexture = true;
-    //tex.draw(0,0);
-    
-    if(mode == HAP_MODE) {
-        
-        hapPlayer.draw(videoOutputWidth, videoOutputHeight);
-        
-    }
-
     if(mode == SCENE_MODE) {
         
         arSceneManager.drawScene(0);
@@ -133,6 +128,12 @@ void MontagneApp::drawScene() {
     if(mode == DRAW_MODE) {
         
         arSceneManager.drawScene(1);
+        
+    }
+    
+    if(mode == BUBBLES_MODE) {
+        
+        arSceneManager.drawScene(4);
         
     }
     
@@ -152,38 +153,43 @@ void MontagneApp::drawScene() {
         }
     }
     
-    //ofDisableAlphaBlending();
+    // we need to flip it of tracking mode..
+    ofPushMatrix();
+    if(mode == TRACKING_MODE ) {
+        ofScale( 1, -1, 1 );
+        ofTranslate( 0, -videoOutputHeight, 0 );
+    }
+    hapPlayer.draw(videoOutputWidth, videoOutputHeight);
+    ofPopMatrix();
+    
+    glDisable(GL_BLEND);
     fboLayer.end();
     
-    
-    ofRectangle rect = ofxImgSizeUtils::getCenteredRect(ofGetWidth(), (ofGetHeight() == 360*2) ? ofGetHeight() / 2 : ofGetHeight(), videoOutputWidth, videoOutputHeight, false);
+    ofRectangle rect = ofxImgSizeUtils::getCenteredRect(ofGetWidth(), (ofGetHeight() == 360 * 2.0f) ? ofGetHeight() * 0.5f : ofGetHeight(), videoOutputWidth, videoOutputHeight, false);
     
     ofSetColor(255,255);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
+    /*
+    // if we have a mask.. draw it for now
+    if(bHasMask && maskFbo && maskFbo->isAllocated()) {
+     
+       // maskFbo->getTexture().getTextureData().bFlipTexture = true;
+        //fboLayer.getTexture().getTextureData().bFlipTexture = true;
+        //tempFbo.getTexture().getTextureData().bFlipTexture = false;
+     
+        tempFbo.begin();
+        ofClear(0, 0, 0, 255);
+
+        fboLayer.draw(0.0, 0.0,  videoOutputWidth, videoOutputHeight);
+        tempFbo.end();
+     
+    }
+     
+     */
+    
+    ofEnableAlphaBlending();
    // glEnable(GL_BLEND);
-    //glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-    
-    
-        /*
-        // if we have a mask.. draw it for now
-        if(bHasMask && maskFbo && maskFbo->isAllocated()) {
-            
-           // maskFbo->getTexture().getTextureData().bFlipTexture = true;
-            //fboLayer.getTexture().getTextureData().bFlipTexture = true;
-            //tempFbo.getTexture().getTextureData().bFlipTexture = false;
-            
-            tempFbo.begin();
-            ofClear(0, 0, 0, 255);
-
-            fboLayer.draw(0.0, 0.0,  videoOutputWidth, videoOutputHeight);
-            tempFbo.end();
-            
-        }
-         
-         */
-        
+    //glBlendFuncSeparate(GL_ONE, GL_ZERO, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     if(mode != TRACKING_MODE ) {
         
         fboLayer.getTexture().getTextureData().bFlipTexture = false;
@@ -197,17 +203,11 @@ void MontagneApp::drawScene() {
        
         
     }
- 
-    glDisable(GL_BLEND);
+   // glDisable(GL_BLEND);
 
 }
 
 void MontagneApp::drawOffScreen() {
-    
-    if(mode == TRACKING_MODE) {
-        
-        
-    }
     
     if(mode == DRAW_MODE) {
         

@@ -33,7 +33,7 @@ void OscManager::update() {
         vector<string> splitted = ofSplitString(adress, "/", true);
         string first            = splitted[0];
 
-        // Video ----------------------------------------------------------------------------------------------------
+        // HAP Video ----------------------------------------------------------------------------------------------------
         
         if(first == "video") {
             
@@ -41,11 +41,11 @@ void OscManager::update() {
                  
                  if(splitted[1] == "stop") {
                      
-                    this->montagneApp->setPastMode();
+                    //this->montagneApp->setPastMode();
                      
                  } else {
                  
-                    this->montagneApp->setMode(HAP_MODE);
+                    //this->montagneApp->setMode(HAP_MODE);
                     app->app.hapPlayer.setVideo(splitted[1]);
                      
                  }
@@ -54,7 +54,7 @@ void OscManager::update() {
                  
                  if(splitted[2] == "loop") {
                      
-                     this->montagneApp->setMode(HAP_MODE);
+                     //this->montagneApp->setMode(HAP_MODE);
                      app->app.hapPlayer.setVideo(splitted[1], true);
                      
                  }
@@ -101,7 +101,13 @@ void OscManager::update() {
                 
                 this->montagneApp->setMode(DRAW_MODE);
                 
-            } else {
+            } else if(app->app.currentSceneName == "bulles" ) {
+                
+                this->montagneApp->setMode(BUBBLES_MODE);
+                
+            }
+            
+            else {
                 
                 this->montagneApp->setMode(TRACKING_MODE);
                 
@@ -116,8 +122,6 @@ void OscManager::update() {
              
         }
         
-        
-       
         if(m.getAddress() == "/scene/cosmogonie/accueilpublic") {
             
             BigBangScene * bigBangScene = (BigBangScene*) this->sceneManager->getSceneIndexForPath("bigbang");
@@ -180,8 +184,26 @@ void OscManager::update() {
             
         }
         
+       
+        
         if(m.getAddress() == "/scene/ete/voloiseau") {
-            
+            DrawScene * drawScene = (DrawScene*) this->sceneManager->getSceneIndexForPath("draw");
+            drawScene->intro();
+        }
+        
+        if(m.getAddress() == "/event/ete/voloiseau/virages") {
+            DrawScene * drawScene = (DrawScene*) this->sceneManager->getSceneIndexForPath("draw");
+            drawScene->scene2();
+        }
+        
+        if(m.getAddress() == "/event/ete/voloiseau/espace") {
+            DrawScene * drawScene = (DrawScene*) this->sceneManager->getSceneIndexForPath("draw");
+            drawScene->scene1();
+        }
+        
+        if(m.getAddress() == "/event/ete/voloiseau/fin") {
+            DrawScene * drawScene = (DrawScene*) this->sceneManager->getSceneIndexForPath("draw");
+            drawScene->outro();
         }
         
         // Events ----------------------------------------------------------------------------------------------------
@@ -213,12 +235,7 @@ void OscManager::update() {
             
         }
         
-        if(m.getAddress() == "/event/drawn/aperture") {
-            
-            DrawScene * drawScene = (DrawScene*) this->sceneManager->getSceneIndexForPath("draw");
-            drawScene->setAperture(m.getArgAsFloat(0));
-            
-        }
+       
         
         if(m.getAddress() == "/event/drawn/thresold") {
             
@@ -238,10 +255,28 @@ void OscManager::update() {
             drawScene->captureShapes(SHAPE_TYPE_VECTOR);
         }
         
-        if(m.getAddress() == "/event/drawn/clear") {
+        if(m.getAddress() == "/event/drawn/undo") {
             
             DrawScene * drawScene = (DrawScene*) this->sceneManager->getSceneIndexForPath("draw");
-            drawScene->clear();
+            drawScene->undo();
+        }
+        
+        if(m.getAddress() == "/event/drawn/removelast") {
+            
+            DrawScene * drawScene = (DrawScene*) this->sceneManager->getSceneIndexForPath("draw");
+            drawScene->removeLastCaptured();
+        }
+        
+        if(m.getAddress() == "/event/drawn/removeall") {
+            
+            DrawScene * drawScene = (DrawScene*) this->sceneManager->getSceneIndexForPath("draw");
+            drawScene->removeAll();
+        }
+        
+        if(m.getAddress() == "/event/drawn/quit") {
+            
+            DrawScene * drawScene = (DrawScene*) this->sceneManager->getSceneIndexForPath("draw");
+            drawScene->quit();
         }
         
         if(m.getAddress() == "/event/printemps/oiseau/pitch") {
@@ -249,11 +284,22 @@ void OscManager::update() {
             BirdsScene * birds = (BirdsScene*) this->sceneManager->getSceneIndexForPath("OISEAU_BULLES");
             birds->setPitchPct(ofNormalize(m.getArgAsFloat(0), 0, 0.6));
             
-        } else {
-            
-            ofLogNotice("OSC: ") << m.getAddress();
         }
         
+        if(m.getAddress() == "/event/printemps/oiseau2/pitch") {
+            
+            BirdsScene * birds = (BirdsScene*) this->sceneManager->getSceneIndexForPath("OISEAU_BULLES2");
+            birds->setPitchPct(ofNormalize(m.getArgAsFloat(0), 0, 0.6));
+            
+        }
+        
+        
+        if(m.getAddress() == "/event/printemps/oiseau3/pitch") {
+            
+            BirdsScene * birds = (BirdsScene*) this->sceneManager->getSceneIndexForPath("OISEAU_BULLES3");
+            birds->setPitchPct(ofNormalize(m.getArgAsFloat(0), 0, 0.6));
+            
+        }
 
         app->addMessage(m.getAddress());
         
@@ -270,6 +316,29 @@ void OscManager::setSceneEvent(ofxOscMessage & m) {
 
 void OscManager::keyPressed(int key) {
     
+    
+    if(key == 'i') {
+        
+        DrawScene * drawScene = (DrawScene*) this->sceneManager->getSceneIndexForPath("draw");
+        drawScene->scene1();
+        //bigBangScene->bigBang.startRepulsion(2);
+        
+    }
+    if(key == 'o') {
+        
+        DrawScene * drawScene = (DrawScene*) this->sceneManager->getSceneIndexForPath("draw");
+        drawScene->scene2();
+        
+    }
+    
+    if(key == 'O') {
+        
+        DrawScene * drawScene = (DrawScene*) this->sceneManager->getSceneIndexForPath("draw");
+        drawScene->outro();
+        //bigBangScene->bigBang.startRepulsion(2);
+        
+    }
+    
     if(key == 'a') {
         
         BigBangScene * bigBangScene = (BigBangScene*) this->sceneManager->getSceneIndexForPath("bigbang");
@@ -285,6 +354,13 @@ void OscManager::keyPressed(int key) {
         
     }
     
+    if(key == 'R') {
+        
+        DrawScene * drawScene = (DrawScene*) this->sceneManager->getSceneIndexForPath("draw");
+        drawScene->removeLastCaptured();
+        
+    }
+    
     if(key == 's') {
         
         DrawScene * drawScene = (DrawScene*) this->sceneManager->getSceneIndexForPath("draw");
@@ -296,6 +372,13 @@ void OscManager::keyPressed(int key) {
         
         DrawScene * drawScene = (DrawScene*) this->sceneManager->getSceneIndexForPath("draw");
         drawScene->clear();
+        
+    }
+    
+    if(key == 'u') {
+        
+        DrawScene * drawScene = (DrawScene*) this->sceneManager->getSceneIndexForPath("draw");
+        drawScene->undo();
         
     }
     
