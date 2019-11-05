@@ -19,8 +19,6 @@ void ArSceneManager::setup(vector<std::shared_ptr<MagiqueMarker>> & trackers) {
     
     bDebugMode = false;
     
-    ofLogNotice("SETUP ar scene manager");
-    
     // HoleScene * holeScene = new HoleScene();
     // holeScene->setup("HOLE");
     
@@ -147,6 +145,7 @@ void ArSceneManager::activateMarkersFromScene() {
     string currentScene = app->app.currentSceneName + "/" + app->app.currentSubSceneName;
 
     vector<string> results;
+    int nMarkersActivated = 0;
     for(int i=0; i<scenes.size(); i++) {
         
         // if no marker skip obviously
@@ -155,6 +154,7 @@ void ArSceneManager::activateMarkersFromScene() {
         
         if(unlockAll) {
             scenes[i]->marker->bIsActive = true;
+            nMarkersActivated++;
             continue;
         }
         
@@ -169,7 +169,7 @@ void ArSceneManager::activateMarkersFromScene() {
         if(scenes[i]->lockedScene == currentScene) {
             scenes[i]->marker->bIsActive = true;
             results.push_back(scenes[i]->name);
-
+            nMarkersActivated++;
 
         } else {
             scenes[i]->marker->bIsActive = false;
@@ -177,9 +177,11 @@ void ArSceneManager::activateMarkersFromScene() {
 
         }
         
+        
+        
     }
     
-    app->addMessage("Setting scene : " + currentScene);
+    app->addMessage("Setting scene : " + currentScene + " with " + ofToString(nMarkersActivated) + " markers activated");
     for(int i=0; i<results.size(); i++) {
         app->addMessage(results[i] + ofToString(" markers activated"));
     }

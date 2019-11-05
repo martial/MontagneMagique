@@ -13,10 +13,9 @@ void ArToolKitManager::setup(int width, int height) {
     
     inputWidth  = width;
     inputHeight = height;
-    
-    //trackers.reserve(10);
     loadTrackers();
     
+    frameDrop   = 0;
 }
 
 void ArToolKitManager::setDelays( int markerLostDelay, int markerFoundDelay) {
@@ -40,6 +39,16 @@ void ArToolKitManager::loadTrackers() {
     dir.listDir();
     dir.sort();
     ofDisableDataPath();
+    
+    // get config
+    ofApp* app = (ofApp*) ofGetAppPtr();
+    float trackingThresold  = app->configJson.value("ar-tracking-thresold", 5);
+    float simThresold       = app->configJson.value("ar-sim-thresold", 0.5);
+    int searchFeatureNum  = app->configJson.value("ar-tracking-searchfeature-num", 16);
+    int searchSize        = app->configJson.value("ar-tracking-search-size", 24);
+    int template1Size     = app->configJson.value("ar-tracking-template1-size", 6);
+    int template2Size     = app->configJson.value("ar-tracking-template2-size", 6);
+
     
     //go through and print out all the paths
     for(int i = 0; i < dir.size(); i++){
@@ -76,7 +85,6 @@ void ArToolKitManager::loadTrackers() {
             myTextFile << name+"\n";
             myTextFile << "NFT\n";
             myTextFile << "FILTER 5.0\n";
-            
             myTextFile.close();
             
             subdir.close();
@@ -100,7 +108,11 @@ void ArToolKitManager::loadTrackers() {
             string name = dir.getFile(i).getBaseName();
             std::shared_ptr<MagiqueMarker> tracker = std::make_shared<MagiqueMarker>();
             
-            tracker->setup(ofVec2f(inputWidth,inputHeight),ofVec2f(inputWidth,inputHeight), OF_PIXELS_BGR, "../Resources/camera_para.dat", "../Resources/m_"+name+".dat");
+            tracker->setup(
+                           ofVec2f(inputWidth,inputHeight),ofVec2f(inputWidth,inputHeight),
+                           OF_PIXELS_BGR, "../Resources/camera_para.dat", "../Resources/m_"+name+".dat", "../Resources/custom.dat",
+                           trackingThresold, simThresold, searchFeatureNum, searchSize, template1Size, template2Size);
+            
             tracker->markerid           = name;
             tracker->timeFoundDelay     = markerFoundDelay;
             tracker->timeLostDelay      = markerLostDelay;
@@ -111,7 +123,7 @@ void ArToolKitManager::loadTrackers() {
             ofAddListener(tracker->solidFoundEvent, this, &ArToolKitManager::onSolidFoundEvent);
             ofAddListener(tracker->solidLostEvent, this, &ArToolKitManager::onSolidLostEvent);
             
-            trackers.push_back(tracker);
+            trackers.push_back(std::move(tracker));
             
         }
     }
@@ -121,15 +133,19 @@ void ArToolKitManager::loadTrackers() {
 
 void ArToolKitManager::update(ofBaseHasPixels & input){
     
-    for(int i=0; i<trackers.size(); i++) {
+    if(frameDrop == 0 || ofGetFrameNum() % frameDrop == 0) {
         
-        if(trackers[i]->bIsActive) {
+        for(int i=0; i<trackers.size(); i++) {
             
-            trackers[i]->update(input);
-            trackers[i]->updateTimes();
-                        
-        }
+            if(trackers[i]->bIsActive) {
+                
+                trackers[i]->update(input);
+                trackers[i]->updateTimes();
+                
+            }
 
+        }
+        
     }
     
 }
@@ -143,7 +159,6 @@ void ArToolKitManager::debugDraw() {
         if(trackers[i]->isFound()){
             
             trackers[i]->beginAR();
-            
             
             if( i < images.size() && images[i].isAllocated() ) {
                 
@@ -192,8 +207,6 @@ void ArToolKitManager::onSolidFoundEvent(string & markerid) {
     
     int sceneIndex = app->app.arSceneManager.getSceneIndexForMarkerID(markerid);
     app->app.arSceneManager.scenes[sceneIndex]->onMarkerTracked();
-
-   
 
 }
 

@@ -18,6 +18,8 @@ public:
     void update();
     void draw(float x, float y, float scale);
     
+    float posYCosAmplitude;
+    
 private:
     
     ofImage bodyImage;

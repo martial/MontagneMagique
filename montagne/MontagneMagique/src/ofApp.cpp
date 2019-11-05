@@ -15,6 +15,7 @@ void ofApp::setup(){
     ofSetCircleResolution(128);
     ofSetLogLevel(OF_LOG_NOTICE);
     ofSetFrameRate(60);
+   // ofEnableSmoothing();
    // ofSetVerticalSync(true);
     
     ofLogNotice("Gl shading version ") <<  glGetString(GL_SHADING_LANGUAGE_VERSION);
@@ -28,7 +29,6 @@ void ofApp::setup(){
     else
         exit();
     
-
     intputMode              = configJson["auto-start-mode"];
     videoInputWidth         = configJson["input-width"];
     videoInputHeight        = configJson["input-height"];
@@ -40,16 +40,20 @@ void ofApp::setup(){
     app.videoOutputWidth    = videoOutputWidth;
     app.videoOutputHeight   = videoOutputHeight;
 
+    int startMode           = configJson.value("start-mode", 0);
     app.setup();
-    app.getArToolKitManager().setDelays(configJson["marker-found-delay"], configJson["marker-lost-delay"]);
+    //app.setMode(startMode);
     
+    int frameDrop           = configJson.value("ar-frame-drop", 0);
+    app.getArToolKitManager().setDelays(configJson["marker-found-delay"], configJson["marker-lost-delay"]);
+    app.getArToolKitManager().frameDrop = frameDrop;
     setInputMode(intputMode);
     
     ofAddListener(syphonDir.events.serverAnnounced, this, &ofApp::serverAnnounced);
     ofAddListener(syphonDir.events.serverRetired, this, &ofApp::serverRetired);
     syphonLayer.setName("MM-OF-Layer");
     
-    oscManager.setup(configJson["osc-in-port"],configJson["osc-out-port"],configJson["osc-out-ip"]);
+    oscManager.setup(configJson["osc-in-port"], configJson["osc-out-port"], configJson["osc-out-ip"]);
     oscManager.setSceneManager(&app.arSceneManager);
     oscManager.setMontagneApp(&app);
     
@@ -58,7 +62,6 @@ void ofApp::setup(){
     // -- gui
     parameters.setName("Settings");
     parameters.add(debugMode.set("debugMode",true));
-    
     
     gui.setup(parameters);
     
@@ -70,21 +73,23 @@ void ofApp::setup(){
     gui.add(bigBangRepulsionFactor.setup("bigBangRepulsionFactor", 1, 0.0, 3));
     
     addMessage("Welcome.");
-    
-    //addMessage("Press g for GUI");
-    addMessage("Press d to debug markers");
+    addMessage("Press d to activate debug mode");
     addMessage("Press p to draw preview");
     addMessage("Press m to show hide messages");
     addMessage("Press t to draw time measurements");
+    addMessage("Press f to go full screen");
+
     addMessage("Press o and send an OSC test message on ip " + ofToString(configJson["osc-out-ip"]) + " and port " + ofToString(configJson["osc-out-port"]));
     addMessage("Your current OSC input port is " + ofToString(configJson["osc-in-port"]));
     
-    
+    if (frameDrop > 0 ) {
+        addMessage("AR tracking runs every " + ofToString(frameDrop) + " frames");
+
+    }
     TIME_SAMPLE_SET_FRAMERATE(60.0f); //specify a target framerate
     ofxTimeMeasurements::instance()->setEnabled(false);
-
-    reader.setAsync(true);
-
+    
+   // oscManager.sendMessage("scene/printemps/ours", 0);
 }
 
 void ofApp::setInputMode(int mode) {
@@ -99,12 +104,13 @@ void ofApp::setInputMode(int mode) {
     string videoUrl         = "videos/" + filename;
     
     ofFboSettings settings;
-    settings.depthStencilAsTexture = false;
-    settings.internalformat = GL_RGB;
-    settings.width = videoInputWidth;
-    settings.height = videoInputHeight;
-    settings.useDepth = false;
-    settings.useStencil = false;
+    settings.depthStencilAsTexture  = false;
+    settings.internalformat         = GL_RGB;
+    settings.width                  = videoInputWidth;
+    settings.height                 = videoInputHeight;
+    settings.useDepth               = false;
+    settings.useStencil             = false;
+    settings.numSamples             = 0;
     
     switch (intputMode) {
             
@@ -192,7 +198,6 @@ void ofApp::update(){
     TS_START("Window-title");
     // frame rate & windows title
     currentFrameRate = 0.95 * currentFrameRate +  (1.0f - 0.95) * ceil(ofGetFrameRate());
-    //currentFrameRate = ofGetFrameRate();
 
     string sceneName = app.currentSceneName + " / " + app.currentSubSceneName;
     ofSetWindowTitle("Montagne Magique – " + sceneName + " ["+  ofToString(floor(currentFrameRate)) + " fps ]");
@@ -209,7 +214,6 @@ void ofApp::update(){
         case INPUT_VIDEO:
             
             TS_START("UPDATE FBO");
-
             videoInput.update();
             resizedFbo.begin();
             ofEnableAlphaBlending();
@@ -294,16 +298,37 @@ void ofApp::update(){
             syphonInput.draw(0.0,0.0, videoInputWidth, videoInputHeight);
             resizedFbo.end();
             TS_STOP("main-fbo");
-             
+            
             //resizedFbo.getTexture().setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
-            TS_START("resize-fbo");
+            TS_START("readpixels-fbo");
             resizedFbo.getTexture().readToPixels(resizedInputPixels);
-            TS_STOP("resize-fbo");
+            TS_STOP("readpixels-fbo");
+            
             TS_START("setpixels-fbo");
             resizedInputImg.setFromPixels(resizedInputPixels);
             TS_STOP("setpixels-fbo");
             
-            //resizedInputImg = syphonInput;
+            
+            /*
+            // test
+            TS_START("alternate-fbo");
+
+            ofTextureData &texData = resizedFbo.getTexture().getTextureData();
+            // reallocate if the incoming texture size is different from our fbo & image
+            // ie. we've connected to a different Syphon server with a different texture size
+            if((texData.width != 0 && texData.height != 0) &&
+               (resizedInputImg.getWidth() != texData.width || resizedFbo.getHeight() != texData.height)) {
+                resizedInputImg.allocate(texData.width, texData.height, OF_IMAGE_COLOR);
+            }
+            // grab pixel data from the FBO, note pixel data pointer as destination
+            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, resizedFbo.getId());
+            glReadPixels(0, 0, texData.width, texData.height, texData.glInternalFormat, GL_UNSIGNED_BYTE, resizedInputImg.getPixels().getData());
+            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+            // we manually loaded pixel data into the image, so update the image texture here
+            //resizedInputImg.update();
+            TS_STOP("alternate-fbo");
+             
+             */
 
             TS_START("tracker");
 
@@ -331,7 +356,6 @@ void ofApp::draw(){
     
     ofBackground(0);
     ofSetColor(255);
-    
     
     if(bDrawPreview ) {
         
@@ -363,15 +387,12 @@ void ofApp::draw(){
     
     TS_STOP("draw-camera");
 
-    
     TS_START("draw-scene");
     ofPushMatrix();
     ofTranslate(cameraRectCanvas.x, cameraRectCanvas.y);
      if(!bDebugTrackers) {
          
-        // if(bDrawPreview ) {
-             app.drawScene();
-         //}
+        app.drawScene();
          
      } else {
          app.processDebugDraw();
@@ -384,12 +405,8 @@ void ofApp::draw(){
     syphonLayer.publishTexture(&app.fboLayer.getTexture());
     TS_STOP("publish-syphon");
 
-    
     TS_START("draw-offscreen");
-
     ofSetColor(255);
-    // draw camera at the bottom and messages
-    
     ofPushMatrix();
     if(ofGetWidth() == videoInputWidth && ofGetHeight() == videoInputHeight*2) {
         ofTranslate(0.0, videoInputHeight);
@@ -401,33 +418,63 @@ void ofApp::draw(){
         app.drawOffScreen();
     }
     
+    TS_STOP("draw-offscreen");
+
+    TS_START("draw-messages");
+
     ofSetColor(255,0,0);
-    ofDrawBitmapString("Montagne Magique | " + ofToString(floor(currentFrameRate)) + " fps", 20, 20);
+    ofDrawBitmapStringHighlight("Montagne Magique | " + ofToString(floor(currentFrameRate)) + " fps", 20, 20, ofColor::white, ofColor::red);
     ofSetColor(255, 255);
     
     if(bDrawMessages) {
         ofSetColor(255, 255);
         for(int i=0; i<messages.size(); i++) {
-            ofDrawBitmapString(messages[i], 20, 40 + i * 20);
+            ofDrawBitmapStringHighlight(messages[i], 20, 40 + i * 20);
         }
-        ofSetColor(255);
     }
     
     ofPopMatrix();
-    
-    TS_STOP("draw-offscreen");
-
-    
+    ofSetColor(255,255);
     if(bDrawGui)
         gui.draw();
     
-    
+    TS_STOP("draw-messages");
+
    // if(bDrawSampler)
      //   sampler.draw();
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
+    
+    if(key == 'd') {
+        
+        app.arSceneManager.setDebugMode(!app.arSceneManager.bDebugMode);
+        
+        if(app.arSceneManager.bDebugMode)
+            addMessage("Debug mode is on");
+        else
+            addMessage("Debug mode is off");
+        
+    }
+    
+    if(key == 'p')
+        bDrawPreview =!bDrawPreview;
+    
+    
+    if(key == 'm')
+        bDrawMessages =!bDrawMessages;
+    
+    if(key == 'o')
+        oscManager.sendMessage("/OF/test", "This is a test");
+    
+    
+    if(key == 't')
+        ofxTimeMeasurements::instance()->setEnabled(!ofxTimeMeasurements::instance()->getEnabled());
+        
+    bool keyboardLock = configJson.value("keyboard-lock", true);
+    if(keyboardLock)
+        return;
     
     if(key == '1')
         setInputMode(INPUT_CAMERA);
@@ -440,34 +487,10 @@ void ofApp::keyPressed(int key){
     
     if(key == 'g')
         bDrawGui = !bDrawGui;
-    
-    if(key == 'o')
-        oscManager.sendMessage("/OF/test", "This is a test");
-    
-   
-    
-    if(key == 't')
-        ofxTimeMeasurements::instance()->setEnabled(!ofxTimeMeasurements::instance()->getEnabled());
-    
-    if(key == 'd') {
-        
-        app.arSceneManager.setDebugMode(!app.arSceneManager.bDebugMode);
-        
-        if(app.arSceneManager.bDebugMode)
-            addMessage("Debug mode is on");
-        else
-            addMessage("Debug mode is off");
-        
-    }
-        
-    if(key == 'p')
-        bDrawPreview =!bDrawPreview;
-    
+ 
     if(key == 'f')
         ofToggleFullscreen();
-    
-    if(key == 'm')
-        bDrawMessages =!bDrawMessages;
+  
     
     // send random video
     if(key == 'v') {
@@ -495,10 +518,8 @@ void ofApp::keyPressed(int key){
 
 void ofApp::addMessage(string message) {
     
-    
- 
-    
-    if(messages.size() > 10) {
+        
+    if(messages.size() > 15) {
         messages.erase(messages.begin());
     }
     
@@ -524,50 +545,7 @@ void ofApp::addMessage(string message) {
     
 }
 
-//--------------------------------------------------------------
-void ofApp::keyReleased(int key){
 
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
-
-}
 
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo){

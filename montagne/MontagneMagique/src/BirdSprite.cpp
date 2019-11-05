@@ -51,6 +51,8 @@ void BirdSprite::setup() {
     
     posY = 0.0;
     blurredPosY = 0.0;
+    
+    posYCosAmplitude = 100;
 }
 
 void BirdSprite::update() {
@@ -112,7 +114,7 @@ void BirdSprite::draw(float x, float y, float scale) {
     ofSetRectMode(OF_RECTMODE_CENTER);
     ofPushMatrix();
     ofTranslate(x,y);
-    ofTranslate(0.0, blurredPosY * 100);
+    ofTranslate(0.0, blurredPosY * posYCosAmplitude);
     ofSetColor(255);
     ofScale(scale,scale);
     //bodyImage.draw(0.0, 0.0);

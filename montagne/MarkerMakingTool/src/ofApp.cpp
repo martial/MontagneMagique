@@ -17,12 +17,11 @@ void ofApp::setup(){
     gui.add(rectXScale.setup("rectXScale,", 1, 0, 1));
     gui.add(rectYScale.setup("rectYScale,", 1, 0, 1));
 
-
-    
-    
     gui.add(generate.setup("generate"));
     generate.addListener(this, &ofApp::generateMarkers);
-
+    
+    ofSetLogLevel(OF_LOG_NOTICE);
+    ofLogNotice("hello");
 
 }
 
@@ -144,7 +143,7 @@ void ofApp::generateMarkers() {
                 status = "Processing";
                 
                 string path = ofToDataPath(filename, true);
-                string command = "../../../../../Utils/genTexData " + path + " -level=4 -leveli=3 -dpi=300 -max_dpi=300 -min_dpi=72";
+                string command = "../../../../../Utils/genTexData " + path + " -level=3 -leveli=2 -dpi=300 -max_dpi=300 -min_dpi=128";
                 ofLogNotice("command ") << command;
 
                 string result = ofSystem(command);

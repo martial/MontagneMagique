@@ -11,12 +11,33 @@ void BigBangScene::setup(string dataPath) {
     
     AbstractARScene::setup(dataPath);
     bigBang.setup(this->dataPath);
-   
+    setProps();
 }
+
+void BigBangScene::setProps() {
+    
+    float thresold              = configJson["thresold"];
+    string targetColorHex       = configJson["color-blob-target"];
+    ofColor targetColor         = ofColor::fromHex(ofHexToInt(targetColorHex));
+    float colorBlobDistanceMax  = configJson["color-blob-target-distance-max"];
+    
+    bigBang.colorBlobTarget         = targetColor;
+    bigBang.thresold                = thresold;
+    bigBang.colorBlobDistanceMax    = colorBlobDistanceMax;
+}
+
 
 void BigBangScene::update() {
     
+    if(hasConfigChanged()) {
+        
+        setProps();
+        
+    }
+    
     bigBang.update();
+    
+    
         
 }
 

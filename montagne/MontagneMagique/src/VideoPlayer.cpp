@@ -7,10 +7,18 @@
 
 #include "VideoPlayer.hpp"
 #include "ofxImgSizeUtils.h"
-
+#include "ofApp.h"
 void VideoPlayer::setup() {
 
     bPreloadVideos = true;
+    
+    dir.open("videos");
+    dir.allowExt("mov");
+    dir.allowExt("mp4");
+    
+    dir.listDir();
+    dir.sort();
+    
     
     if(bPreloadVideos) {
         preloadVideos();
@@ -59,26 +67,27 @@ void VideoPlayer::stop() {
      } else {
          
          if(currentPlayerIndex >= 0 )
-             players[currentPlayerIndex]->close();
+             players[currentPlayerIndex]->stop();
      }
     
 }
 
 void VideoPlayer::preloadVideos() {
     
-    ofDirectory dir("videos");
-    dir.allowExt("mov");
-    dir.allowExt("mp4");
     
-    dir.listDir();
-    dir.sort();
     int nFiles = dir.size();
     
     for(int i=0; i<nFiles; i++) {
         
         ofxHapPlayer * player = new ofxHapPlayer();
-        player->load(dir.getPath(i));
-        players.push_back(player);
+        bool bHasLoaded = player->load(dir.getPath(i));
+        if(bHasLoaded ) {
+            players.push_back(player);
+        } else {
+           
+        }
+        
+       
         
     }
     
@@ -87,12 +96,7 @@ void VideoPlayer::preloadVideos() {
 
 void VideoPlayer::setVideo(string name, bool loop) {
     
-    ofDirectory dir("videos");
-    dir.allowExt("mov");
-    dir.allowExt("mp4");
     
-    dir.listDir();
-    dir.sort();
     int nFiles = dir.size();
     
     currentPlayerIndex = -1;
@@ -132,6 +136,4 @@ void VideoPlayer::setVideo(string name, bool loop) {
         
     }
     
-    ofLogNotice("Show HAP") << currentPlayerIndex;
-        
 }

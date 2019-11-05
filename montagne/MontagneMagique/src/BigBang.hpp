@@ -24,6 +24,10 @@ public:
     void startRepulsion(float scale);
     
     int  mode;
+    
+    int thresold;
+    ofColor colorBlobTarget;
+    float colorBlobDistanceMax;
 
     
 private:
@@ -56,6 +60,9 @@ private:
     int                 nConnectedMax, nConnectedGap;
     
     ofImage             particleImage;
+    
+    vector<ofColor>     blobsAverageColors;
+    vector<int>         allowedBlobs;
     
 };
 

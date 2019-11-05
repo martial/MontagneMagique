@@ -64,8 +64,7 @@ void GenericScene::draw() {
     
     if(pct > 0 ) {
         
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        glBlendFuncSeparate(GL_ONE, GL_ZERO, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
         ofSetColor(255, pct * 255);
         ofSetRectMode(OF_RECTMODE_CENTER);
         for(int i=0; i < videoPlayers.size(); i++) {
@@ -81,11 +80,12 @@ void GenericScene::draw() {
             }
         }
         ofSetRectMode(OF_RECTMODE_CORNER);
-        glDisable(GL_BLEND);
-
         endFlip();
         
     }
+    
+    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,GL_ONE,GL_ONE_MINUS_SRC_ALPHA);
+
     
     
 }

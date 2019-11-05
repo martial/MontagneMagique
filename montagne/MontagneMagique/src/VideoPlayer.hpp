@@ -33,6 +33,7 @@ private:
     int     currentPlayerIndex;
     
     ofJson  configJson;
+    ofDirectory dir;
     
 };
 

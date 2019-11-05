@@ -21,8 +21,10 @@ void BigBang::setup(string dataPath) {
     fadeInOutPct            = 0.1;
     particlesCreated        = 0;
     
-    //particleImage.load("assets/images/particle.png");
-    //particleImage.setAnchorPoint(particleImage.getWidth() * .5, particleImage.getHeight() * .5);
+    thresold                = 100;
+    colorBlobTarget         = ofColor(255);
+    colorBlobDistanceMax    = 0;
+    
 }
 
 
@@ -44,21 +46,66 @@ void BigBang::update() {
     colorImg.setFromPixels(app->resizedInputImg.getPixels());
     
     grayImage = colorImg;
-    grayImage.threshold(100);
+    grayImage.threshold(thresold);
     
     if(mode != 2)
-        contourFinder.findContours(grayImage, 50, (app->videoInputWidth * app->videoInputHeight), 10, false);    // find holes
+        contourFinder.findContours(grayImage, 20, (app->videoInputWidth * app->videoInputHeight) * 0.75, 10, false);    // find holes
     else {
-        contourFinder.findContours(grayImage, 20,(app->videoInputWidth * app->videoInputHeight), 10, false);    // find holes
+        contourFinder.findContours(grayImage, 5,(app->videoInputWidth * app->videoInputHeight) * 0.50, 10, true);    // find holes
 
     }
     
+    
+    
+    blobsAverageColors.clear();
+    allowedBlobs.clear();
     for (int j = 0; j < contourFinder.nBlobs; j++){
+        
+        if(colorBlobDistanceMax > 0 ) {
+
+            // get average color
+            float totalR = 0;
+            float totalG = 0;
+            float totalB = 0;
+
+            for (int y = 0; y < contourFinder.blobs[j].boundingRect.height; ++y)
+            {
+                for (int x = 0; x < contourFinder.blobs[j].boundingRect.width; ++x)
+                {
+                    int xDiff = contourFinder.blobs[j].boundingRect.x;
+                    int yDiff = contourFinder.blobs[j].boundingRect.y;
+
+                    ofColor color = app->resizedInputImg.getPixels().getColor(xDiff + x, yDiff + y);
+                    totalR += color.r;
+                    totalG += color.g;
+                    totalB += color.b;
+                    
+                }
+            }
+            
+            int nPixels = contourFinder.blobs[j].boundingRect.width * contourFinder.blobs[j].boundingRect.height;
+            ofColor average = ofColor(totalR / (float)nPixels,totalG / (float)nPixels,totalB / (float)nPixels);
+            blobsAverageColors.push_back(average);
+            
+            // average
+            ofVec3f c = ofVec3f(blobsAverageColors[j].r, blobsAverageColors[j].g, blobsAverageColors[j].b );
+            ofVec3f cTarget = ofVec3f(colorBlobTarget.r, colorBlobTarget.g, colorBlobTarget.b);
+            c.normalize();
+            cTarget.normalize();
+            
+            allowedBlobs.push_back( ( c.distance(cTarget) < colorBlobDistanceMax) ? 1 : 0);
+            
+            
+        } else {
+            
+            allowedBlobs.push_back(1);
+        }
         
         contourFinder.blobs[j].area     *= scale;
         contourFinder.blobs[j].centroid *= scale;
-                                            
+        
     }
+        
     
    
     // delete old particles
@@ -79,7 +126,7 @@ void BigBang::update() {
         app->bigBangScaleMin    = 1.3;
         app->bigBangScaleMax    = 6.5;
 
-        fadeInOutPct            = 0.001;
+        fadeInOutPct            = 0.1;
         maxParticleLife         = 900;
         forceRandomNessScale    = 1.0;
         repulsionScale          -= .1;
@@ -182,6 +229,9 @@ void BigBang::draw() {
             
             for (int j = 0; j < contourFinder.nBlobs; j++){
                 
+                if(allowedBlobs[j] == 0)
+                    continue;
+                
                 if(repulsionScale > 0.0) {
                     particles[i]->addRepulsionForce(contourFinder.blobs[j].centroid, app->videoOutputWidth * 5, repulsionScale);
                 }
@@ -219,6 +269,8 @@ void BigBang::draw() {
         }
         
         // draw
+       
+
         ofSetColor(255, 255 * alpha);
         
         float size = particles[i]->scale * particles[i]->scale;
@@ -245,6 +297,10 @@ void BigBang::draw() {
                 float minDistFromBlobs = particles[i]->pos.distance(contourFinder.blobs[0].centroid);
                 
                 for (int j = 1; j < contourFinder.nBlobs; j++){
+                    
+                    if(allowedBlobs[j] == 0)
+                        continue;
+                    
                     minDistFromBlobs = MIN( minDistFromBlobs,particles[i]->pos.distance(contourFinder.blobs[j].centroid) );
                 }
             
@@ -272,7 +328,6 @@ void BigBang::draw() {
                                  
                                  particles[j]->nConnecteds++;
                                  
-                                 //nConnecteds++;
                              }
                              
                          }
@@ -294,8 +349,15 @@ void BigBang::draw() {
         if(contourFinder.nBlobs > 0 ) {
             
              for(int i = 0; i < contourFinder.nBlobs; i ++) {
+                 
+                 if(allowedBlobs[i] == 0)
+                     continue;
+                 
                  for(int j = 0; j < contourFinder.nBlobs; j ++) {
-                
+                     
+                    if(allowedBlobs[j] == 0)
+                        continue;
+                     
                     if ( i != j  ) {
                         
                         ofVec2f pos = ofVec2f (contourFinder.blobs[i].centroid);
@@ -322,18 +384,31 @@ void BigBang::draw() {
         ofPushMatrix();
         ofScale(scale, scale);
         contourFinder.draw();
+        
+        for (int j = 0; j < contourFinder.nBlobs; j++){
+            
+            ofSetColor(blobsAverageColors[j]);
+            ofDrawRectangle(contourFinder.blobs[j].centroid, 10, 10);
+            ofDrawRectangle(j*50, 0, 50, 50);
+            
+            ofSetColor(255,0,0);
+            if(allowedBlobs[j] == 0) {
+                ofDrawLine(j*50, 0, j*50 + 50, 50);
+                ofDrawLine(j*50, 50, j*50 + 50, 0);
+            }
+            
+        }
+        
         ofPopMatrix();
         
     }
+    
    
-    /*
-    // draw one white point
-    float a = cos(ofGetElapsedTimef() * .5) * 255;
-    ofSetColor(255,0,0);
-    ofSetColor(255, 255 * a);
-    ofDrawEllipse(800,
-                  600, 50, 50);
-    */
+    
+    
+    
+     
+     
     
 
 }
@@ -373,6 +448,11 @@ void BigBang::addParticles(int nParticles, float minSize, float maxSize, float m
         
         
          for (int j = 0; j < contourFinder.nBlobs; j++){
+             
+             if(allowedBlobs[j] == 0)
+                 continue;
+             
+             
              positions.push_back(contourFinder.blobs[j].centroid);
          }
         
@@ -415,7 +495,6 @@ void BigBang::addParticles(int nParticles, float minSize, float maxSize, float m
 
 void BigBang::startRepulsion(float scale) {
     ofApp * app = (ofApp*) ofGetAppPtr();
-   // app->bigBangRepulsionFactor = scale;
     repulsionScale = scale * app->bigBangRepulsionFactor;
     
 }

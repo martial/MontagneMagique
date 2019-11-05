@@ -10,13 +10,15 @@
 
 void MontagneApp::setup() {
     
-    mode        = DRAW_MODE;
+    mode        = SCENE_MODE;
     pastMode    = mode;
     
     currentSceneName    = "";
     currentSubSceneName = "";
     
     hapPlayer.setup();
+    
+    alphaMode = 0;
     
 }
 
@@ -36,12 +38,12 @@ void MontagneApp::setupTrackers(int trackerInputWidth, int trackerInputHeight) {
 
 void MontagneApp::setupFbos() {
     
-    debugFboLayer.allocate(trackerInputWidth, trackerInputHeight);
+    //debugFboLayer.allocate(trackerInputWidth, trackerInputHeight);
     fboLayer.allocate(videoOutputWidth, videoOutputHeight, GL_RGBA);
-    fboLayer.getTexture().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
+   // fboLayer.getTexture().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
         
-    maskFbo = new ofFbo();
-    maskFbo->allocate(videoOutputWidth, videoOutputHeight, GL_RGBA);
+   // maskFbo = new ofFbo();
+   // maskFbo->allocate(videoOutputWidth, videoOutputHeight, GL_RGBA);
     
 }
 
@@ -114,15 +116,21 @@ void MontagneApp::drawScene() {
     fboLayer.begin();
     ofEnableAlphaBlending();
     glEnable(GL_BLEND);
-   // glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-    glBlendFuncSeparate(GL_ONE, GL_SRC_COLOR, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    
+   // glBlendFuncSeparate(GL_ONE, GL_SRC_COLOR, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
-    ofClear(0, 0);
+    
+    
     
     if(mode == SCENE_MODE) {
-        
+        ofClear(255, 0);
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
         arSceneManager.drawScene(0);
     
+    } else {
+        ofClear(0, 0);
+        glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,GL_ONE,GL_ONE_MINUS_SRC_ALPHA);
+
     }
     
     if(mode == DRAW_MODE) {
@@ -159,9 +167,16 @@ void MontagneApp::drawScene() {
         ofScale( 1, -1, 1 );
         ofTranslate( 0, -videoOutputHeight, 0 );
     }
+    
+  //  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    ofSetColor(255,255);
+   // ofEnableAlphaBlending();
+
+    glBlendFuncSeparate(GL_ONE, GL_ZERO, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     hapPlayer.draw(videoOutputWidth, videoOutputHeight);
     ofPopMatrix();
     
+  
     glDisable(GL_BLEND);
     fboLayer.end();
     

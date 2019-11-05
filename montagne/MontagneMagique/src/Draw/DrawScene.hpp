@@ -18,14 +18,10 @@
 #include "ofxAnimatableFloat.h"
 #include "ofxAnimatableOfColor.h"
 
-
-
 #define SHAPE_TYPE_VECTOR 0
 #define SHAPE_TYPE_IMG 1
 #define SHAPE_TYPE_BOTH 2
 #define SHAPE_TYPE_TERRAIN 3
-
-
 
 class VectorObject {
   
@@ -254,9 +250,9 @@ private:
 
     // animation
     ofxAnimatableFloat      cameraPosY, lookAtPosY, terrainCurve, terrainCols, terrainColsScale, particlesScale, birdMainScale, birdMainPosY;
-    ofxAnimatableFloat      pathXAmplitude, pathYAmplitude;
+    ofxAnimatableFloat      pathXAmplitude, pathYAmplitude, birdPosYCosAmp;
 
-    ofxAnimatableOfColor    backgroundColorTop, backgroundColorBottom, mountainsColor, mountainsSecondColor;
+    ofxAnimatableOfColor    backgroundColorTop, backgroundColorBottom, mountainsColor, mountainsSecondColor, pathColor;
     
     ofImage particle;
     vector<ofImage*> images;

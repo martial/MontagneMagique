@@ -139,9 +139,7 @@ void MagiqueMarker::beginAR() {
     ARMarkerNFT * mk = &getSelectedMarker();
     
     ofRectangle r(0,0, videoOutputWidth,videoOutputHeight);
-    
-    
-    
+        
     ofPushView();
     ofViewport(r);
     loadProjectionMatrix();

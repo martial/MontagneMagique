@@ -15,9 +15,9 @@
 
 #define TRACKING_MODE 0
 #define SCENE_MODE 1
-//#define HAP_MODE 2
-#define DRAW_MODE 3
-#define BUBBLES_MODE 4
+#define DRAW_MODE 2
+#define BUBBLES_MODE 3
+#define OFF_MODE 4
 
 class MontagneApp {
   
@@ -40,7 +40,7 @@ public:
 
     ArToolKitManager  & getArToolKitManager(){return arToolKitManager;};
     
-    ofFbo debugFboLayer, fboLayer;
+    ofFbo fboLayer;
     
     // TODO move this into JSON config in ofApp*
     int videoOutputWidth, videoOutputHeight;
@@ -50,6 +50,8 @@ public:
 
     // from OSC
     string currentSceneName, currentSubSceneName;
+    
+    int alphaMode;
 
     
 private:

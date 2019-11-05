@@ -14,8 +14,6 @@
 #define INPUT_SYPHON 2
 #define INPUT_IMAGE 3
 
-//#define USE_SAMPLER
-
 #ifdef USE_SAMPLER
 #include "Sampler.hpp"
 #endif
@@ -28,17 +26,7 @@ class ofApp : public ofBaseApp{
 		void draw();
 
 		void keyPressed(int key);
-		void keyReleased(int key);
-		void mouseMoved(int x, int y );
-		void mouseDragged(int x, int y, int button);
-		void mousePressed(int x, int y, int button);
-		void mouseReleased(int x, int y, int button);
-		void mouseEntered(int x, int y);
-		void mouseExited(int x, int y);
-		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
-		void gotMessage(ofMessage msg);
-    
         void exit();
     
         void serverAnnounced(ofxSyphonServerDirectoryEventArgs &arg);
@@ -75,11 +63,11 @@ class ofApp : public ofBaseApp{
         ofJson                      configJson;
 
         // Gui
-        ofxFloatSlider bigBangDampingMin,bigBangDampingMax;
-        ofxFloatSlider bigBangScaleMin,bigBangScaleMax;
-        ofxFloatSlider bigBangScaleDampingScale;
-        ofxFloatSlider bigBangRepulsionFactor;
-        ofxIntSlider bigBangParticleIntensity;
+        ofxFloatSlider  bigBangDampingMin,bigBangDampingMax;
+        ofxFloatSlider  bigBangScaleMin,bigBangScaleMax;
+        ofxFloatSlider  bigBangScaleDampingScale;
+        ofxFloatSlider  bigBangRepulsionFactor;
+        ofxIntSlider    bigBangParticleIntensity;
 
         ofxPanel gui;
         ofParameter<bool> debugMode;
