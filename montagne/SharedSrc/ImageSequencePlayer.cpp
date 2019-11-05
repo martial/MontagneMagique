@@ -1,10 +1,3 @@
-//
-//  ImageSequencePlayer.cpp
-//  5GTunnel
-//
-//  Created by Martial Geoffre-Rouland on 24/11/2017.
-//
-
 #include "ImageSequencePlayer.hpp"
 
 ImageSequencePlayer::ImageSequencePlayer() {

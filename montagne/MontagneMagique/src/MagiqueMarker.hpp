@@ -1,10 +1,3 @@
-//
-//  MagiqueMarker.hpp
-//  MontagneMagique
-//
-//  Created by Martial Geoffre-Rouland on 21/12/2018.
-//
-
 #ifndef MagiqueMarker_hpp
 #define MagiqueMarker_hpp
 

@@ -1,10 +1,3 @@
-//
-//  BigBang.cpp
-//  MontagneMagique
-//
-//  Created by Martial Geoffre-Rouland on 18/02/2019.
-//
-
 #include "BigBang.hpp"
 #include "ofApp.h"
 
@@ -26,7 +19,6 @@ void BigBang::setup(string dataPath) {
     colorBlobDistanceMax    = 0;
     
 }
-
 
 void BigBang::update() {
         
@@ -54,8 +46,6 @@ void BigBang::update() {
         contourFinder.findContours(grayImage, 5,(app->videoInputWidth * app->videoInputHeight) * 0.50, 10, true);    // find holes
 
     }
-    
-    
     
     blobsAverageColors.clear();
     allowedBlobs.clear();
@@ -105,9 +95,7 @@ void BigBang::update() {
         contourFinder.blobs[j].centroid *= scale;
         
     }
-        
     
-   
     // delete old particles
     for(int i = particles.size() - 1; i >= 0; i --) {
         
@@ -269,24 +257,15 @@ void BigBang::draw() {
         }
         
         // draw
-       
-
         ofSetColor(255, 255 * alpha);
         
         float size = particles[i]->scale * particles[i]->scale;
-        
-       // float imgSize = particleImage.getWidth();
-        //float particleSize = ofMap(size, 0, imgSize,  )
-        //particleImage
-        
-      
         
         ofDrawEllipse(particles[i]->pos.x,
                       particles[i]->pos.y,
                       particles[i]->scale * particles[i]->scale,
                       particles[i]->scale * particles[i]->scale);
         
-
         // we draw lines in mode 1
         
         if( mode == 1 ) {
@@ -402,14 +381,6 @@ void BigBang::draw() {
         ofPopMatrix();
         
     }
-    
-   
-    
-    
-    
-     
-     
-    
 
 }
 
@@ -446,12 +417,10 @@ void BigBang::addParticles(int nParticles, float minSize, float maxSize, float m
     // we get positions from the blobs
     else if ( mode == 1 ) {
         
-        
          for (int j = 0; j < contourFinder.nBlobs; j++){
              
              if(allowedBlobs[j] == 0)
                  continue;
-             
              
              positions.push_back(contourFinder.blobs[j].centroid);
          }
@@ -491,9 +460,8 @@ void BigBang::addParticles(int nParticles, float minSize, float maxSize, float m
     
 }
 
-
-
 void BigBang::startRepulsion(float scale) {
+    
     ofApp * app = (ofApp*) ofGetAppPtr();
     repulsionScale = scale * app->bigBangRepulsionFactor;
     

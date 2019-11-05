@@ -1,10 +1,3 @@
-//
-//  BirdSprite.cpp
-//  MontagneMagique
-//
-//  Created by Martial Geoffre-Rouland on 23/09/2019.
-//
-
 #include "BirdSprite.hpp"
 
 void BirdSprite::setup() {
@@ -69,7 +62,6 @@ void BirdSprite::update() {
             currentSet = &images;
             timeElapsed = ofGetElapsedTimeMillis();
 
-
         } else {
             
             bWaitForFrame = true;
@@ -117,7 +109,6 @@ void BirdSprite::draw(float x, float y, float scale) {
     ofTranslate(0.0, blurredPosY * posYCosAmplitude);
     ofSetColor(255);
     ofScale(scale,scale);
-    //bodyImage.draw(0.0, 0.0);
     
     int currFrameInt = floor(currFrame);
     currentSet->at(currFrameInt).draw(0.0, 0.0);

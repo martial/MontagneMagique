@@ -1,10 +1,3 @@
-//
-//  OscManager.hpp
-//  MontagneMagique
-//
-//  Created by Martial Geoffre-Rouland on 19/02/2019.
-//
-
 #ifndef OscManager_hpp
 #define OscManager_hpp
 
@@ -39,7 +32,6 @@ private:
     ofxOscSender        sender;
     
     string              lastAddress;
-    
     
 };
 

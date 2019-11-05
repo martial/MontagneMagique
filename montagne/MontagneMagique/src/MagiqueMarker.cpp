@@ -1,10 +1,3 @@
-//
-//  MagiqueMarker.cpp
-//  MontagneMagique
-//
-//  Created by Martial Geoffre-Rouland on 21/12/2018.
-//
-
 #include "MagiqueMarker.hpp"
 #include "ofApp.h"
 
@@ -22,7 +15,6 @@ MagiqueMarker::MagiqueMarker() {
     timeFound       = ofGetElapsedTimeMillis();
     timeLost        = ofGetElapsedTimeMillis();
     
-        
     timeSolidFoundElapsed = 0;
     timeSolidLostElapsed  = 0;
     

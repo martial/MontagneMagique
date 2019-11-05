@@ -1,10 +1,3 @@
-//
-//  BirdsScene.cpp
-//  MontagneMagique
-//
-//  Created by Martial Geoffre-Rouland on 21/02/2019.
-//
-
 #include "BirdsScene.hpp"
 
 void BirdsScene::setup(string dataPath) {
@@ -37,7 +30,6 @@ void BirdsScene::update() {
         float noise = cos((float)ofGetElapsedTimeMillis() / 1000.0f);
         setPitchPct(noise);
         
-
     }
 }
 
@@ -60,7 +52,6 @@ void BirdsScene::draw() {
         }
         
     }
-
     
     beginFlip();
 
@@ -105,14 +96,13 @@ void BirdsScene::draw() {
     for (int i=0; i<particles.size(); i++) {
         
         particles[i]->resetForce();
-        
         particles[i]->depthVel = -ofMap(particles[i]->scale, 0.0, maxRadius, 2, 20);
+        
         //ofVec2f frc (ofRandom(-0.01, -0.02), ofRandom(-0.001, -0.005));
         //frc *= .3;
         //particles[i]->addForce(frc.x, frc.y);
         
         particles[i]->addStoredForce();
-        
         particles[i]->update();
         
     }
@@ -179,12 +169,9 @@ void BirdsScene::draw() {
     
     endFlip();
     
-    
-    
 }
 
 void BirdsScene::drawCircle(ofVec2f pos, float radius, ofColor col) {
-    
     
     ofSetColor(col);
     drawCircleNoise(pos, radius, col);
@@ -239,7 +226,6 @@ void BirdsScene::onPitchStart() {
     
     endColor =  colors[rdmIndex];
     
-    
     // choose initial pos
     ofVec2f initialPos (ofRandom(6, 8),ofRandom(44, 50));
     
@@ -271,14 +257,11 @@ void BirdsScene::onPitchStart() {
     radiusVel                               = ofRandom(0.001, 0.003);
     radiusVelFactor                         = 10.0;
     
-   // ofLogNotice("onPitch start");
-
 }
 
 void BirdsScene::onPitchEnd() {
     
     particles.push_back(currentParticle);
     currentParticle = NULL;
-   // ofLogNotice("onPitch End");
 
 }

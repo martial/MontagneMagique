@@ -1,28 +1,18 @@
-//
-//  GenericScene.cpp
-//  MontagneMagique
-//
-//  Created by Martial Geoffre-Rouland on 10/04/2019.
-//
-
 #include "GenericScene.hpp"
 
 
 void GenericScene::setup(string dataPath) {
     
     AbstractARScene::setup(dataPath);
-    //loadVideos();
-    
     
 }
 
 void GenericScene::loadVideos() {
     
-    // iterate json
-    
     videoPlayers.clear();
     
     int numOfVideos = configJson["videos"].size();
+    
     for(int i=0; i < numOfVideos; i++) {
         
         string name =  configJson["videos"][i]["name"];
@@ -40,9 +30,7 @@ void GenericScene::loadVideos() {
       
     }
     
-    
 }
-
 
 void GenericScene::update() {
     
@@ -51,7 +39,6 @@ void GenericScene::update() {
     }
         
 }
-
 
 void GenericScene::draw() {
     
@@ -85,8 +72,6 @@ void GenericScene::draw() {
     }
     
     glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,GL_ONE,GL_ONE_MINUS_SRC_ALPHA);
-
-    
     
 }
 

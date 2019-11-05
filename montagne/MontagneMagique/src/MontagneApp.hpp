@@ -1,10 +1,3 @@
-//
-//  MontagneApp.hpp
-//  MontagneMagique
-//
-//  Created by Martial Geoffre-Rouland on 14/12/2018.
-//
-
 #ifndef MontagneApp_hpp
 #define MontagneApp_hpp
 
@@ -69,9 +62,7 @@ private:
     ofImage brushImage;
     ofFbo  * maskFbo;
     ofFbo tempFbo;
-    
-    
-    
+        
 };
 
 #endif /* MontagneApp_hpp */

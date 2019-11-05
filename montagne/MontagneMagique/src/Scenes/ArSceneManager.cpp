@@ -1,10 +1,3 @@
-//
-//  ArSceneManager.cpp
-//  MontagneMagique
-//
-//  Created by Martial Geoffre-Rouland on 08/01/2019.
-//
-
 #include "ArSceneManager.hpp"
 #include "VideoScene.hpp"
 #include "BigBangScene.hpp"
@@ -14,14 +7,10 @@
 #include "DrawScene.hpp"
 #include "ofApp.h"
 
-
 void ArSceneManager::setup(vector<std::shared_ptr<MagiqueMarker>> & trackers) {
     
     bDebugMode = false;
-    
-    // HoleScene * holeScene = new HoleScene();
-    // holeScene->setup("HOLE");
-    
+
     BigBangScene * bigBangScene     = new BigBangScene();
     bigBangScene->setup("bigbang");
     
@@ -37,17 +26,11 @@ void ArSceneManager::setup(vector<std::shared_ptr<MagiqueMarker>> & trackers) {
     BirdsScene * staticBirdScene     = new BirdsScene();
     staticBirdScene->setup("OISEAU_BULLES3");
     
-    //BeesDepthScene * beesScene = new BeesDepthScene();
-    //beesScene->setup("PRINTEMPS_ARBRE_ABEILLES");
-    
     scenes.push_back(bigBangScene);
     scenes.push_back(drawScene);
     scenes.push_back(birdsScene);
     scenes.push_back(otherBirdScene);
     scenes.push_back(staticBirdScene);
-
-   // scenes.push_back(beesScene);
-   // scenes.push_back(holeScene);
 
     loadAutoScenes();
     
@@ -58,7 +41,6 @@ void ArSceneManager::setup(vector<std::shared_ptr<MagiqueMarker>> & trackers) {
             scenes[sceneIndex]->setMarker(trackers[i]);
         
     }
-    
 
 }
 
@@ -92,7 +74,6 @@ void ArSceneManager::loadAutoScenes() {
     
 }
 
-
 void ArSceneManager::updateCamera(int markerIndex, MagiqueMarker & marker,  ofBaseHasPixels & input) {
     
     int sceneIndex = getSceneIndexForMarkerID(marker.markerid);
@@ -116,8 +97,6 @@ void ArSceneManager::drawOffScreen(int sceneIndex) {
 
 }
 
-
-
 void ArSceneManager::draw(int markerIndex, MagiqueMarker & marker) {
     
     int sceneIndex = getSceneIndexForMarkerID(marker.markerid);
@@ -131,11 +110,7 @@ void ArSceneManager::draw(int markerIndex, MagiqueMarker & marker) {
     
 }
 
-void ArSceneManager::activateAllMarkers() {
-    
-    
-}
-
+void ArSceneManager::activateAllMarkers() {}
 
 void ArSceneManager::activateMarkersFromScene() {
     
@@ -177,8 +152,6 @@ void ArSceneManager::activateMarkersFromScene() {
 
         }
         
-        
-        
     }
     
     app->addMessage("Setting scene : " + currentScene + " with " + ofToString(nMarkersActivated) + " markers activated");
@@ -187,7 +160,6 @@ void ArSceneManager::activateMarkersFromScene() {
     }
     
 }
-
 
 AbstractARScene * ArSceneManager::getSceneIndexForIndex(int index, MagiqueMarker & marker) {
     
@@ -200,7 +172,6 @@ AbstractARScene * ArSceneManager::getSceneIndexForIndex(int index, MagiqueMarker
     }
     return NULL;
 }
-
 
 int ArSceneManager::getSceneIndexForMarkerID(string markerID) {
     
@@ -239,7 +210,6 @@ void ArSceneManager::setGenericSceneLoopMode(ofLoopType loopState) {
     }
     
 }
-
 
 void ArSceneManager::setDebugMode(bool debugMode) {
     

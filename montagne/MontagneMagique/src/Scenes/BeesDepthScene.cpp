@@ -1,13 +1,5 @@
-//
-//  BeesDepthScene.cpp
-//  MontagneMagique
-//
-//  Created by Martial Geoffre-Rouland on 19/02/2019.
-//
-
 #include "BeesDepthScene.hpp"
 #include "ofApp.h"
-
 
 void BeesDepthScene::setup(string dataPath) {
     
@@ -22,7 +14,6 @@ void BeesDepthScene::setup(string dataPath) {
     bee1.setAnchorPercent(0.5,0.5);
     bee2.setAnchorPercent(0.5,0.5);
     beeShadow.setAnchorPercent(0.5,0.5);
-
     
 }
 
@@ -51,7 +42,6 @@ void BeesDepthScene::update() {
 
                 bees.push_back(bee);
                
-                
             }
             
         }
@@ -78,16 +68,13 @@ void BeesDepthScene::update() {
             
         }
         
-        
     } else {
         
         bees.clear();
         
     }
     
-    
     sort(bees.begin(), bees.end());
-
     
 }
 
@@ -127,6 +114,5 @@ void BeesDepthScene::draw() {
         endFlip();
         
     }
-    
     
 }

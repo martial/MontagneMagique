@@ -1,10 +1,3 @@
-//
-//  VideoScene.hpp
-//  MontagneMagique
-//
-//  Created by Martial Geoffre-Rouland on 14/02/2019.
-//
-
 #ifndef VideoScene_hpp
 #define VideoScene_hpp
 

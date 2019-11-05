@@ -1,10 +1,3 @@
-//
-//  GenericScene.hpp
-//  MontagneMagique
-//
-//  Created by Martial Geoffre-Rouland on 10/04/2019.
-//
-
 #ifndef Drawscene_hpp
 #define Drawscene_hpp
 
@@ -62,9 +55,6 @@ public:
         anchorPoint.set(this->line.getCentroid2D().x, this->line.getCentroid2D().y);
     }
     
-    
-    
-    
     ofVec3f positionToWorld() {
         
         ofVec3f pos;
@@ -75,8 +65,6 @@ public:
         
     }
     
- 
-  
     void draw() {
         
         scale.update(1.0 / 60.0f);
@@ -170,9 +158,6 @@ public:
         
     }
     
-    
-    
-    
 };
 
 class DrawScene : public AbstractARScene {
@@ -263,6 +248,5 @@ private:
     ofPoint viewportSize;
 
 };
-
 
 #endif /* GenericScene_hpp */

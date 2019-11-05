@@ -1,10 +1,3 @@
-//
-//  ArSceneManager.hpp
-//  MontagneMagique
-//
-//  Created by Martial Geoffre-Rouland on 08/01/2019.
-//
-
 #ifndef ArSceneManager_hpp
 #define ArSceneManager_hpp
 
@@ -20,9 +13,9 @@ public:
     void loadAutoScenes();
     void setup(vector<std::shared_ptr<MagiqueMarker>> & trackers);
     void updateCamera(int markerIndex, MagiqueMarker & marker,  ofBaseHasPixels & input);
+    
     void drawScene(int sceneIndex);
     void drawOffScreen(int sceneIndex);
-
     void draw(int markerIndex, MagiqueMarker & marker);
     
     void setDebugMode(bool debugMode);
@@ -36,12 +29,8 @@ public:
     AbstractARScene * getSceneIndexForPath(string path);
     int getSceneIndexForMarkerID(string markerID);
     vector<AbstractARScene*> scenes;
-
     
     bool bDebugMode;
-
-private:
-    
 
 };
 

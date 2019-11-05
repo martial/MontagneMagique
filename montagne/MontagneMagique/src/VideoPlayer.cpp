@@ -1,13 +1,7 @@
-//
-//  VideoPlayer.cpp
-//  MontagneMagique
-//
-//  Created by Martial Geoffre-Rouland on 20/05/2019.
-//
-
 #include "VideoPlayer.hpp"
 #include "ofxImgSizeUtils.h"
 #include "ofApp.h"
+
 void VideoPlayer::setup() {
 
     bPreloadVideos = true;
@@ -15,10 +9,8 @@ void VideoPlayer::setup() {
     dir.open("videos");
     dir.allowExt("mov");
     dir.allowExt("mp4");
-    
     dir.listDir();
     dir.sort();
-    
     
     if(bPreloadVideos) {
         preloadVideos();
@@ -30,7 +22,6 @@ void VideoPlayer::setup() {
 void VideoPlayer::update() {
     
     player.update();
-    
     
 }
 
@@ -74,28 +65,22 @@ void VideoPlayer::stop() {
 
 void VideoPlayer::preloadVideos() {
     
-    
     int nFiles = dir.size();
     
     for(int i=0; i<nFiles; i++) {
         
         ofxHapPlayer * player = new ofxHapPlayer();
         bool bHasLoaded = player->load(dir.getPath(i));
+        
         if(bHasLoaded ) {
             players.push_back(player);
-        } else {
-           
         }
-        
-       
         
     }
     
 }
 
-
 void VideoPlayer::setVideo(string name, bool loop) {
-    
     
     int nFiles = dir.size();
     

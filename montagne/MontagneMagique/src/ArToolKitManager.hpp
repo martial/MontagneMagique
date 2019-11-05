@@ -1,10 +1,3 @@
-//
-//  ArToolKitManager.hpp
-//  MontagneMagique
-//
-//  Created by Martial Geoffre-Rouland on 13/12/2018.
-//
-
 #ifndef ArToolKitManager_hpp
 #define ArToolKitManager_hpp
 

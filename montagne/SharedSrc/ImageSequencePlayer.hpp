@@ -1,10 +1,3 @@
-//
-//  ImageSequencePlayer.hpp
-//  5GTunnel
-//
-//  Created by Martial Geoffre-Rouland on 24/11/2017.
-//
-
 #ifndef ImageSequencePlayer_hpp
 #define ImageSequencePlayer_hpp
 

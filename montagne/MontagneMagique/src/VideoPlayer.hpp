@@ -1,16 +1,8 @@
-//
-//  VideoPlayer.hpp
-//  MontagneMagique
-//
-//  Created by Martial Geoffre-Rouland on 20/05/2019.
-//
-
 #ifndef VideoPlayer_hpp
 #define VideoPlayer_hpp
 
 #include "ofMain.h"
 #include "ofxHapPlayer.h"
-
 
 class VideoPlayer {
   

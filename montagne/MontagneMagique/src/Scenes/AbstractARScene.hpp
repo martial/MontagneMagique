@@ -1,10 +1,3 @@
-//
-//  AbstractARScene.hpp
-//  MontagneMagique
-//
-//  Created by Martial Geoffre-Rouland on 08/01/2019.
-//
-
 #ifndef AbstractARScene_hpp
 #define AbstractARScene_hpp
 
@@ -61,7 +54,6 @@ public:
         animOutMillisDelay          = configJson.value("animOutMillisDelay", this->animOutMillisDelay);
         markerID                    = configJson["marker-id"].get<std::string>();
 
-        
     }
     
     void saveConfigJson() {
@@ -99,10 +91,8 @@ public:
     virtual void update(){};
     virtual void draw(){};
     virtual void drawOffScreen(){};
-    
     virtual void updateCamera(ofBaseHasPixels & input){};
 
-    
     string markerID, name;
     string assetsDir;
     std::shared_ptr<MagiqueMarker> marker;
@@ -116,7 +106,6 @@ public:
     
     void generateMaskFbo() {
         
-
         beginFlip();
         ofSetRectMode(OF_RECTMODE_CENTER);
         ofSetColor(255);
@@ -124,14 +113,11 @@ public:
         endFlip();
         ofSetRectMode(OF_RECTMODE_CORNER);
 
-        
     }
     
     virtual void onMarkerTracked(){};
     virtual void onMarkerLost(){};
 
-
-    
 protected:
     
     void beginFlip() {
@@ -143,11 +129,7 @@ protected:
             
             float x = marker->width * scaleFactor * .5;
             float y = - marker->height * scaleFactor + marker->height * scaleFactor * .5;
-            
-        // weird offset issue
-           // x += 4;
-            //y -= 4;
-            
+ 
             ofTranslate(x,y);
 
             if(!configJson["translate"].is_null() && configJson["translate"].is_object()) {
@@ -203,6 +185,5 @@ protected:
     ofFile file;
     
 };
-
 
 #endif /* AbstractARScene_hpp */

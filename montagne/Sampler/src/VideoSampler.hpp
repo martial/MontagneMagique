@@ -1,10 +1,3 @@
-//
-//  VideoSampler.hpp
-//  Sampler
-//
-//  Created by Martial Geoffre-Rouland on 12/04/2019.
-//
-
 #ifndef VideoSampler_hpp
 #define VideoSampler_hpp
 

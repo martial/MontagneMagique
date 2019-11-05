@@ -1,10 +1,3 @@
-//
-//  DrawScene.cpp
-//  MontagneMagique
-//
-//  Created by Martial Geoffre-Rouland on 10/07/2019.
-//
-
 #include "DrawScene.hpp"
 #include "ofApp.h"
 
@@ -34,8 +27,6 @@ void DrawScene::setup(string dataPath) {
      
      */
     
-   
-    
     ofApp * app = (ofApp*) ofGetAppPtr();
     post.init(app->videoOutputWidth, app->videoOutputHeight);
     post.setFlip(true);
@@ -53,10 +44,6 @@ void DrawScene::setup(string dataPath) {
     if (!shapesFolder.empty()) {
         loadFolderOfImageForTerrain(shapesFolder);
     }
-    
-    //cam.setNearClip(0.1);
-    //cam.setFarClip(20000.0f);
-   // cam.setDistance(20000);
     
     ribbonPath.set(cam.getPosition());
     
@@ -94,21 +81,22 @@ void DrawScene::setMarker(shared_ptr<MagiqueMarker> marker) {
     
     AbstractARScene::setMarker(marker);
     
-    
 }
-
 
 void DrawScene::setTreshold(float thresold) {
     
     configJson["thresold"] = thresold;
     saveConfigJson();
+    
 }
+
 void DrawScene::setAperture(float aperture) {
     
     configJson["aperture"] = aperture;
     saveConfigJson();
     
 }
+
 void DrawScene::loadFolder(string folder) {
     
     // first load shapes
@@ -193,24 +181,14 @@ void DrawScene::loadFolderOfImageForTerrain(string folder) {
         
     }
     
-  //  int rdmIndex = floor(ofRandom(nFiles));
-   // string vid = dir.getName(rdmIndex);
-   // oscManager.sendMessage("/video/"+vid, "This is a test");
-    
+    // int rdmIndex = floor(ofRandom(nFiles));
+    // string vid = dir.getName(rdmIndex);
+    // oscManager.sendMessage("/video/"+vid, "This is a test");
     
 }
 
-
-
 void DrawScene::update() {
     
-    //float farClip = ofGetMouseX() * 100;
-  
-    
-    
-   // fakeSSSPass->setLightPosition(ofPoint(0.0, 1080*2, 0.0));
-    //fakeSSSPass->setAttenuationOffset(ofMap(ofGetMouseX(), 0, ofGetWidth(), 0, 5));
-
     // update animations
     float step = 1.0f / 60.0f;
     backgroundColorTop.update(step);
@@ -245,11 +223,6 @@ void DrawScene::update() {
     
     float maxBlur = configJson["max-blur"];
     dofPass->setMaxBlur(maxBlur);
-    //dofPass->setMaxBlur(0.000001);
-   
-    
-    //float fov =  configJson["fov"];
-    //cam.setFov(fov);
 
     if(hasConfigChanged()) {
         
@@ -302,23 +275,6 @@ void DrawScene::update() {
         contourFinder.blobs[j].centroid *= scale;
         
     }
-    
-    
-    /*
-    // release objects if invisible
-    for(int i=vectorObjects.size()-1; i >= 0; i-- ) {
-
-        if(vectorObjects[i].opacity <= 0.0f) {
-            vectorObjects[i].clear();
-            vectorObjects.erase (vectorObjects.begin()+i);
-        }
-        
-    }
-    
-    // sort shapes by depth / scale
-    //sort(vectorObjects.begin(), vectorObjects.end());
-     
-     */
     
     ofVec3f position;
   
@@ -397,13 +353,10 @@ void DrawScene::update() {
     bigRibbon->terrainScale = terrainColsScale.getCurrentValue();
     bigRibbon->thickness    = round(terrainCols.getCurrentValue());
     bigRibbon->update(ribbonPath, color, pathColor.getCurrentColor());
-
-    //ofLogNotice("terrainCols.getCurrentValue()") << terrainCols.getCurrentValue();
     
     // lights
     pointLight.setAmbientColor( ofFloatColor(lightIntensity,lightIntensity,lightIntensity) );
     pointLight.setDiffuseColor( ofFloatColor(1.0f, 1.f, 1.f) );
-
     
     float drawingScale = configJson["drawing-position-scale"];
     for(int i=0; i<nPoints; i++) {
@@ -418,7 +371,6 @@ void DrawScene::update() {
     }
     
     vector<ofVec4f> positions = bigRibbon->getLastRowOfVerticesMiddle();
-   // ofLogNotice("update") << vectorObjects.size() << " objects" << " and " << positions.size();
 
     if(positions.size() > 0 ) {
         
@@ -433,7 +385,6 @@ void DrawScene::update() {
                 
             } else {
             
-               
                  if(bIsBehindCamera) {
                      
                      if( (*vecObject).type == SHAPE_TYPE_TERRAIN ) {
@@ -454,9 +405,6 @@ void DrawScene::update() {
                          float sc = 3.0;
                          (*vecObject).position.x = cam.getPosition().x - (post.getWidth()* 0.5 * sc) + ((*vecObject).originalPosition.x * sc);
                          (*vecObject).position.y = cam.getPosition().y - (post.getHeight()* 0.5 * sc) + ((*vecObject).originalPosition.y * sc);
-                         
-                         //(*vecObject).position.z = cam.getPosition().z + 20000 + ofRandom(3000);
-                         
                          (*vecObject).position.z = cam.getPosition().z + cam.getFarClip();
                          (*vecObject).scale.reset(0.0);
                          (*vecObject).setScaleTransition(2.5, ofRandom(0.5, 0.8), EASE_IN_OUT_BACK);
@@ -473,14 +421,10 @@ void DrawScene::update() {
         }
         
     }
-    
 
 }
 
-void DrawScene::updateCamera(ofBaseHasPixels & input){
-    
-    
-}
+void DrawScene::updateCamera(ofBaseHasPixels & input){}
 
 void DrawScene::captureShapes(int mode) {
     
@@ -619,13 +563,9 @@ void DrawScene::draw() {
     bgGradientMesh.addColor(backgroundColorBottom.getCurrentColor());
     bgGradientMesh.draw();
     
-
-
     // draw background parralax
-    
     float pathNoiseXAmplitude = 1000;
 
-    
     float pathX     = configJson["path-x"];
     float distance  = ribbonPath.x - pathX;
     float diff      = ofMap(distance, -pathNoiseXAmplitude, pathNoiseXAmplitude, -100, 100);
@@ -649,10 +589,8 @@ void DrawScene::draw() {
     
     ofPopMatrix();
     
-    
     ofEnableDepthTest();
     cam.begin();
-    
     
     // terrain mesh
     ofEnableLighting();
@@ -660,16 +598,13 @@ void DrawScene::draw() {
     pointLight.enable();
     bigRibbon->draw(true, 4);
     pointLight.disable();
-   // ofSetSmoothLighting(false);
     ofDisableLighting();
     
     // objects
-    
     glAlphaFunc(GL_GREATER, 0.5);
     for(int i=0; i < vectorObjects.size(); i++ ) {
         vectorObjects[i].draw();
     }
-   
     
     // particles
     float pScale = particlesScale.getCurrentValue();
@@ -688,8 +623,6 @@ void DrawScene::draw() {
    
     cam.end();
     ofDisableDepthTest();
-    
-    
     post.end();
     
     ofEnableAlphaBlending();
@@ -717,7 +650,7 @@ void DrawScene::draw() {
         
     }
     ofDisableAlphaBlending();
-    //ofPopMatrix();
+    
 }
 
 void DrawScene::clear() {
@@ -740,7 +673,6 @@ void DrawScene::undo() {
     }
     
 }
-
 
 void DrawScene::removeLastCaptured() {
     
@@ -766,7 +698,6 @@ void DrawScene::removeAll() {
     
 }
 
-
 void DrawScene::quit() {
     
     for(int i=0; i < vectorObjects.size(); i++ ) {
@@ -776,7 +707,6 @@ void DrawScene::quit() {
     }
     
 }
-
 
 void DrawScene::onMarkerTracked() {
     
@@ -816,7 +746,6 @@ void DrawScene::save() {
         
     }
     
-    
 }
 
 void DrawScene::drawOffScreen() {
@@ -829,7 +758,6 @@ void DrawScene::drawOffScreen() {
     ofTranslate(0.0, app->resizedInputImg.getHeight());
     ofScale(1, -1, 1);
     contourFinder.draw();
-        
     ofPopMatrix();
     
 }
@@ -857,14 +785,12 @@ void DrawScene::intro() {
     string initMFirst       = configJson["terrain-colors"]["init"]["montain-1-color"];
     string initMSecond      = configJson["terrain-colors"]["init"]["montain-2-color"];
     string initPathHexa     = configJson["terrain-colors"]["init"]["path-color"];
-
-
+    
     string introTopHexa     = configJson["terrain-colors"]["intro"]["top-color"];
     string introBottomHexa  = configJson["terrain-colors"]["intro"]["bottom-color"];
     string introMFirst      = configJson["terrain-colors"]["intro"]["montain-1-color"];
     string introMSecond     = configJson["terrain-colors"]["intro"]["montain-2-color"];
     string introPathHexa    = configJson["terrain-colors"]["intro"]["path-color"];
-
 
     backgroundColorTop.setColor(ofColor::fromHex(ofHexToInt(initTopHexa)));
     backgroundColorBottom.setColor(ofColor::fromHex(ofHexToInt(initBottomHexa)));
@@ -872,7 +798,6 @@ void DrawScene::intro() {
     mountainsSecondColor.setColor(ofColor::fromHex(ofHexToInt(initMSecond)));
     pathColor.setColor(ofColor::fromHex(ofHexToInt(initPathHexa)));
 
-    
     //---------------------------------------------------- animation
     
     backgroundColorTop.setDuration(30);
@@ -956,7 +881,6 @@ void DrawScene::scene1() { // go to space
     backgroundColorBottom.setCurve(QUADRATIC_EASE_OUT);
     backgroundColorBottom.animateTo(ofColor::black);
     
-    
     cameraPosY.setDuration(7);
     cameraPosY.setCurve(LATE_EASE_IN_EASE_OUT);
     float camIntro = configJson["cam-intro-y"];
@@ -974,7 +898,6 @@ void DrawScene::scene1() { // go to space
     pathXAmplitude.setDuration(20);
     pathXAmplitude.setCurve(QUADRATIC_EASE_OUT);
     pathXAmplitude.animateToAfterDelay(50, 0);
-    
     
     //
     float particleScale = configJson["particle-scale"];
@@ -1038,8 +961,8 @@ void DrawScene::scene2() { // change colors
     cameraPosY.setCurve(EASE_IN_EASE_OUT);
     cameraPosY.animateTo(1300);
     
-    
 }
+
 void DrawScene::outro() { // change colors
     
     pathYAmplitude.setDuration(20);
@@ -1057,7 +980,6 @@ void DrawScene::outro() { // change colors
     backgroundColorBottom.setDuration(15);
     backgroundColorBottom.setCurve(QUADRATIC_EASE_OUT);
     backgroundColorBottom.animateTo(ofColor::black);
-    
     
     particlesScale.setDuration(30);
     particlesScale.animateToAfterDelay(0.05, 0);

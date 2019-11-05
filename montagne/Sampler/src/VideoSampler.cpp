@@ -1,10 +1,3 @@
-//
-//  VideoSampler.cpp
-//  Sampler
-//
-//  Created by Martial Geoffre-Rouland on 12/04/2019.
-//
-
 #include "VideoSampler.hpp"
 
 void VideoSampler::setup(int width, int height) {

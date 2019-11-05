@@ -1,22 +1,9 @@
-//
-//  BeesDepthScene.hpp
-//  MontagneMagique
-//
-//  Created by Martial Geoffre-Rouland on 19/02/2019.
-//
-
 #ifndef BeesDepthScene_hpp
 #define BeesDepthScene_hpp
 
 #include "AbstractARScene.hpp"
 #include "Bee.hpp"
 
-/*
-struct SortByX
-{
-    bool operator() const (MyClass const & L, MyClass const & R) { return L.x < R.x; }
-};
-*/
 class BeesDepthScene : public AbstractARScene {
     
 public:
@@ -35,12 +22,6 @@ private:
     vector<ofVec2f> positions, targetPositions;
     vector<float> scales, targetScales;
     
-   
-
-    
 };
-
-
-
 
 #endif /* BeesDepthScene_hpp */

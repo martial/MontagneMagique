@@ -1,15 +1,7 @@
-//
-//  OscManager.cpp
-//  MontagneMagique
-//
-//  Created by Martial Geoffre-Rouland on 19/02/2019.
-//
-
 #include "OscManager.hpp"
 #include "BigBangScene.hpp"
 #include "BirdsScene.hpp"
 #include "DrawScene.hpp"
-
 #include "ofApp.h"
 
 void OscManager::setup(int receiverPort, int senderPort, string senderIp) {
@@ -34,18 +26,16 @@ void OscManager::update() {
         string first            = splitted[0];
 
         // HAP Video ----------------------------------------------------------------------------------------------------
-        
         if(first == "video") {
             
              if(splitted.size() == 2) {
                  
                  if(splitted[1] == "stop") {
                      
-                    //this->montagneApp->setPastMode();
+                     // deprecated
                      
                  } else {
                  
-                    //this->montagneApp->setMode(HAP_MODE);
                     app->app.hapPlayer.setVideo(splitted[1]);
                      
                  }
@@ -54,7 +44,6 @@ void OscManager::update() {
                  
                  if(splitted[2] == "loop") {
                      
-                     //this->montagneApp->setMode(HAP_MODE);
                      app->app.hapPlayer.setVideo(splitted[1], true);
                      
                  }
@@ -114,7 +103,6 @@ void OscManager::update() {
             }
             
         }
-        
         
         // Scenes ----------------------------------------------------------------------------------------------------
         
@@ -184,8 +172,6 @@ void OscManager::update() {
             
         }
         
-       
-        
         if(m.getAddress() == "/scene/ete/voloiseau") {
             DrawScene * drawScene = (DrawScene*) this->sceneManager->getSceneIndexForPath("draw");
             drawScene->intro();
@@ -234,8 +220,6 @@ void OscManager::update() {
             this->sceneManager->setGenericSceneLoopMode(OF_LOOP_NONE);
             
         }
-        
-       
         
         if(m.getAddress() == "/event/drawn/thresold") {
             
@@ -293,7 +277,6 @@ void OscManager::update() {
             
         }
         
-        
         if(m.getAddress() == "/event/printemps/oiseau3/pitch") {
             
             BirdsScene * birds = (BirdsScene*) this->sceneManager->getSceneIndexForPath("OISEAU_BULLES3");
@@ -309,10 +292,7 @@ void OscManager::update() {
     
 }
 
-void OscManager::setSceneEvent(ofxOscMessage & m) {
-    
-    
-}
+void OscManager::setSceneEvent(ofxOscMessage & m) {}
 
 void OscManager::keyPressed(int key) {
     
@@ -321,9 +301,9 @@ void OscManager::keyPressed(int key) {
         
         DrawScene * drawScene = (DrawScene*) this->sceneManager->getSceneIndexForPath("draw");
         drawScene->scene1();
-        //bigBangScene->bigBang.startRepulsion(2);
         
     }
+    
     if(key == 'o') {
         
         DrawScene * drawScene = (DrawScene*) this->sceneManager->getSceneIndexForPath("draw");
@@ -335,7 +315,6 @@ void OscManager::keyPressed(int key) {
         
         DrawScene * drawScene = (DrawScene*) this->sceneManager->getSceneIndexForPath("draw");
         drawScene->outro();
-        //bigBangScene->bigBang.startRepulsion(2);
         
     }
     
@@ -343,7 +322,6 @@ void OscManager::keyPressed(int key) {
         
         BigBangScene * bigBangScene = (BigBangScene*) this->sceneManager->getSceneIndexForPath("bigbang");
         bigBangScene->bigBang.addParticles(1, 2, 6, 0.1, 0.2);
-        //bigBangScene->bigBang.startRepulsion(2);
         
     }
     
@@ -436,5 +414,3 @@ void OscManager::sendMessage(string adress, int value) {
     sender.sendMessage(m, false);
     
 }
-
-

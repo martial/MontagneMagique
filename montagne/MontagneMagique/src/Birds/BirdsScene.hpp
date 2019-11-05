@@ -1,10 +1,3 @@
-//
-//  BirdsScene.hpp
-//  MontagneMagique
-//
-//  Created by Martial Geoffre-Rouland on 21/02/2019.
-//
-
 #ifndef BirdsScene_hpp
 #define BirdsScene_hpp
 

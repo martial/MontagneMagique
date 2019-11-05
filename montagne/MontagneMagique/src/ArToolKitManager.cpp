@@ -1,10 +1,3 @@
-//
-//  ArToolKitManager.cpp
-//  MontagneMagique
-//
-//  Created by Martial Geoffre-Rouland on 13/12/2018.
-//
-
 #include "ArToolKitManager.hpp"
 #include <glm/gtx/matrix_decompose.hpp>
 #include "ofApp.h"

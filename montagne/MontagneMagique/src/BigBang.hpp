@@ -1,10 +1,3 @@
-//
-//  BigBang.hpp
-//  MontagneMagique
-//
-//  Created by Martial Geoffre-Rouland on 18/02/2019.
-//
-
 #ifndef BigBang_hpp
 #define BigBang_hpp
 

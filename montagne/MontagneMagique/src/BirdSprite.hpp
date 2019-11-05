@@ -1,10 +1,3 @@
-//
-//  BirdSprite.hpp
-//  MontagneMagique
-//
-//  Created by Martial Geoffre-Rouland on 23/09/2019.
-//
-
 #ifndef BirdSprite_hpp
 #define BirdSprite_hpp
 
@@ -27,12 +20,10 @@ private:
     vector<ofImage> * currentSet;
     float currFrame, vel;
     
-    float timeElapsed;
-    int delay;
-    
-    float posY, blurredPosY;
-    
-    bool bWaitForFrame;
+    float   timeElapsed;
+    int     delay;
+    float   posY, blurredPosY;    
+    bool    bWaitForFrame;
 };
 
 #endif /* BirdSprite_hpp */

@@ -1,10 +1,3 @@
-//
-//  BigBangScene.cpp
-//  MontagneMagique
-//
-//  Created by Martial Geoffre-Rouland on 19/02/2019.
-//
-
 #include "BigBangScene.hpp"
 
 void BigBangScene::setup(string dataPath) {
@@ -30,20 +23,14 @@ void BigBangScene::setProps() {
 void BigBangScene::update() {
     
     if(hasConfigChanged()) {
-        
         setProps();
-        
     }
     
     bigBang.update();
     
-    
-        
 }
 
-
 void BigBangScene::draw() {
-    
     
     float pct = getInOuPct();
     
@@ -55,6 +42,5 @@ void BigBangScene::draw() {
         ofPopMatrix();
         
     }
-    
     
 }
