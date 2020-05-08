@@ -177,9 +177,7 @@ void MontagneApp::drawScene() {
 
         fboLayer.draw(0.0, 0.0,  videoOutputWidth, videoOutputHeight);
         tempFbo.end();
-     
     }
-     
      */
     
     ofEnableAlphaBlending();

@@ -59,8 +59,8 @@ void GenericScene::draw() {
             if(videoPlayers[i]->isLoaded()) {
                 
                 ofPushMatrix();
-                ofTranslate(configJson["videos"][i]["x"], configJson["videos"][i]["y"]);
-                ofScale(configJson["videos"][i]["scale"], configJson["videos"][i]["scale"]);
+                ofTranslate(configJson["videos"][i].value("x", 0), configJson["videos"][i].value("y", 0));
+                ofScale(configJson["videos"][i].value("scale", 1), configJson["videos"][i].value("scale", 1));
                 videoPlayers[i]->draw(0.0, 0.0);
                 ofPopMatrix();
                 

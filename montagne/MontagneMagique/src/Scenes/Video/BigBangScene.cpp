@@ -9,10 +9,10 @@ void BigBangScene::setup(string dataPath) {
 
 void BigBangScene::setProps() {
     
-    float thresold              = configJson["thresold"];
+    float thresold              = configJson.value("thresold", 1);
     string targetColorHex       = configJson["color-blob-target"];
     ofColor targetColor         = ofColor::fromHex(ofHexToInt(targetColorHex));
-    float colorBlobDistanceMax  = configJson["color-blob-target-distance-max"];
+    float colorBlobDistanceMax  = configJson.value("color-blob-target-distance-max", 200);
     
     bigBang.colorBlobTarget         = targetColor;
     bigBang.thresold                = thresold;

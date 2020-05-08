@@ -42,7 +42,7 @@ void ofApp::setup(){
 
     int startMode           = configJson.value("start-mode", 0);
     app.setup();
-    //app.setMode(startMode);
+    app.setMode(startMode);
     
     int frameDrop           = configJson.value("ar-frame-drop", 0);
     app.getArToolKitManager().setDelays(configJson["marker-found-delay"], configJson["marker-lost-delay"]);

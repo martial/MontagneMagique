@@ -114,7 +114,7 @@ void ArSceneManager::activateAllMarkers() {}
 
 void ArSceneManager::activateMarkersFromScene() {
     
-    bool unlockAll = false;
+    bool unlockAll = true;
     
     ofApp * app = (ofApp*) ofGetAppPtr();
     string currentScene = app->app.currentSceneName + "/" + app->app.currentSubSceneName;
